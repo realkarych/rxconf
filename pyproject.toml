@@ -1,0 +1,22 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "rxconf"
+version = "0.0.0"
+authors = [
+  { name="Andrey Karchevsky", email="karych@karych.ru" },
+]
+description = "Powerful and flexible library for configuration management"
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/realkarych/rxconf"
+Issues = "https://github.com/realkarych/rxconf/issues"
