@@ -17,7 +17,13 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4.0.3
         with:
-          node-version: 14
+          node-version: latest
+
+      - name: Remove existing npm installation
+        run: npm uninstall -g npm
+
+      - name: Initialize npm
+        run: npm init -y
 
       - name: Install dependencies
         run: npm install
@@ -26,4 +32,4 @@ jobs:
         run: npm install -g markdownlint-cli
 
       - name: Lint Markdown files
-        run: markdownlint docs
+        run: markdownlint .

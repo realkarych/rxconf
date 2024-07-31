@@ -46,7 +46,12 @@ jobs:
         run: flake8 docs_src
 
       - name: Run Mypy on docs_src
-        run: mypy tests
+        run: |
+          if [ -n "$(find docs_src -name '*.py' -o -name '*.pyi')" ]; then
+            mypy docs_src
+          else
+            echo "No .py or .pyi files found in docs_src directory. Skipping Mypy."
+          fi
 
       - name: Run Pyright on tests
         run: pyright tests
@@ -58,4 +63,9 @@ jobs:
         run: flake8 tests
 
       - name: Run Mypy on tests
-        run: mypy tests
+        run: |
+          if [ -n "$(find tests -name '*.py' -o -name '*.pyi')" ]; then
+            mypy tests
+          else
+            echo "No .py or .pyi files found in tests directory. Skipping Mypy."
+          fi
