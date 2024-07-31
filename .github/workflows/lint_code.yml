@@ -1,0 +1,61 @@
+name: Lint source code
+
+on:
+  push:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint_codebase:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4.1.7
+
+      - name: Set up Python
+        uses: actions/setup-python@v5.1.1
+        with:
+          python-version: 3.x
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyright ruff flake8 mypy
+
+      - name: Run Pyright on rxconf
+        run: pyright rxconf
+
+      - name: Run Ruff on rxconf
+        run: ruff check rxconf
+
+      - name: Run Flake8 on rxconf
+        run: flake8 rxconf
+
+      - name: Run Mypy on rxconf
+        run: mypy rxconf
+
+      - name: Run Pyright on docs_src
+        run: pyright docs_src
+
+      - name: Run Ruff on docs_src
+        run: ruff check docs_src
+
+      - name: Run Flake8 on docs_src
+        run: flake8 docs_src
+
+      - name: Run Mypy on docs_src
+        run: mypy tests
+
+      - name: Run Pyright on tests
+        run: pyright tests
+
+      - name: Run Ruff on tests
+        run: ruff check tests
+
+      - name: Run Flake8 on tests
+        run: flake8 tests
+
+      - name: Run Mypy on tests
+        run: mypy tests
