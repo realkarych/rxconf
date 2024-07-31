@@ -1,0 +1,35 @@
+name: Lint docs
+
+on:
+  push:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.1.7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4.0.3
+        with:
+          node-version: latest
+
+      - name: Remove existing npm installation
+        run: npm uninstall -g npm
+
+      - name: Initialize npm
+        run: npm init -y
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install markdownlint
+        run: npm install -g markdownlint-cli
+
+      - name: Lint Markdown files
+        run: markdownlint .

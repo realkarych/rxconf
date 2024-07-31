@@ -1,0 +1,9 @@
+site_name: RxConf
+theme:
+  name: material
+
+nav:
+  - Home: index.md
+
+plugins:
+  - search
