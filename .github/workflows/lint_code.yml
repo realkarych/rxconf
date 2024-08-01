@@ -2,12 +2,9 @@ name: Lint source code
 
 on:
   push:
-  pull_request:
-    branches:
-      - main
 
 jobs:
-  lint_codebase:
+  run_lint:
     runs-on: ubuntu-latest
 
     steps:
