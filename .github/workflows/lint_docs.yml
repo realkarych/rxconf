@@ -2,12 +2,9 @@ name: Lint docs
 
 on:
   push:
-  pull_request:
-    branches:
-      - main
 
 jobs:
-  lint:
+  run_lint:
     runs-on: ubuntu-latest
 
     steps:
