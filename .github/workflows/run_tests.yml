@@ -5,11 +5,12 @@ on:
 
 jobs:
   run_tests:
-    runs-on: ubuntu-latest
-
     strategy:
       matrix:
-        python-version: ['3.10', '3.11', '3.12', '3.13.0-beta.4', 'pypy3.9']
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ['3.10', '3.11', '3.12', '3.13.0-beta.4', 'pypy-3.9']
+
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout code
@@ -25,6 +26,12 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements-tests.txt
 
-      - name: Run tests
+      - name: Run tests on Linux and macOS
+        if: runner.os != 'Windows'
         run: |
           find tests -name "test*.py" -exec python -m unittest {} +
+
+      - name: Run tests on Windows
+        if: runner.os == 'Windows'
+        run: |
+          pwsh -command "Get-ChildItem -Recurse -Filter 'test*.py' -Path 'tests' | ForEach-Object { python -m unittest $_.FullName }"
