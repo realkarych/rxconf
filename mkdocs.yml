@@ -4,6 +4,8 @@ theme:
 
 nav:
   - Home: index.md
+  - Development:
+      - Contributing: development/CONTRIBUTING.md
 
 plugins:
   - search

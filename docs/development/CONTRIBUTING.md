@@ -31,11 +31,33 @@ To get started with contributing, please follow these steps:
 When submitting your contribution, please ensure the following:
 
 - Minimized count of commits.
-- Provided descriptive commits' titles.
-**Use [this emoji notation](https://gist.github.com/parmentf/035de27d6ed1dce0b36a)**!
 - Your code follows our code style guidelines.
 - Your changes are well-documented and include any necessary updates to the project's documentation.
 - Your changes do not introduce any breaking changes or regressions.
+- Provided descriptive commits' titles. Use emoji notation:
+
+| Topic                      | Alias                                         |
+|----------------------------|-----------------------------------------------|
+| Version tag                | :bookmark: `:bookmark:`                       |
+| New feature                | :sparkles: `:sparkles:`                       |
+| Bugfix                     | :bug: `:bug:`                                 |
+| Documentation              | :books: `:books:`                             |
+| Performance                | :racehorse: `:racehorse:`                     |
+| Tests                      | :white_check_mark: `:white_check_mark:`       |
+| General update             | :rocket: `:rocket:`                           |
+| Improve format/structure   | :art: `:art:`                                 |
+| Refactor code              | :hammer: `:hammer:`                           |
+| Removing code/files        | :fire: `:fire:`                               |
+| Continuous Integration     | :construction_worker: `:construction_worker:` |
+| Security                   | :lock: `:lock:`                               |
+| Upgrading dependencies     | :arrow_up: `:arrow_up:`                       |
+| Downgrading dependencies   | :arrow_down: `:arrow_down:`                   |
+| Critical hotfix            | :ambulance: `:ambulance:`                     |
+| Adding CI build system     | :construction_worker: `:construction_worker:` |
+| Configuration files        | :wrench: `:wrench:`                           |
+| Reverting changes          | :rewind: `:rewind:`                           |
+| Breaking changes           | :boom: `:boom:`                               |
+| Movements                  | :truck: `:truck:`                             |
 
 ## Code Style
 
