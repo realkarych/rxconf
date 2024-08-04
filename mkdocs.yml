@@ -9,7 +9,7 @@ theme:
 nav:
   - Home: index.md
   - Development:
-      - Contributing: development/CONTRIBUTING.md
+      - Contributing: development/contributing.md
 
 plugins:
   - search
