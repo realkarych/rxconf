@@ -19,7 +19,16 @@
 Currently in develop...
 </h1>
 
-- [ ] Implement config loaders: `ENV`, `dotenv`, `yaml`, `toml`, `ini`, `json`.
+- [ ] Implement config loaders:
+  - [ ] Implement base class which will be inherited by concrete loaders
+  - [ ] Implement Environment Variables & `dotenv` loader
+  - [ ] Implement `yaml` loader
+  - [ ] Implement `toml` loader
+  - [ ] Implement `ini` loader
+  - [ ] Implement `json` loader
+
+  *Here in-need to minimize deps not from standart library.*
+
 - [ ] Implement reactive config-state observer.
 - [ ] Implement async reactive config-state observer.
 - [ ] Intruduce testing strategy: validation, race conditions etc.
