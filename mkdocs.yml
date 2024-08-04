@@ -1,6 +1,8 @@
 site_name: RxConf
 theme:
   name: material
+  logo: assets/logo.png
+  favicon: assets/favicon.ico
 
 nav:
   - Home: index.md

@@ -38,26 +38,25 @@ When submitting your contribution, please ensure the following:
 
 | Topic                      | Alias                                         |
 |----------------------------|-----------------------------------------------|
-| Version tag                | :bookmark: `:bookmark:`                       |
-| New feature                | :sparkles: `:sparkles:`                       |
-| Bugfix                     | :bug: `:bug:`                                 |
-| Documentation              | :books: `:books:`                             |
-| Performance                | :racehorse: `:racehorse:`                     |
-| Tests                      | :white_check_mark: `:white_check_mark:`       |
-| General update             | :rocket: `:rocket:`                           |
-| Improve format/structure   | :art: `:art:`                                 |
-| Refactor code              | :hammer: `:hammer:`                           |
-| Removing code/files        | :fire: `:fire:`                               |
-| Continuous Integration     | :construction_worker: `:construction_worker:` |
-| Security                   | :lock: `:lock:`                               |
-| Upgrading dependencies     | :arrow_up: `:arrow_up:`                       |
-| Downgrading dependencies   | :arrow_down: `:arrow_down:`                   |
-| Critical hotfix            | :ambulance: `:ambulance:`                     |
-| Adding CI build system     | :construction_worker: `:construction_worker:` |
-| Configuration files        | :wrench: `:wrench:`                           |
-| Reverting changes          | :rewind: `:rewind:`                           |
-| Breaking changes           | :boom: `:boom:`                               |
-| Movements                  | :truck: `:truck:`                             |
+| Version tag                | 🔖 `:bookmark:`                               |
+| New feature                | ✨ `:sparkles:`                               |
+| Bugfix                     | 🐛 `:bug:`                                    |
+| Documentation              | 📚 `:books:`                                  |
+| Performance                | 🏇 `:racehorse:`                              |
+| Tests                      | ✅ `:white_check_mark:`                       |
+| General update             | 🚀 `:rocket:`                                 |
+| Improve format/structure   | 🎨 `:art:`                                    |
+| Refactor code              | 🔨 `:hammer:`                                 |
+| Removing code/files        | 🔥 `:fire:`                                   |
+| Continuous Integration     | 👷 `:construction_worker:`                    |
+| Security                   | 🔒 `:lock:`                                   |
+| Upgrading dependencies     | ⬆️ `:arrow_up:`                               |
+| Downgrading dependencies   | ⬇️ `:arrow_down:`                             |
+| Critical hotfix            | 🚑 `:ambulance:`                              |
+| Configuration files        | 🔧 `:wrench:`                                 |
+| Reverting changes          | ⏪ `:rewind:`                                 |
+| Breaking changes           | 💥 `:boom:`                                   |
+| Movements                  | 🚚 `:truck:`                                  |
 
 ## Code Style
 
