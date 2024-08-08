@@ -15,16 +15,7 @@ Please take a moment to review the following guidelines before submitting your c
 
 ## Getting Started
 
-To get started with contributing, please follow these steps:
-
-1. Fork the repository.
-2. Clone the forked repository to your local machine.
-3. Create a new branch for your contribution.
-4. Make your changes and commit them.
-5. Push your changes to your forked repository.
-6. Create a pull request to the main repository.
-7. Fix all failed tests.
-8. Write changelog — difference that you.
+Setup your development environment: [Setup guide](setup.md).
 
 ## Submitting Contributions
 

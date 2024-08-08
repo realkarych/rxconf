@@ -10,6 +10,11 @@ nav:
   - Home: index.md
   - Development:
       - Contributing: development/contributing.md
+      - Setup: development/setup.md
 
 plugins:
   - search
+
+markdown_extensions:
+  - admonition
+  - codehilite
