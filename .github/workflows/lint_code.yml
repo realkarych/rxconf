@@ -9,7 +9,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ['3.10', '3.11', '3.12', '3.13.0-beta.4', 'pypy3.9']
+        python-version: ['3.9', '3.10', '3.11', '3.12', '3.13.0-beta.4', 'pypy3.9']
 
     steps:
       - name: Checkout code
@@ -20,53 +20,57 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          export PATH="$HOME/.local/bin:$PATH"
+
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install pyright ruff flake8 mypy
+          poetry install --with dev
 
       - name: Run Pyright on rxconf
-        run: pyright rxconf
+        run: poetry run pyright rxconf
 
       - name: Run Ruff on rxconf
-        run: ruff check rxconf
+        run: poetry run ruff check rxconf
 
       - name: Run Flake8 on rxconf
-        run: flake8 rxconf
+        run: poetry run flake8 rxconf
 
       - name: Run Mypy on rxconf
-        run: mypy rxconf
+        run: poetry run mypy rxconf
 
       - name: Run Pyright on docs_src
-        run: pyright docs_src
+        run: poetry run pyright docs_src
 
       - name: Run Ruff on docs_src
-        run: ruff check docs_src
+        run: poetry run ruff check docs_src
 
       - name: Run Flake8 on docs_src
-        run: flake8 docs_src
+        run: poetry run flake8 docs_src
 
       - name: Run Mypy on docs_src
         run: |
           if [ -n "$(find docs_src -name '*.py' -o -name '*.pyi')" ]; then
-            mypy docs_src
+            poetry run mypy docs_src
           else
             echo "No .py or .pyi files found in docs_src directory. Skipping Mypy."
           fi
 
       - name: Run Pyright on tests
-        run: pyright tests
+        run: poetry run pyright tests
 
       - name: Run Ruff on tests
-        run: ruff check tests
+        run: poetry run ruff check tests
 
       - name: Run Flake8 on tests
-        run: flake8 tests
+        run: poetry run flake8 tests
 
       - name: Run Mypy on tests
         run: |
           if [ -n "$(find tests -name '*.py' -o -name '*.pyi')" ]; then
-            mypy tests
+            poetry run mypy tests
           else
             echo "No .py or .pyi files found in tests directory. Skipping Mypy."
           fi
