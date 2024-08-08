@@ -18,11 +18,16 @@ jobs:
         with:
           python-version: '3.x'
 
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
       - name: Install dependencies
-        run: pip install mkdocs mkdocs-material
+        run: poetry install --with dev
 
       - name: Build site
-        run: mkdocs build
+        run: poetry run mkdocs build
 
       - name: Deploy to GitHub Pages
         run: |
