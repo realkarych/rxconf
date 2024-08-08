@@ -20,7 +20,7 @@ Currently in develop...
 </h1>
 
 - [ ] Implement config loaders:
-  - [ ] Implement base class which will be inherited by concrete loaders
+  - [x] Implement base class which will be inherited by concrete loaders
   - [ ] Implement Environment Variables & `dotenv` loader
   - [ ] Implement `yaml` loader
   - [ ] Implement `toml` loader
