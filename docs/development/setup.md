@@ -74,20 +74,14 @@ before making the package publicly available.
 
 1. **Upload to Test PyPI**:
 
-    ```sh
-    poetry publish --repository testpypi
-    ```
+    `poetry publish --repository testpypi`
 
 2. **Test the package:**
 
-    Install the package from Test PyPI and run tests to ensure everything is working ok:
+    Install the package from Test PyPI and run tests to ensure everything is working correctly:
 
-    ```sh
-    pip install --index-url <https://test.pypi.org/simple/rxconf/>
-    ```
+    `pip install --index-url https://test.pypi.org/simple/rxconf`
 
 3. **Upload to PyPI:**
 
-    ```sh
-    poetry publish --repository pypi
-    ```
+    `poetry publish --repository pypi`
