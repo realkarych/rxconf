@@ -63,10 +63,11 @@ To build and deploy docs locally, run `mkdocs serve`.
 We use a [CI action](https://github.com/realkarych/rxconf/blob/main/.github/workflows/deploy_docs.yml)
 that automatically deploys the documentation to production whenever changes are pushed to the `main` branch.
 
-## Deploying on PyPI
+## Deploying on Test PyPI
 
 !!! note
-    Requires private access and performs only by core contributors (currently only by realkarych@).
+    Requires private access and performs only by core contributors.
+    So you can create your own repo on <https://test.pypi.org> and provide token.
 
 Before deploying to the official PyPI repository, we first upload and test our package on Test PyPI.
 This allows us to ensure that everything works correctly and to catch any potential issues
@@ -74,14 +75,20 @@ before making the package publicly available.
 
 1. **Upload to Test PyPI**:
 
-    `poetry publish --repository testpypi`
+    - Add Test PyPI repo to poetry conf: `poetry config repositories.testpypi https://test.pypi.org/legacy/`.
+    - Add secret to conf: `poetry config pypi-token.testpypi <token>`
+    - Publish: `poetry publish --repository testpypi`
 
 2. **Test the package:**
 
     Install the package from Test PyPI and run tests to ensure everything is working correctly:
 
-    `pip install --index-url https://test.pypi.org/simple/rxconf`
+    `pip install --index-url https://test.pypi.org/simple/rxconf/`
 
-3. **Upload to PyPI:**
+## Deploying on PyPI
 
-    `poetry publish --repository pypi`
+!!! warning
+    Our rule is to not deploy library on PyPI from local.
+
+We use a [CI action](https://github.com/realkarych/rxconf/blob/main/.github/workflows/publish.yml)
+that automatically deploys the library to <https://pypi.org/project/rxconf/> on new version tag introduction.
