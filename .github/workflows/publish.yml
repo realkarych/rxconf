@@ -23,6 +23,11 @@ jobs:
         curl -sSL https://install.python-poetry.org | python3 -
         export PATH="$HOME/.local/bin:$PATH"
 
+    - name: Configure PyPI repository
+      run: |
+        poetry config repositories.pypi https://upload.pypi.org/legacy/
+        poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
+
     - name: Install dependencies
       run: poetry install
 
