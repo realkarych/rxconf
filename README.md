@@ -10,6 +10,8 @@
 <p align="center">
   <img src="https://realkarych.github.io/rxconf/coverage.svg" alt="Coverage">
   <img src="https://github.com/realkarych/rxconf/actions/workflows/run_tests.yml/badge.svg" alt="Tests status">
+  <img src="https://img.shields.io/pypi/v/rxconf" alt="PyPI version">
+  <img src="https://img.shields.io/pypi/pyversions/rxconf" alt="Supported Python versions">
 </p>
 
 ---
