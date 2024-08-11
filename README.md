@@ -7,6 +7,10 @@
     <em>RxConf library, easy to use, powerful and flexible for configuration management in Python</em>
 </p>
 
+<p align="center">
+  <img src="./coverage.svg" alt="Coverage">
+</p>
+
 ---
 
 **Documentation:** <https://realkarych.github.io/rxconf/>
