@@ -62,15 +62,22 @@ jobs:
       - name: Generate coverage badge
         run: poetry run coverage-badge -o coverage.svg -f
 
-      - name: Push coverage badge to GitHub Pages
+      - name: Clone gh-pages branch
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git clone --branch gh-pages https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} gh-pages
-          mv coverage.svg gh-pages/
+
+      - name: Copy coverage badge to gh-pages
+        run: cp coverage.svg gh-pages/
+
+      - name: Check for changes
+        run: |
           cd gh-pages
           git add coverage.svg
-          git commit -m ':arrow_up: Update coverage badge'
-          git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          if [ -n "$(git diff --cached --name-only)" ]; then
+            git commit -m ':arrow_up: Update coverage badge'
+            git push
+          else
+            echo "No changes to commit"
+          fi

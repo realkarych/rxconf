@@ -9,6 +9,7 @@
 
 <p align="center">
   <img src="https://realkarych.github.io/rxconf/coverage.svg" alt="Coverage">
+  <img src="https://github.com/realkarych/rxconf/actions/workflows/run_tests.yml/badge.svg" alt="Tests status">
 </p>
 
 ---
