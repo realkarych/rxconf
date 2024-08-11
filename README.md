@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-  <img src="./coverage.svg" alt="Coverage">
+  <img src="https://realkarych.github.io/rxconf/coverage.svg" alt="Coverage">
 </p>
 
 ---
