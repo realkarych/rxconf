@@ -27,18 +27,19 @@
 Currently in develop...
 </h1>
 
-- [ ] Implement config loaders:
-  - [x] Implement base class which will be inherited by concrete loaders
-  - [ ] Implement Environment Variables & `dotenv` loader
-  - [ ] Implement `yaml` loader
-  - [ ] Implement `toml` loader
-  - [ ] Implement `ini` loader
-  - [ ] Implement `json` loader
-
-  *Here in-need to minimize deps not from standart library.*
-
-- [ ] Implement reactive config-state observer.
-- [ ] Implement async reactive config-state observer.
-- [ ] Intruduce testing strategy: validation, race conditions etc.
-- [ ] Introduce core API structure and interfaces.
-- [ ] Provide examples and usecases for all public interfaces.
+<ul>
+  <li><input type="checkbox" disabled> Implement config loaders:</li>
+  <ul>
+    <li><input type="checkbox" checked disabled> Implement base class which will be inherited by concrete loaders</li>
+    <li><input type="checkbox" disabled> Implement Environment Variables & <code>dotenv</code> loader</li>
+    <li><input type="checkbox" disabled> Implement <code>yaml</code> loader</li>
+    <li><input type="checkbox" disabled> Implement <code>toml</code> loader</li>
+    <li><input type="checkbox" disabled> Implement <code>ini</code> loader</li>
+    <li><input type="checkbox" disabled> Implement <code>json</code> loader</li>
+  </ul>
+  <li><input type="checkbox" disabled> Implement reactive config-state observer.</li>
+  <li><input type="checkbox" disabled> Implement async reactive config-state observer.</li>
+  <li><input type="checkbox" disabled> Introduce testing strategy: validation, race conditions etc.</li>
+  <li><input type="checkbox" disabled> Introduce core API structure and interfaces.</li>
+  <li><input type="checkbox" disabled> Provide examples and use cases for all public interfaces.</li>
+</ul>
