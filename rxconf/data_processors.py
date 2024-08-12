@@ -27,13 +27,13 @@ class YamlDataProcessor(DataProcessor):
     def _process_data(self, data: tp.Any) -> attrs.YamlAttribute:
         if isinstance(data, dict):
             return attrs.YamlAttribute(
-                value={k: self._process_data(v) for k, v in data.items()}
+                value={k.lower(): self._process_data(v) for k, v in data.items()}
             )
         elif isinstance(data, list):
             return attrs.YamlAttribute(
                 value=[
                     self._process_data(item) if not isinstance(item, dict) else attrs.YamlAttribute(
-                        value={k: self._process_data(v) for k, v in item.items()}
+                        value={k.lower(): self._process_data(v) for k, v in item.items()}
                     ) for item in data
                 ]
             )
