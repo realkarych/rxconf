@@ -13,6 +13,7 @@
   <img src="https://img.shields.io/pypi/v/rxconf" alt="PyPI version">
   <img src="https://img.shields.io/pypi/pyversions/rxconf?color=dark-green" alt="Supported Python versions">
   <img src="https://img.shields.io/badge/Supported%20OS-Windows%2C%20macOS%2C%20Linux-default" alt="Supported OS">
+  <img src="https://static.pepy.tech/badge/rxconf/month" alt="Downloads per month">
 </p>
 
 ---

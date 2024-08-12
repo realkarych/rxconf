@@ -1,3 +1,3 @@
-# About RxConf
+# RxConf
 
-Powerful and flexible library for dynamic configuration management in Python.
+This template will be replaced with actual content of README.md from root of project on docs deployment pipeline.
