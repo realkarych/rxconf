@@ -5,7 +5,7 @@ from pathlib import PurePath
 
 import yaml
 
-from rxconf import attributes as attrs
+import rxconf
 from rxconf import data_processors, exceptions
 
 
@@ -24,9 +24,9 @@ class FileConfigType(ConfigType):
 
 class YamlConfig(FileConfigType):
     allowed_extensions = frozenset({".yaml", ".yml"})
-    _root: tp.Final[attrs.YamlAttribute]
+    _root: tp.Final[rxconf.YamlAttribute]
 
-    def __init__(self, root_attribute: attrs.YamlAttribute) -> None:
+    def __init__(self, root_attribute: rxconf.YamlAttribute) -> None:
         self._root = root_attribute
 
     @classmethod

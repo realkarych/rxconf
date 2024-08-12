@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 from typing_extensions import runtime_checkable
 
+
 PRIMITIVE_TYPE = tp.Union[bool, int, str, float, None]
 DATES_TYPE = tp.Union[datetime.date, datetime.datetime]
 PRIMITIVE_LIST_TYPE = tp.List[PRIMITIVE_TYPE]
