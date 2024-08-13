@@ -1,9 +1,8 @@
 import datetime
 import typing as tp
-from dataclasses import dataclass
+from abc import ABCMeta, abstractmethod
 
-from typing_extensions import runtime_checkable
-
+from rxconf import exceptions
 
 PRIMITIVE_TYPE = tp.Union[bool, int, str, float, None]
 DATES_TYPE = tp.Union[datetime.date, datetime.datetime]
@@ -12,20 +11,238 @@ PRIMITIVE_SET_TYPE = tp.Set[PRIMITIVE_TYPE]
 PRIMITIVE_SEQUENCE_TYPE = tp.Union[PRIMITIVE_LIST_TYPE, PRIMITIVE_SET_TYPE]
 
 
-@runtime_checkable
-class AttributeType(tp.Protocol):
-    value: tp.Any
+def _patch_other_value(func: tp.Callable[..., tp.Any]) -> tp.Callable[..., tp.Any]:
+    def wrapper(self: "AttributeType", other: tp.Any) -> tp.Any:
+        if isinstance(other, AttributeType):
+            other = other.value
+        return func(self, other)
+    return wrapper
 
 
-@dataclass(frozen=True)
+class AttributeType(metaclass=ABCMeta):
+    _value: tp.Any
+
+    def __init__(self, value: tp.Any) -> None:
+        self._value = value
+
+    @property
+    @abstractmethod
+    def value(self) -> tp.Any:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def __getattr__(self, item: str) -> tp.Any:
+        raise NotImplementedError()
+
+    @exceptions.handle_unknown_exception
+    def __int__(self) -> int:
+        return int(self._value)  # type: ignore
+
+    @exceptions.handle_unknown_exception
+    def __float__(self) -> float:
+        return float(self._value)  # type: ignore
+
+    @exceptions.handle_unknown_exception
+    def __str__(self) -> str:
+        return str(self._value)  # type: ignore
+
+    @exceptions.handle_unknown_exception
+    def __bool__(self) -> bool:
+        return bool(self._value)  # type: ignore
+
+    @exceptions.handle_unknown_exception
+    @_patch_other_value
+    def __add__(self, other: tp.Any) -> tp.Any:
+        return self._value + other  # type: ignore
+
+    @exceptions.handle_unknown_exception
+    @_patch_other_value
+    def __mul__(self, other: tp.Any) -> tp.Any:
+        return self._value * other  # type: ignore
+
+    @exceptions.handle_unknown_exception
+    @_patch_other_value
+    def __sub__(self, other: tp.Any) -> tp.Any:
+        return self._value - other  # type: ignore
+
+    @exceptions.handle_unknown_exception
+    @_patch_other_value
+    def __truediv__(self, other: tp.Any) -> tp.Any:
+        return self._value / other  # type: ignore
+
+    @exceptions.handle_unknown_exception
+    @_patch_other_value
+    def __floordiv__(self, other: tp.Any) -> tp.Any:
+        return self._value // other  # type: ignore
+
+    @exceptions.handle_unknown_exception
+    @_patch_other_value
+    def __mod__(self, other: tp.Any) -> tp.Any:
+        return self._value % other  # type: ignore
+
+    @exceptions.handle_unknown_exception
+    @_patch_other_value
+    def __pow__(self, other: tp.Any) -> tp.Any:
+        return self._value ** other  # type: ignore
+
+    @exceptions.handle_unknown_exception
+    @_patch_other_value
+    def __lshift__(self, other: tp.Any) -> tp.Any:
+        return self._value << other  # type: ignore
+
+    @exceptions.handle_unknown_exception
+    @_patch_other_value
+    def __rshift__(self, other: tp.Any) -> tp.Any:
+        return self._value >> other  # type: ignore
+
+    @exceptions.handle_unknown_exception
+    @_patch_other_value
+    def __and__(self, other: tp.Any) -> tp.Any:
+        return self._value & other  # type: ignore
+
+    @exceptions.handle_unknown_exception
+    @_patch_other_value
+    def __xor__(self, other: tp.Any) -> tp.Any:
+        return self._value ^ other  # type: ignore
+
+    @exceptions.handle_unknown_exception
+    @_patch_other_value
+    def __or__(self, other: tp.Any) -> tp.Any:
+        return self._value | other  # type: ignore
+
+    @exceptions.handle_unknown_exception
+    def __neg__(self) -> tp.Any:
+        return -self._value  # type: ignore
+
+    @exceptions.handle_unknown_exception
+    def __pos__(self) -> tp.Any:
+        return +self._value  # type: ignore
+
+    @exceptions.handle_unknown_exception
+    def __abs__(self) -> tp.Any:
+        return abs(self._value)  # type: ignore
+
+    @exceptions.handle_unknown_exception
+    def __invert__(self) -> tp.Any:
+        return ~self._value  # type: ignore
+
+    @exceptions.handle_unknown_exception
+    def __round__(self, n: int = 0) -> tp.Any:
+        return round(self._value, n)  # type: ignore
+
+    @exceptions.handle_unknown_exception
+    def __hash__(self) -> int:
+        return hash(self._value)  # type: ignore
+
+    @exceptions.handle_unknown_exception
+    def __len__(self) -> int:
+        return len(self._value)  # type: ignore
+
+    @exceptions.handle_unknown_exception
+    def __iter__(self) -> tp.Iterator[tp.Any]:
+        return iter(self._value)  # type: ignore
+
+    @exceptions.handle_unknown_exception
+    @_patch_other_value
+    def __contains__(self, item: tp.Any) -> bool:
+        return item in self._value  # type: ignore
+
+    @exceptions.handle_unknown_exception
+    @_patch_other_value
+    def __getitem__(self, item: tp.Any) -> tp.Any:
+        return self._value[item]  # type: ignore
+
+    @exceptions.handle_unknown_exception
+    @_patch_other_value
+    def __eq__(self, other: tp.Any) -> bool:
+        return self._value == other  # type: ignore
+
+    @exceptions.handle_unknown_exception
+    @_patch_other_value
+    def __ne__(self, other: tp.Any) -> bool:
+        return not self.__eq__(other)  # type: ignore
+
+    @exceptions.handle_unknown_exception
+    @_patch_other_value
+    def __lt__(self, other: tp.Any) -> bool:
+        return self._value < other  # type: ignore
+
+    @exceptions.handle_unknown_exception
+    @_patch_other_value
+    def __le__(self, other: tp.Any) -> bool:
+        return self._value <= other  # type: ignore
+
+    @exceptions.handle_unknown_exception
+    @_patch_other_value
+    def __gt__(self, other: tp.Any) -> bool:
+        return other < self._value  # type: ignore
+
+    @exceptions.handle_unknown_exception
+    @_patch_other_value
+    def __ge__(self, other: tp.Any) -> bool:
+        return other <= self._value  # type: ignore
+
+    @exceptions.handle_unknown_exception
+    def __repr__(self) -> str:
+        return f"AttributeType({self._value})"
+
+
 class YamlAttribute(AttributeType):
-    __slots__ = ("value",)
-
-    value: tp.Union[
+    _value: tp.Union[
         PRIMITIVE_TYPE,
         PRIMITIVE_SEQUENCE_TYPE,
         DATES_TYPE,
+        "YamlAttribute",
         tp.List["YamlAttribute"],
         tp.Set["YamlAttribute"],
         tp.Dict[str, "YamlAttribute"],
     ]
+
+    def __init__(
+        self: "YamlAttribute",
+        value: tp.Union[
+            PRIMITIVE_TYPE,
+            PRIMITIVE_SEQUENCE_TYPE,
+            DATES_TYPE,
+            "YamlAttribute",
+            tp.List["YamlAttribute"],
+            tp.Set["YamlAttribute"],
+            tp.Dict[str, "YamlAttribute"],
+        ]
+    ) -> None:
+        self._value = value
+
+    @property
+    def value(
+        self: "YamlAttribute"
+    ) -> tp.Union[
+        PRIMITIVE_TYPE,
+        PRIMITIVE_SEQUENCE_TYPE,
+        DATES_TYPE,
+        "YamlAttribute",
+        tp.List["YamlAttribute"],
+        tp.Set["YamlAttribute"],
+        tp.Dict[str, "YamlAttribute"],
+    ]:
+        return self._value
+
+    @exceptions.handle_unknown_exception
+    def __getattr__(
+        self: "YamlAttribute",
+        item: str
+    ) -> tp.Union[
+        PRIMITIVE_TYPE,
+        PRIMITIVE_SEQUENCE_TYPE,
+        DATES_TYPE,
+        "YamlAttribute",
+        tp.List["YamlAttribute"],
+        tp.Set["YamlAttribute"],
+        tp.Dict[str, "YamlAttribute"],
+    ]:
+        if isinstance(self._value, dict):
+            try:
+                return self._value[item]
+            except KeyError as exc:
+                raise KeyError(f"Dictionary {self._value} does not have key {item}") from exc
+        else:
+            return self._value
