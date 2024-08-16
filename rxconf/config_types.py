@@ -1,3 +1,4 @@
+import datetime
 import os
 import typing as tp
 from abc import ABCMeta, abstractmethod
@@ -7,7 +8,7 @@ import yaml
 
 import rxconf
 from rxconf import attributes as attrs
-from rxconf import exceptions, types
+from rxconf import exceptions
 
 
 class ConfigType(metaclass=ABCMeta):
@@ -19,8 +20,12 @@ class ConfigType(metaclass=ABCMeta):
 
 class FileConfigType(ConfigType, metaclass=ABCMeta):
 
-    def __init__(self, root_attribute: rxconf.AttributeType) -> None:
-        self._root = root_attribute
+    def __init__(
+        self: "FileConfigType",
+        root_attribute: rxconf.AttributeType,
+        path: PurePath,
+    ) -> None:
+        pass
 
     @property
     @abstractmethod
@@ -32,14 +37,23 @@ class FileConfigType(ConfigType, metaclass=ABCMeta):
     def load_from_path(cls, path: tp.Union[str, PurePath]) -> "FileConfigType":
         pass
 
+    def __repr__(self) -> str:
+        return self._root.__repr__()
+
 
 class YamlConfig(FileConfigType):
 
     _allowed_extensions: tp.Final[frozenset] = frozenset({".yaml", ".yml"})
     _root: tp.Final[rxconf.YamlAttribute]
+    _path: tp.Final[PurePath]
 
-    def __init__(self, root_attribute: rxconf.YamlAttribute) -> None:
+    def __init__(
+        self: "YamlConfig",
+        root_attribute: rxconf.YamlAttribute,
+        path: PurePath,
+    ) -> None:
         self._root = root_attribute
+        self._path = path
 
     @property
     def allowed_extensions(self) -> tp.FrozenSet[str]:
@@ -59,7 +73,8 @@ class YamlConfig(FileConfigType):
                 ) from exc
 
         return cls(
-            root_attribute=cls._process_data(yaml_data)
+            root_attribute=cls._process_data(yaml_data),
+            path=path if isinstance(path, PurePath) else PurePath(path)
         )
 
     @exceptions.handle_unknown_exception
@@ -85,9 +100,7 @@ class YamlConfig(FileConfigType):
             return attrs.YamlAttribute(
                 value={cls._process_data(item) for item in data}
             )
-        elif isinstance(data, types.PRIMITIVE_TYPE):
-            return attrs.YamlAttribute(value=data)
-        elif isinstance(data, types.DATES_TYPE):
+        elif isinstance(data, (bool, int, str, float, type(None), datetime.date, datetime.datetime)):
             return attrs.YamlAttribute(value=data)
         else:
             raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")

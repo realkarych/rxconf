@@ -236,7 +236,7 @@ class YamlAttribute(AttributeType):
     @exceptions.handle_unknown_exception
     def __getattr__(
         self: "YamlAttribute",
-        item: str
+        item: str,
     ) -> tp.Union[
         types.PRIMITIVE_TYPE,
         types.PRIMITIVE_SEQUENCE_TYPE,
@@ -250,6 +250,6 @@ class YamlAttribute(AttributeType):
             try:
                 return self._value[item]
             except KeyError as exc:
-                raise KeyError(f"Dictionary {self._value} does not have key {item}") from exc
-        else:
-            return self._value
+                raise KeyError(f"Key `{item}` doesn't exist...") from exc
+
+        raise KeyError(f"Key `{item}` doesn't exist...")

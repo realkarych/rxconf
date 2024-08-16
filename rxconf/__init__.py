@@ -1,4 +1,4 @@
-import types
+from rxconf import types
 
 from .attributes import AttributeType, YamlAttribute
 from .config_resolver import ConfigResolver
@@ -8,17 +8,19 @@ from .exceptions import (
     ConfigNotFoundError,
     InvalidExtensionError,
 )
+from .rxconf import (
+    RxConf
+)
 
 __all__ = [
+    "RxConf",
     "AttributeType",
     "YamlAttribute",
     "ConfigResolver",
     "YamlConfig",
-    # Exceptions
     "BrokenConfigSchemaError",
     "ConfigNotFoundError",
     "InvalidExtensionError",
-    # Modules
     "types",
     "attributes",
     "config_resolver",
