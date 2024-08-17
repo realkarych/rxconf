@@ -1,3 +1,4 @@
+import datetime
 from pathlib import Path
 
 import pytest
@@ -69,3 +70,10 @@ def test_string_casts() -> None:
     assert conf.string + "!" == "Hello world =)!"
     with pytest.raises(exceptions.RxConfError):
         assert conf.string.unknown
+
+
+def test_dates() -> None:
+    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.yml")
+
+    assert conf.date == datetime.date(2024, 8, 17)
+    assert conf.datetime == datetime.datetime(2024, 8, 17)
