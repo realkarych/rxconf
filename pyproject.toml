@@ -18,7 +18,6 @@ keywords = ["config", "configuration", "settings", "python"]
 [tool.poetry.dependencies]
 python = ">=3.9"
 pyyaml = "^6.0.2"
-typing-extensions = "^4.12.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^8.3.2"
@@ -34,6 +33,7 @@ mkdocs = "^1.6.0"
 mkdocs-material = "^9.5.31"
 types-PyYAML = "^6.0.12"
 coverage-badge = "^1.1.2"
+typing-extensions = "^4.12.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
