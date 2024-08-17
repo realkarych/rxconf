@@ -18,3 +18,12 @@ plugins:
 markdown_extensions:
   - admonition
   - codehilite
+
+repo_name: realkarych/rxconf
+repo_url: https://github.com/realkarych/rxconf
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/realkarych/rxconf
+      position: header
