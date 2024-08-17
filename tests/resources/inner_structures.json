@@ -1,0 +1,18 @@
+{
+    "config": {
+      "name": "John Doe",
+      "age": 42,
+      "address": {
+        "address": "123 Main St",
+        "city": null
+      },
+      "preferences": {
+        "favorites": [
+          "Blue",
+          "Pizza",
+          "The Inception"
+        ]
+      },
+      "is_active": true
+    }
+}

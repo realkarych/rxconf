@@ -1,4 +1,5 @@
 import datetime
+import json
 import os
 import typing as tp
 from abc import ABCMeta, abstractmethod
@@ -11,14 +12,14 @@ from rxconf import attributes as attrs
 from rxconf import exceptions
 
 
-class ConfigType(metaclass=ABCMeta):
+class ConfigType(metaclass=ABCMeta):  # pragma: no cover
 
     @abstractmethod
     def __getattr__(self, item: str) -> tp.Any:
         raise NotImplementedError()
 
 
-class FileConfigType(ConfigType, metaclass=ABCMeta):
+class FileConfigType(ConfigType, metaclass=ABCMeta):  # pragma: no cover
 
     def __init__(
         self: "FileConfigType",
@@ -97,10 +98,71 @@ class YamlConfig(FileConfigType):
                 ]
             )
         elif isinstance(data, tp.Set):
-            return attrs.YamlAttribute(
+            return attrs.YamlAttribute(  # pragma: no cover
                 value={cls._process_data(item) for item in data}
             )
         elif isinstance(data, (bool, int, str, float, type(None), datetime.date, datetime.datetime)):
             return attrs.YamlAttribute(value=data)
         else:
-            raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")
+            raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
+
+
+class JsonConfig(FileConfigType):
+
+    _allowed_extensions: tp.Final[frozenset] = frozenset({".json"})
+    _root: tp.Final[rxconf.JsonAttribute]
+    _path: tp.Final[PurePath]
+
+    def __init__(
+        self: "JsonConfig",
+        root_attribute: rxconf.JsonAttribute,
+        path: PurePath,
+    ) -> None:
+        self._root = root_attribute
+        self._path = path
+
+    @property
+    def allowed_extensions(self) -> tp.FrozenSet[str]:
+        return self._allowed_extensions
+
+    @classmethod
+    @exceptions.handle_unknown_exception
+    def load_from_path(cls, path: tp.Union[str, PurePath]) -> "JsonConfig":
+        if not os.path.isfile(str(path)):
+            raise exceptions.ConfigNotFoundError(f"Config file not found: {path}")
+        with open(str(path)) as file:
+            try:
+                json_data = json.load(file)
+            except json.JSONDecodeError as exc:
+                raise exceptions.BrokenConfigSchemaError(
+                    f"Error while parsing json config: {path}"
+                ) from exc
+
+        return cls(
+            root_attribute=cls._process_data(json_data),
+            path=path if isinstance(path, PurePath) else PurePath(path)
+        )
+
+    @exceptions.handle_unknown_exception
+    def __getattr__(self, item: str) -> tp.Any:
+        return getattr(self._root, item.lower())
+
+    @classmethod
+    @exceptions.handle_unknown_exception
+    def _process_data(cls, data: tp.Any) -> attrs.JsonAttribute:
+        if isinstance(data, dict):
+            return attrs.JsonAttribute(
+                value={k.lower(): cls._process_data(v) for k, v in data.items()}
+            )
+        elif isinstance(data, list):
+            return attrs.JsonAttribute(
+                value=[
+                    cls._process_data(item) if not isinstance(item, dict) else attrs.JsonAttribute(
+                        value={k.lower(): cls._process_data(v) for k, v in item.items()}
+                    ) for item in data
+                ]
+            )
+        elif isinstance(data, (bool, int, str, float, type(None))):
+            return attrs.JsonAttribute(value=data)
+        else:
+            raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover

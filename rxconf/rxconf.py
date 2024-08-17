@@ -1,6 +1,7 @@
-from rxconf import config_resolver, config_types
-import typing as tp
 import pathlib
+import typing as tp
+
+from rxconf import config_resolver, config_types
 
 
 class RxConf:

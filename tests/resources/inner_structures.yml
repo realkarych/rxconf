@@ -1,6 +1,13 @@
-this:
-  is:
-    inner:
-      structure:
-        - first_list:
-          hahn:
+config:
+  name: "John Doe"
+  age: 42
+  address:
+    address: "123 Main St"
+    city: Null
+  hobbies:
+    - "Reading"
+    - "Gardening"
+    - "Cooking"
+  preferences:
+    favorites: ["Blue", "Pizza", "The Inception"]
+  is_active: true

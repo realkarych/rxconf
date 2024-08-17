@@ -3,12 +3,10 @@ import pathlib
 import typing as tp
 from abc import ABCMeta
 
-from rxconf import attributes, exceptions
-from rxconf import config_types
+from rxconf import attributes, config_types, exceptions
 
 
 class ConfigResolver(metaclass=ABCMeta):
-
     pass
 
 
@@ -39,5 +37,6 @@ class FileConfigResolver(ConfigResolver):
 DefaultFileConfigResolver: tp.Final[FileConfigResolver] = FileConfigResolver(
     config_types=[
         config_types.YamlConfig,
+        config_types.JsonConfig,
     ]
 )
