@@ -1,14 +1,7 @@
-import datetime
 import typing as tp
 from abc import ABCMeta, abstractmethod
 
-from rxconf import exceptions
-
-PRIMITIVE_TYPE = tp.Union[bool, int, str, float, None]
-DATES_TYPE = tp.Union[datetime.date, datetime.datetime]
-PRIMITIVE_LIST_TYPE = tp.List[PRIMITIVE_TYPE]
-PRIMITIVE_SET_TYPE = tp.Set[PRIMITIVE_TYPE]
-PRIMITIVE_SEQUENCE_TYPE = tp.Union[PRIMITIVE_LIST_TYPE, PRIMITIVE_SET_TYPE]
+from rxconf import exceptions, types
 
 
 def _patch_other_value(func: tp.Callable[..., tp.Any]) -> tp.Callable[..., tp.Any]:
@@ -187,11 +180,25 @@ class AttributeType(metaclass=ABCMeta):
         return f"AttributeType({self._value})"
 
 
+class MockAttribute(AttributeType):
+    _value: tp.Any
+
+    def __init__(self, value: tp.Any = None) -> None:
+        self._value = value
+
+    @property
+    def value(self) -> None:
+        pass
+
+    def __getattr__(self, item: str) -> None:
+        pass
+
+
 class YamlAttribute(AttributeType):
     _value: tp.Union[
-        PRIMITIVE_TYPE,
-        PRIMITIVE_SEQUENCE_TYPE,
-        DATES_TYPE,
+        types.PRIMITIVE_TYPE,
+        types.PRIMITIVE_SEQUENCE_TYPE,
+        types.DATES_TYPE,
         "YamlAttribute",
         tp.List["YamlAttribute"],
         tp.Set["YamlAttribute"],
@@ -201,9 +208,9 @@ class YamlAttribute(AttributeType):
     def __init__(
         self: "YamlAttribute",
         value: tp.Union[
-            PRIMITIVE_TYPE,
-            PRIMITIVE_SEQUENCE_TYPE,
-            DATES_TYPE,
+            types.PRIMITIVE_TYPE,
+            types.PRIMITIVE_SEQUENCE_TYPE,
+            types.DATES_TYPE,
             "YamlAttribute",
             tp.List["YamlAttribute"],
             tp.Set["YamlAttribute"],
@@ -216,9 +223,9 @@ class YamlAttribute(AttributeType):
     def value(
         self: "YamlAttribute"
     ) -> tp.Union[
-        PRIMITIVE_TYPE,
-        PRIMITIVE_SEQUENCE_TYPE,
-        DATES_TYPE,
+        types.PRIMITIVE_TYPE,
+        types.PRIMITIVE_SEQUENCE_TYPE,
+        types.DATES_TYPE,
         "YamlAttribute",
         tp.List["YamlAttribute"],
         tp.Set["YamlAttribute"],
@@ -229,11 +236,11 @@ class YamlAttribute(AttributeType):
     @exceptions.handle_unknown_exception
     def __getattr__(
         self: "YamlAttribute",
-        item: str
+        item: str,
     ) -> tp.Union[
-        PRIMITIVE_TYPE,
-        PRIMITIVE_SEQUENCE_TYPE,
-        DATES_TYPE,
+        types.PRIMITIVE_TYPE,
+        types.PRIMITIVE_SEQUENCE_TYPE,
+        types.DATES_TYPE,
         "YamlAttribute",
         tp.List["YamlAttribute"],
         tp.Set["YamlAttribute"],
@@ -243,6 +250,6 @@ class YamlAttribute(AttributeType):
             try:
                 return self._value[item]
             except KeyError as exc:
-                raise KeyError(f"Dictionary {self._value} does not have key {item}") from exc
-        else:
-            return self._value
+                raise KeyError(f"Key `{item}` doesn't exist...") from exc
+
+        raise KeyError(f"Key `{item}` doesn't exist...")
