@@ -18,6 +18,7 @@ keywords = ["config", "configuration", "settings", "python"]
 [tool.poetry.dependencies]
 python = ">=3.9"
 pyyaml = "^6.0.2"
+typing-extensions = "^4.12.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^8.3.2"
@@ -27,8 +28,8 @@ black = "^24.8.0"
 isort = "^5.13.2"
 flake8 = "^7.1.1"
 pylint = "^3.2.6"
-pyright = "^1.1.375"
-ruff = "^0.5.7"
+pyright = "^1.1.376"
+ruff = "^0.6.1"
 mkdocs = "^1.6.0"
 mkdocs-material = "^9.5.31"
 types-PyYAML = "^6.0.12"
