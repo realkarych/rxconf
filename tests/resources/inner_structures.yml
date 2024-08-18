@@ -5,9 +5,12 @@ config:
     address: "123 Main St"
     city: Null
   hobbies:
-    - "Reading"
-    - "Gardening"
-    - "Cooking"
+    - "1"
+    - "2"
+    - "3"
   preferences:
-    favorites: ["Blue", "Pizza", "The Inception"]
+    favorites: ["a", "b", "c"]
   is_active: true
+
+second:
+  element: "value"

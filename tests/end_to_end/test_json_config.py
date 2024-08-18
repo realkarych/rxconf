@@ -69,3 +69,14 @@ def test_string_casts() -> None:
     assert conf.string + "!" == "Hello world =)!"
     with pytest.raises(exceptions.RxConfError):
         assert conf.string.unknown
+
+
+def test_inner_structures() -> None:
+    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "inner_structures.json")
+
+    assert conf.config.name == "John Doe"
+    assert conf.config.age == 42
+    assert conf.config.address.address == "123 Main St"
+    assert not conf.config.address.city
+    assert list(conf.config.preferences.favorites) == ["a", "b", "c"]
+    assert conf.config.is_active

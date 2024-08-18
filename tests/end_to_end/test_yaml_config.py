@@ -77,3 +77,23 @@ def test_dates() -> None:
 
     assert conf.date == datetime.date(2024, 8, 17)
     assert conf.datetime == datetime.datetime(2024, 8, 17)
+
+
+def test_not_existing_attribute() -> None:
+    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.yml")
+
+    with pytest.raises(exceptions.RxConfError):
+        assert conf.string.unknown
+
+
+def test_inner_structures() -> None:
+    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "inner_structures.yml")
+
+    assert conf.config.name == "John Doe"
+    assert conf.config.age == 42
+    assert conf.config.address.address == "123 Main St"
+    assert not conf.config.address.city
+    assert sorted(list(conf.config.hobbies)) == sorted(["1", "2", "3"])
+    assert list(conf.config.preferences.favorites) == ["a", "b", "c"]
+    assert conf.config.is_active
+    assert conf.second.element == "value"
