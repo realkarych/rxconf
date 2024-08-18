@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "rxconf"
-version = "v0.0.0-alpha.3"
+version = "v0.0.0-alpha.4"
 description = "Powerful and flexible library for dynamic configuration management in Python"
 authors = ["Andrey Karchevsky <karych@karych.ru>"]
 readme = "README.md"
