@@ -36,7 +36,7 @@ Currently in develop...
     <li><input type="checkbox" checked disabled> Implement <code>yaml</code> loader</li>
     <li><input type="checkbox" disabled> Implement <code>toml</code> loader</li>
     <li><input type="checkbox" disabled> Implement <code>ini</code> loader</li>
-    <li><input type="checkbox" disabled> Implement <code>json</code> loader</li>
+    <li><input type="checkbox" checked disabled> Implement <code>json</code> loader</li>
   </ul>
   <li><input type="checkbox" disabled> Implement reactive config-state observer.</li>
   <li><input type="checkbox" disabled> Implement async reactive config-state observer.</li>
