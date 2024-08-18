@@ -34,7 +34,7 @@ Currently in develop...
     <li><input type="checkbox" checked disabled> Implement base class which will be inherited by concrete loaders</li>
     <li><input type="checkbox" disabled> Implement Environment Variables & <code>dotenv</code> loader</li>
     <li><input type="checkbox" checked disabled> Implement <code>yaml</code> loader</li>
-    <li><input type="checkbox" disabled> Implement <code>toml</code> loader</li>
+    <li><input type="checkbox" checked disabled> Implement <code>toml</code> loader</li>
     <li><input type="checkbox" disabled> Implement <code>ini</code> loader</li>
     <li><input type="checkbox" checked disabled> Implement <code>json</code> loader</li>
   </ul>

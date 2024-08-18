@@ -1,6 +1,6 @@
 import unittest
 from rxconf import exceptions
-from rxconf.attributes import JsonAttribute, MockAttribute, YamlAttribute
+from rxconf.attributes import JsonAttribute, MockAttribute, YamlAttribute, TomlAttribute
 
 
 class TestAttributeType(unittest.TestCase):
@@ -162,5 +162,17 @@ class TestJsonAttribute(unittest.TestCase):
 
     def test_getattr_key_error(self):
         attr = JsonAttribute({"key": "value"})  # type: ignore
+        with self.assertRaises(exceptions.RxConfError):
+            _ = attr.nonexistent_key
+
+
+class TestTomlAttribute(unittest.TestCase):
+
+    def test_getattr(self):
+        attr = TomlAttribute({"key": "value"})  # type: ignore
+        self.assertEqual(attr.key, "value")
+
+    def test_getattr_key_error(self):
+        attr = TomlAttribute({"key": "value"})  # type: ignore
         with self.assertRaises(exceptions.RxConfError):
             _ = attr.nonexistent_key

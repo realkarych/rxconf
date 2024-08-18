@@ -7,8 +7,21 @@ if sys.version_info >= (3, 10):
 else:
     from typing_extensions import TypeAlias
 
-PRIMITIVE_TYPE: TypeAlias = tp.Union[bool, int, str, float, None]
-DATES_TYPE: TypeAlias = tp.Union[date, datetime]
-PRIMITIVE_LIST_TYPE: TypeAlias = tp.List[PRIMITIVE_TYPE]
-PRIMITIVE_SET_TYPE: TypeAlias = tp.Set[PRIMITIVE_TYPE]
-PRIMITIVE_SEQUENCE_TYPE: TypeAlias = tp.Union[PRIMITIVE_LIST_TYPE, PRIMITIVE_SET_TYPE]
+
+YAML_ATTRIBUTE_TYPE: TypeAlias = tp.Union[
+    tp.Union[bool, int, str, float, None],
+    tp.List[tp.Union[bool, int, str, float, None]],
+    tp.Set[tp.Union[bool, int, str, float, None]],
+    tp.Union[date, datetime],
+]
+
+JSON_ATTRIBUTE_TYPE: TypeAlias = tp.Union[
+    tp.Union[bool, int, str, float, None],
+    tp.List[tp.Union[bool, int, str, float, None]],
+]
+
+TOML_ATTRIBUTE_TYPE: TypeAlias = tp.Union[
+    tp.Union[bool, int, str, float],
+    tp.List[tp.Union[bool, int, str, float]],
+    tp.Union[date, datetime],
+]

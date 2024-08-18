@@ -196,9 +196,7 @@ class MockAttribute(AttributeType):  # pragma: no cover
 
 class YamlAttribute(AttributeType):
     _value: tp.Union[
-        types.PRIMITIVE_TYPE,
-        types.PRIMITIVE_SEQUENCE_TYPE,
-        types.DATES_TYPE,
+        types.YAML_ATTRIBUTE_TYPE,
         "YamlAttribute",
         tp.List["YamlAttribute"],
         tp.Set["YamlAttribute"],
@@ -208,9 +206,7 @@ class YamlAttribute(AttributeType):
     def __init__(
         self: "YamlAttribute",
         value: tp.Union[
-            types.PRIMITIVE_TYPE,
-            types.PRIMITIVE_SEQUENCE_TYPE,
-            types.DATES_TYPE,
+            types.YAML_ATTRIBUTE_TYPE,
             "YamlAttribute",
             tp.List["YamlAttribute"],
             tp.Set["YamlAttribute"],
@@ -223,9 +219,7 @@ class YamlAttribute(AttributeType):
     def value(
         self: "YamlAttribute"
     ) -> tp.Union[
-        types.PRIMITIVE_TYPE,
-        types.PRIMITIVE_SEQUENCE_TYPE,
-        types.DATES_TYPE,
+        types.YAML_ATTRIBUTE_TYPE,
         "YamlAttribute",
         tp.List["YamlAttribute"],
         tp.Set["YamlAttribute"],
@@ -238,9 +232,7 @@ class YamlAttribute(AttributeType):
         self: "YamlAttribute",
         item: str,
     ) -> tp.Union[
-        types.PRIMITIVE_TYPE,
-        types.PRIMITIVE_SEQUENCE_TYPE,
-        types.DATES_TYPE,
+        types.YAML_ATTRIBUTE_TYPE,
         "YamlAttribute",
         tp.List["YamlAttribute"],
         tp.Set["YamlAttribute"],
@@ -257,8 +249,7 @@ class YamlAttribute(AttributeType):
 
 class JsonAttribute(AttributeType):
     _value: tp.Union[
-        types.PRIMITIVE_TYPE,
-        types.PRIMITIVE_SEQUENCE_TYPE,
+        types.JSON_ATTRIBUTE_TYPE,
         "JsonAttribute",
         tp.List["JsonAttribute"],
         tp.Dict[str, "JsonAttribute"],
@@ -267,8 +258,7 @@ class JsonAttribute(AttributeType):
     def __init__(
         self: "JsonAttribute",
         value: tp.Union[
-            types.PRIMITIVE_TYPE,
-            types.PRIMITIVE_SEQUENCE_TYPE,
+            types.JSON_ATTRIBUTE_TYPE,
             "JsonAttribute",
             tp.List["JsonAttribute"],
             tp.Dict[str, "JsonAttribute"],
@@ -280,8 +270,7 @@ class JsonAttribute(AttributeType):
     def value(
         self: "JsonAttribute"
     ) -> tp.Union[
-        types.PRIMITIVE_TYPE,
-        types.PRIMITIVE_SEQUENCE_TYPE,
+        types.JSON_ATTRIBUTE_TYPE,
         "JsonAttribute",
         tp.List["JsonAttribute"],
         tp.Dict[str, "JsonAttribute"],
@@ -293,11 +282,59 @@ class JsonAttribute(AttributeType):
         self: "JsonAttribute",
         item: str,
     ) -> tp.Union[
-        types.PRIMITIVE_TYPE,
-        types.PRIMITIVE_SEQUENCE_TYPE,
+        types.JSON_ATTRIBUTE_TYPE,
         "JsonAttribute",
         tp.List["JsonAttribute"],
         tp.Dict[str, "JsonAttribute"],
+    ]:
+        if isinstance(self._value, dict):
+            try:
+                return self._value[item]
+            except KeyError as exc:
+                raise KeyError(f"Key `{item}` doesn't exist...") from exc
+
+        raise KeyError(f"Key `{item}` doesn't exist...")
+
+
+class TomlAttribute(AttributeType):
+    _value: tp.Union[
+        types.TOML_ATTRIBUTE_TYPE,
+        "TomlAttribute",
+        tp.List["TomlAttribute"],
+        tp.Dict[str, "TomlAttribute"],
+    ]
+
+    def __init__(
+        self: "TomlAttribute",
+        value: tp.Union[
+            types.TOML_ATTRIBUTE_TYPE,
+            "TomlAttribute",
+            tp.List["TomlAttribute"],
+            tp.Dict[str, "TomlAttribute"],
+        ]
+    ) -> None:
+        self._value = value
+
+    @property
+    def value(
+        self: "TomlAttribute"
+    ) -> tp.Union[
+        types.TOML_ATTRIBUTE_TYPE,
+        "TomlAttribute",
+        tp.List["TomlAttribute"],
+        tp.Dict[str, "TomlAttribute"],
+    ]:
+        return self._value
+
+    @exceptions.handle_unknown_exception
+    def __getattr__(
+        self: "TomlAttribute",
+        item: str,
+    ) -> tp.Union[
+        types.TOML_ATTRIBUTE_TYPE,
+        "TomlAttribute",
+        tp.List["TomlAttribute"],
+        tp.Dict[str, "TomlAttribute"],
     ]:
         if isinstance(self._value, dict):
             try:

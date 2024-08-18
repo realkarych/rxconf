@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "rxconf"
-version = "v0.0.0-alpha.3"
+version = "v0.0.0-alpha.4"
 description = "Powerful and flexible library for dynamic configuration management in Python"
 authors = ["Andrey Karchevsky <karych@karych.ru>"]
 readme = "README.md"
@@ -18,6 +18,7 @@ keywords = ["config", "configuration", "settings", "python"]
 [tool.poetry.dependencies]
 python = ">=3.9"
 pyyaml = "^6.0.2"
+toml = {version = "^0.10.2", markers = "python_version < '3.11'"}
 
 [tool.poetry.dev-dependencies]
 pytest = "^8.3.2"
@@ -34,6 +35,8 @@ mkdocs-material = "^9.5.31"
 types-PyYAML = "^6.0.12"
 coverage-badge = "^1.1.2"
 typing-extensions = "^4.12.2"
+toml = "^0.10.2"
+types-toml = "^0.10.8.20240310"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

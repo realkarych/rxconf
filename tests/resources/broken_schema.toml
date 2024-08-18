@@ -1,0 +1,9 @@
+[person]
+name = "John Doe"
+age = 30
+email = "johndoe@example.com"
+
+[person]
+name = "Jane Smith"
+age = 25
+email = "janesmith@example.com"

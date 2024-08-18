@@ -27,6 +27,16 @@ def test_broken_schema_json() -> None:
         assert RxConf.from_file(config_path=_RESOURCE_DIR / "broken_schema.json")
 
 
+def test_not_existing_toml() -> None:
+    with pytest.raises(exceptions.ConfigNotFoundError):
+        assert RxConf.from_file(config_path=_RESOURCE_DIR / "something_not_exist.toml")
+
+
+def test_broken_schema_toml() -> None:
+    with pytest.raises(exceptions.BrokenConfigSchemaError):
+        assert RxConf.from_file(config_path=_RESOURCE_DIR / "broken_schema.toml")
+
+
 def test_unrecognized_extension() -> None:
     with pytest.raises(exceptions.InvalidExtensionError):
         assert RxConf.from_file(config_path=_RESOURCE_DIR / "something.tpl")
