@@ -4,11 +4,13 @@ from .attributes import (
     AttributeType,
     YamlAttribute,
     JsonAttribute,
+    TomlAttribute,
 )
 from .config_resolver import ConfigResolver
 from .config_types import (
     YamlConfig,
     JsonConfig,
+    TomlConfig,
 )
 from .exceptions import (
     BrokenConfigSchemaError,
@@ -24,9 +26,11 @@ __all__ = [
     "AttributeType",
     "YamlAttribute",
     "JsonAttribute",
+    "TomlAttribute",
     "ConfigResolver",
     "YamlConfig",
     "JsonConfig",
+    "TomlConfig",
     "BrokenConfigSchemaError",
     "ConfigNotFoundError",
     "InvalidExtensionError",

@@ -1,0 +1,13 @@
+[config]
+name = "John Doe"
+age = 42
+
+[config.address]
+address = "123 Main St"
+
+[config.hobbies]
+hobbies = ["1", "2", "3"]
+is_active = true
+
+[second]
+element = "value"
