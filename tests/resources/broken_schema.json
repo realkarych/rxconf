@@ -1,0 +1,19 @@
+{
+    "type": "object",
+    "properties": {
+        "name": {
+            "type": "string"
+        },
+        "age": {
+            "type": "number"
+        },
+        "email": {
+            "type": "string",
+            "format": "email"
+        }
+    },
+    "required": ["name", "age", "email"],
+    "additionalProperties": false,
+    "invalidProperty": "This is an invalid property"
+}
+{}

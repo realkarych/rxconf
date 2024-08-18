@@ -1,0 +1,13 @@
+{
+    "integer": 42,
+    "big_integer": 100500,
+    "float": 36.6,
+    "string": "Hello world =)",
+    "boolean": true,
+    "none": null,
+    "list": [1, 2, 3],
+    "set": ["a", "b", "c"],
+    "CamelCase": "ok",
+    "snake_case": "ok",
+    "StRanGeCasE": "ok"
+}

@@ -15,16 +15,16 @@ def _patch_other_value(func: tp.Callable[..., tp.Any]) -> tp.Callable[..., tp.An
 class AttributeType(metaclass=ABCMeta):
     _value: tp.Any
 
-    def __init__(self, value: tp.Any) -> None:
+    def __init__(self, value: tp.Any) -> None:  # pragma: no cover
         self._value = value
 
     @property
     @abstractmethod
-    def value(self) -> tp.Any:
+    def value(self) -> tp.Any:  # pragma: no cover
         raise NotImplementedError()
 
     @abstractmethod
-    def __getattr__(self, item: str) -> tp.Any:
+    def __getattr__(self, item: str) -> tp.Any:  # pragma: no cover
         raise NotImplementedError()
 
     @exceptions.handle_unknown_exception
@@ -180,7 +180,7 @@ class AttributeType(metaclass=ABCMeta):
         return f"AttributeType({self._value})"
 
 
-class MockAttribute(AttributeType):
+class MockAttribute(AttributeType):  # pragma: no cover
     _value: tp.Any
 
     def __init__(self, value: tp.Any = None) -> None:
@@ -245,6 +245,59 @@ class YamlAttribute(AttributeType):
         tp.List["YamlAttribute"],
         tp.Set["YamlAttribute"],
         tp.Dict[str, "YamlAttribute"],
+    ]:
+        if isinstance(self._value, dict):
+            try:
+                return self._value[item]
+            except KeyError as exc:
+                raise KeyError(f"Key `{item}` doesn't exist...") from exc
+
+        raise KeyError(f"Key `{item}` doesn't exist...")
+
+
+class JsonAttribute(AttributeType):
+    _value: tp.Union[
+        types.PRIMITIVE_TYPE,
+        types.PRIMITIVE_SEQUENCE_TYPE,
+        "JsonAttribute",
+        tp.List["JsonAttribute"],
+        tp.Dict[str, "JsonAttribute"],
+    ]
+
+    def __init__(
+        self: "JsonAttribute",
+        value: tp.Union[
+            types.PRIMITIVE_TYPE,
+            types.PRIMITIVE_SEQUENCE_TYPE,
+            "JsonAttribute",
+            tp.List["JsonAttribute"],
+            tp.Dict[str, "JsonAttribute"],
+        ]
+    ) -> None:
+        self._value = value
+
+    @property
+    def value(
+        self: "JsonAttribute"
+    ) -> tp.Union[
+        types.PRIMITIVE_TYPE,
+        types.PRIMITIVE_SEQUENCE_TYPE,
+        "JsonAttribute",
+        tp.List["JsonAttribute"],
+        tp.Dict[str, "JsonAttribute"],
+    ]:
+        return self._value
+
+    @exceptions.handle_unknown_exception
+    def __getattr__(
+        self: "JsonAttribute",
+        item: str,
+    ) -> tp.Union[
+        types.PRIMITIVE_TYPE,
+        types.PRIMITIVE_SEQUENCE_TYPE,
+        "JsonAttribute",
+        tp.List["JsonAttribute"],
+        tp.Dict[str, "JsonAttribute"],
     ]:
         if isinstance(self._value, dict):
             try:

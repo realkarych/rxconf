@@ -1,8 +1,15 @@
 from rxconf import types
 
-from .attributes import AttributeType, YamlAttribute
+from .attributes import (
+    AttributeType,
+    YamlAttribute,
+    JsonAttribute,
+)
 from .config_resolver import ConfigResolver
-from .config_types import YamlConfig
+from .config_types import (
+    YamlConfig,
+    JsonConfig,
+)
 from .exceptions import (
     BrokenConfigSchemaError,
     ConfigNotFoundError,
@@ -16,8 +23,10 @@ __all__ = [
     "RxConf",
     "AttributeType",
     "YamlAttribute",
+    "JsonAttribute",
     "ConfigResolver",
     "YamlConfig",
+    "JsonConfig",
     "BrokenConfigSchemaError",
     "ConfigNotFoundError",
     "InvalidExtensionError",

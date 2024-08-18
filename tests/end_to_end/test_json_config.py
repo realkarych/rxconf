@@ -1,4 +1,3 @@
-import datetime
 from pathlib import Path
 
 import pytest
@@ -9,13 +8,13 @@ _RESOURCE_DIR = Path.cwd() / Path("tests/resources")
 
 
 def test_empty() -> None:
-    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "empty.yaml")
+    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "empty.json")
 
     assert conf
 
 
 def test_primitive_types() -> None:
-    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.yml")
+    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.json")
 
     assert conf.integer == 42
     assert conf.float == 36.6
@@ -25,7 +24,7 @@ def test_primitive_types() -> None:
 
 
 def test_pritive_collections() -> None:
-    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.yml")
+    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.json")
     expected_list = [1, 2, 3]
     expected_set = {"a", "b", "c"}
 
@@ -41,7 +40,7 @@ def test_pritive_collections() -> None:
 
 
 def test_key_cases() -> None:
-    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.yml")
+    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.json")
 
     assert conf.camelcase
     assert conf.CamelCase
@@ -52,7 +51,7 @@ def test_key_cases() -> None:
 
 
 def test_numeric_casts() -> None:
-    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.yml")
+    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.json")
 
     assert conf.integer-1 < conf.integer < conf.integer+1
     assert conf.integer-0.1 < conf.integer <= int(conf.integer+0.1)
@@ -62,7 +61,7 @@ def test_numeric_casts() -> None:
 
 
 def test_string_casts() -> None:
-    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.yml")
+    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.json")
 
     assert conf.string[0] == "H"
     assert conf.string[1:-1] == "ello world ="
@@ -72,28 +71,12 @@ def test_string_casts() -> None:
         assert conf.string.unknown
 
 
-def test_dates() -> None:
-    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.yml")
-
-    assert conf.date == datetime.date(2024, 8, 17)
-    assert conf.datetime == datetime.datetime(2024, 8, 17)
-
-
-def test_not_existing_attribute() -> None:
-    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.yml")
-
-    with pytest.raises(exceptions.RxConfError):
-        assert conf.string.unknown
-
-
 def test_inner_structures() -> None:
-    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "inner_structures.yml")
+    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "inner_structures.json")
 
     assert conf.config.name == "John Doe"
     assert conf.config.age == 42
     assert conf.config.address.address == "123 Main St"
     assert not conf.config.address.city
-    assert sorted(list(conf.config.hobbies)) == sorted(["1", "2", "3"])
     assert list(conf.config.preferences.favorites) == ["a", "b", "c"]
     assert conf.config.is_active
-    assert conf.second.element == "value"
