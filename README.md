@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/realkarych/rxconf">
-  <img src="https://github.com/user-attachments/assets/5a0beb84-2a52-4cfc-80c5-48a20e49a952" alt="RxConf"></a>
+  <img src="https://github.com/user-attachments/assets/d9e426cf-5ad6-4a1d-8c5d-ac9dbdd1e63a" alt="RxConf"></a>
 </p>
 
 <p align="center">
