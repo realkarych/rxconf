@@ -343,3 +343,43 @@ class TomlAttribute(AttributeType):
                 raise KeyError(f"Key `{item}` doesn't exist...") from exc
 
         raise KeyError(f"Key `{item}` doesn't exist...")
+
+
+class IniAttribute(AttributeType):
+    _value: tp.Union[
+        types.INI_ATTRIBUTE_TYPE,
+        tp.Dict[str, "IniAttribute"],
+    ]
+
+    def __init__(self: "IniAttribute", value: tp.Union[
+        types.INI_ATTRIBUTE_TYPE,
+        tp.Dict[str, "IniAttribute"]
+    ]) -> None:
+        self._value = value
+
+    @property
+    def value(
+            self: "IniAttribute"
+    ) -> tp.Union[
+        types.INI_ATTRIBUTE_TYPE,
+        tp.Dict[str, "IniAttribute"]
+    ]: return self._value
+
+    @exceptions.handle_unknown_exception
+    def __getattr__(
+            self: "IniAttribute",
+            item: str,
+    ) -> tp.Union[
+        types.INI_ATTRIBUTE_TYPE,
+        tp.Dict[str, "IniAttribute"],
+    ]:
+        if isinstance(self._value, dict):
+            try:
+                return self._value[item]
+            except KeyError as exc:
+                raise KeyError(f"Key `{item}` doesn't exist...") from exc
+
+        raise KeyError(f"Key `{item}` doesn't exist...")
+
+
+
