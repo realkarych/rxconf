@@ -363,7 +363,8 @@ class IniAttribute(AttributeType):
     ) -> tp.Union[
         types.INI_ATTRIBUTE_TYPE,
         tp.Dict[str, "IniAttribute"]
-    ]: return self._value
+    ]:
+        return self._value
 
     @exceptions.handle_unknown_exception
     def __getattr__(

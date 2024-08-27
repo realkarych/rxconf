@@ -28,5 +28,6 @@ INI_ATTRIBUTE_TYPE: TypeAlias = tp.Union[
     str,
     bool,
     int,
-    float
+    float,
+    None
 ]
