@@ -240,7 +240,7 @@ class YamlAttribute(AttributeType):
     ]:
         if isinstance(self._value, dict):
             try:
-                return self._value[item]
+                return self._value[item.lower()]
             except KeyError as exc:
                 raise KeyError(f"Key `{item}` doesn't exist...") from exc
 
@@ -289,7 +289,7 @@ class JsonAttribute(AttributeType):
     ]:
         if isinstance(self._value, dict):
             try:
-                return self._value[item]
+                return self._value[item.lower()]
             except KeyError as exc:
                 raise KeyError(f"Key `{item}` doesn't exist...") from exc
 
@@ -338,7 +338,7 @@ class TomlAttribute(AttributeType):
     ]:
         if isinstance(self._value, dict):
             try:
-                return self._value[item]
+                return self._value[item.lower()]
             except KeyError as exc:
                 raise KeyError(f"Key `{item}` doesn't exist...") from exc
 
@@ -383,7 +383,7 @@ class EnvAttribute(AttributeType):
     ]:
         if isinstance(self._value, dict):
             try:
-                return self._value[item]
+                return self._value[item.lower()]
             except KeyError as exc:
                 raise KeyError(f"Key `{item}` doesn't exist...") from exc
 

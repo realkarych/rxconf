@@ -297,6 +297,6 @@ class DotenvConfig(FileConfigType, EnvConfig):
 
     @classmethod
     @exceptions.handle_unknown_exception
-    def load_from_path(cls, path: str | PurePath = ".env") -> FileConfigType:
+    def load_from_path(cls, path: tp.Union[str, PurePath] = ".env") -> FileConfigType:
         load_dotenv(dotenv_path=path)
         return cls.load_from_environment(path=path)
