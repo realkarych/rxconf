@@ -219,7 +219,6 @@ class TomlConfig(FileConfigType):
 
     @exceptions.handle_unknown_exception
     def __getattr__(self, item: str) -> tp.Any:
-        print(item)
         return getattr(self._root, item.lower())
 
     @classmethod

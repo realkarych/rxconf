@@ -60,7 +60,6 @@ def test_empty() -> None:
 def test_key_cases() -> None:
     conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.toml")
 
-    print(conf)
     assert conf.camelcase
     assert conf.CamelCase
     assert conf.snake_case
