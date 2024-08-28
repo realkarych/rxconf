@@ -3,10 +3,10 @@ name = "John Doe"
 age = 42
 
 [config.address]
-address = "123 Main St"
+Address = "123 Main St"
 
-[config.hobbies]
-hobbies = ["1", "2", "3"]
+[config.HoBbies]
+HOBBIES = ["1", "2", "3"]
 is_active = true
 
 [second]
