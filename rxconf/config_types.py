@@ -23,6 +23,7 @@ from rxconf import attributes as attrs
 from rxconf import exceptions
 
 
+
 class ConfigType(metaclass=ABCMeta):  # pragma: no cover
 
     @abstractmethod
@@ -294,25 +295,6 @@ class IniConfig(FileConfigType):
     def __getattr__(self, item: str) -> tp.Any:
         return getattr(self._root, item.lower())
 
-    @exceptions.handle_unknown_exception
-    def _cast_type(self, value: str) -> tp.Union[bool, str, int, float, None]:
-        value_lower = value.lower()
-
-        if value_lower in ('none', 'null', ''):
-            return None
-
-        if value_lower == 'true':
-            return True
-        elif value_lower == 'false':
-            return False
-
-        if value.isdigit():
-            return int(value)
-
-        if value.replace('.', '', 1).isdigit() and value.count('.') == 1:
-            return float(value)
-
-        return value
 
     @classmethod
     @exceptions.handle_unknown_exception
@@ -322,9 +304,9 @@ class IniConfig(FileConfigType):
                 value={k.lower(): cls._process_data(v) for k, v in data.items()}
             )
         elif isinstance(data, (bool, int, str, float, type(None))):
-            return attrs.IniAttribute(value=cls._cast_type(cls, data))
+            return attrs.IniAttribute(value=types.map_primitive(data))
         else:
-            raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")
+            raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
 
 
 class EnvConfig(ConfigType):

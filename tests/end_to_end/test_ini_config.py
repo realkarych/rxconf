@@ -15,6 +15,7 @@ def test_empty() -> None:
 
 def test_primitive_types() -> None:
     conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.ini")
+
     assert conf.primitives.integer == 42
     assert conf.primitives.float == 36.6
     assert conf.primitives.string == "Hello world =)"
@@ -24,7 +25,7 @@ def test_primitive_types() -> None:
 def test_key_cases() -> None:
     conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.ini")
 
-    assert conf.primitives.сamelсase
+    assert conf.primitives.camelcase
     assert conf.primitives.CamelCase
     assert conf.primitives.snake_case
     assert conf.primitives.SNAKE_CASE
@@ -32,36 +33,35 @@ def test_key_cases() -> None:
     assert conf.primitives.STRanGeCasE
 
 
-# def test_numeric_casts() -> None:
-#     conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.ini")
-#
-#     assert conf.integer - 1 < conf.integer < conf.integer + 1
-#     assert conf.integer - 0.1 < conf.integer <= int(conf.integer + 0.1)
-#     assert int(conf.integer) == conf.integer
-#     assert int(conf.integer * 2 / 2) == conf.integer ** 1
-#     assert conf.big_integer > conf.integer
-#
-#
-# def test_string_casts() -> None:
-#     conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.ini")
-#
-#     assert conf.string[0] == "H"
-#     assert conf.string[1:-1] == "ello world ="
-#     assert str(conf.string).upper() == "HELLO WORLD =)"
-#     assert conf.string + "!" == "Hello world =)!"
-#     with pytest.raises(exceptions.RxConfError):
-#         assert conf.string.unknown
-#
-#
-# def test_inner_structures() -> None:
-#     conf = RxConf.from_file(config_path=_RESOURCE_DIR / "inner_structures.ini")
-#
-#     print(conf)
-#     assert conf.config.name == "John Doe"
-#     assert conf.config.age == 42
-#     assert conf.config.address.address == "123 Main St"
-#     assert not conf.config.address.city
-#     assert conf.config.active.is_active
+def test_numeric_casts() -> None:
+    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.ini")
+
+    assert conf.primitives.integer - 1 < conf.primitives.integer < conf.primitives.integer + 1
+    assert conf.primitives.integer - 0.1 < conf.primitives.integer <= int(conf.primitives.integer + 0.1)
+    assert int(conf.primitives.integer) == conf.primitives.integer
+    assert int(conf.primitives.integer * 2 / 2) == conf.primitives.integer ** 1
+    assert conf.primitives.big_integer > conf.primitives.integer
+
+
+def test_string_casts() -> None:
+    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.ini")
+
+    assert conf.primitives.string[0] == "H"
+    assert conf.primitives.string[1:-1] == "ello world ="
+    assert str(conf.primitives.string).upper() == "HELLO WORLD =)"
+    assert conf.primitives.string + "!" == "Hello world =)!"
+    with pytest.raises(exceptions.RxConfError):
+        assert conf.primitives.string.unknown
+
+
+def test_inner_structures() -> None:
+    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "inner_structures.ini")
+
+    assert conf.config.name == "John Doe"
+    assert conf.config.age == 42
+    assert conf.config.address.address == "123 Main St"
+    assert not conf.config.address.city
+    assert conf.config.active.is_active
 
 
 def test_structures() -> None:
@@ -105,3 +105,13 @@ def test_structures() -> None:
     assert config.users.alice.is_active == True
     assert config.users.bob.email == "bob@example.com"
     assert config.users.bob.is_active == False
+
+
+def test_creates_nested_dict():
+    config = RxConf.from_file(config_path=_RESOURCE_DIR / "deep_nesting_schema.ini")
+
+    assert config.database.main.settings.username == 'example_user'
+    assert config.database.main.settings.password == 'secret'
+    assert config.database.main.connection.host == 'localhost'
+    assert config.database.main.connection.port == 3306
+

@@ -421,7 +421,7 @@ class IniAttribute(AttributeType):
     ]:
         if isinstance(self._value, dict):
             try:
-                return self._value[item]
+                return self._value[item.lower()]
             except KeyError as exc:
                 raise KeyError(f"Key `{item}` doesn't exist...") from exc
 
