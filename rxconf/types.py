@@ -24,6 +24,7 @@ TOML_ATTRIBUTE_TYPE: TypeAlias = tp.Union[
     tp.List[tp.Union[bool, int, str, float]],
     tp.Union[date, datetime],
 ]
+
 INI_ATTRIBUTE_TYPE: TypeAlias = tp.Union[
     str,
     bool,
@@ -31,3 +32,26 @@ INI_ATTRIBUTE_TYPE: TypeAlias = tp.Union[
     float,
     None
 ]
+
+ENV_ATTRIBUTE_TYPE: TypeAlias = tp.Union[
+    bool, int, str, float, None,
+]
+
+
+def map_primitive(value: str) -> tp.Union[int, float, bool, None, str]:
+    if value.lower() == "none":
+        return None
+    if value.lower() == "true":
+        return True
+    if value.lower() == "false":
+        return False
+    try:
+        return int(value)
+    except ValueError:
+        pass
+    try:
+        return float(value)
+    except ValueError:
+        pass
+    return value
+

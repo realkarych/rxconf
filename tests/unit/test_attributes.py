@@ -1,6 +1,7 @@
 import unittest
 from rxconf import exceptions
-from rxconf.attributes import JsonAttribute, MockAttribute, YamlAttribute, TomlAttribute, IniAttribute
+
+from rxconf.attributes import JsonAttribute, MockAttribute, YamlAttribute, TomlAttribute, IniAttribute, EnvAttribute
 
 
 class TestAttributeType(unittest.TestCase):
@@ -185,5 +186,17 @@ class TestIniAttribute(unittest.TestCase):
 
     def test_getattr_key_error(self):
         attr = IniAttribute({"key": "value"})  # type: ignore
+        with self.assertRaises(exceptions.RxConfError):
+            _ = attr.nonexistent_key
+
+
+class TestEnvAttribute(unittest.TestCase):
+
+    def test_getattr(self):
+        attr = EnvAttribute({"key": "value"})  # type: ignore
+        self.assertEqual(attr.key, "value")
+
+    def test_getattr_key_error(self):
+        attr = EnvAttribute({"key": "value"})  # type: ignore
         with self.assertRaises(exceptions.RxConfError):
             _ = attr.nonexistent_key

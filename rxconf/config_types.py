@@ -7,6 +7,9 @@ from abc import ABCMeta, abstractmethod
 from pathlib import PurePath
 
 import yaml
+from dotenv import load_dotenv
+
+from rxconf import types
 
 if sys.version_info >= (3, 11):
     import tomllib as toml
@@ -322,3 +325,56 @@ class IniConfig(FileConfigType):
             return attrs.IniAttribute(value=cls._cast_type(cls, data))
         else:
             raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")
+
+
+class EnvConfig(ConfigType):
+    _root: tp.Final[rxconf.EnvAttribute]
+
+    def __init__(self: "EnvConfig", root_attribute: rxconf.EnvAttribute) -> None:
+        self._root = root_attribute
+
+    def __repr__(self) -> str:
+        return repr(self._root)
+
+    @exceptions.handle_unknown_exception
+    def __getattr__(self, item: str) -> tp.Any:
+        return getattr(self._root, item.lower())
+
+    @classmethod
+    @exceptions.handle_unknown_exception
+    def load_from_environment(cls, prefix: tp.Optional[str] = None, **kwargs) -> "EnvConfig":
+        env_vars = {
+            k.lower(): v for k, v in os.environ.items()
+            if prefix is None or k.lower().startswith(prefix.lower())
+        }
+        root_attribute = cls._process_data(env_vars)
+        return cls(root_attribute=root_attribute, **kwargs)
+
+    @classmethod
+    @exceptions.handle_unknown_exception
+    def _process_data(cls, data: tp.Dict[str, str]) -> attrs.EnvAttribute:
+        processed_data = {k.lower(): attrs.EnvAttribute(value=types.map_primitive(v)) for k, v in data.items()}
+        return attrs.EnvAttribute(value=processed_data)
+
+
+class DotenvConfig(FileConfigType, EnvConfig):
+    _allowed_extensions: tp.Final[frozenset] = frozenset({".env"})
+    _path: tp.Final[PurePath]
+
+    def __init__(
+            self: "DotenvConfig",
+            root_attribute: rxconf.EnvAttribute,
+            path: PurePath,
+    ) -> None:
+        self._root = root_attribute  # type: ignore
+        self._path = path
+
+    @property
+    def allowed_extensions(self) -> tp.FrozenSet[str]:
+        return self._allowed_extensions
+
+    @classmethod
+    @exceptions.handle_unknown_exception
+    def load_from_path(cls, path: tp.Union[str, PurePath] = ".env") -> FileConfigType:
+        load_dotenv(dotenv_path=path)
+        return cls.load_from_environment(path=path)

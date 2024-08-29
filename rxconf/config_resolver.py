@@ -40,5 +40,6 @@ DefaultFileConfigResolver: tp.Final[FileConfigResolver] = FileConfigResolver(
         config_types.JsonConfig,
         config_types.TomlConfig,
         config_types.IniConfig,
+        config_types.DotenvConfig,
     ]
 )

@@ -2,12 +2,12 @@
     "config": {
       "name": "John Doe",
       "age": 42,
-      "address": {
-        "address": "123 Main St",
+      "Address": {
+        "ADDRESS": "123 Main St",
         "city": null
       },
       "preferences": {
-        "favorites": [
+        "FaVoriteS": [
           "a",
           "b",
           "c"

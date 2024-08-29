@@ -24,8 +24,19 @@ class RxConf:
             )
         )
 
+    @classmethod
+    def from_env(
+        cls: tp.Type["RxConf"],
+        prefix: tp.Optional[str] = None,
+    ) -> "RxConf":
+        return cls(
+            config=config_types.EnvConfig.load_from_environment(
+                prefix=prefix,
+            ),
+        )
+
     def __getattr__(self, item: str) -> tp.Any:
-        return getattr(self._config, item)
+        return getattr(self._config, item.lower())
 
     def __repr__(self) -> str:
         return repr(self._config)

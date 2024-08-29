@@ -289,7 +289,7 @@ class JsonAttribute(AttributeType):
     ]:
         if isinstance(self._value, dict):
             try:
-                return self._value[item]
+                return self._value[item.lower()]
             except KeyError as exc:
                 raise KeyError(f"Key `{item}` doesn't exist...") from exc
 
@@ -338,7 +338,52 @@ class TomlAttribute(AttributeType):
     ]:
         if isinstance(self._value, dict):
             try:
-                return self._value[item]
+                return self._value[item.lower()]
+            except KeyError as exc:
+                raise KeyError(f"Key `{item}` doesn't exist...") from exc
+
+        raise KeyError(f"Key `{item}` doesn't exist...")
+
+
+class EnvAttribute(AttributeType):
+    _value: tp.Union[
+        types.ENV_ATTRIBUTE_TYPE,
+        "EnvAttribute",
+        tp.Dict[str, "EnvAttribute"],
+    ]
+
+    def __init__(
+        self: "EnvAttribute",
+        value: tp.Union[
+            types.ENV_ATTRIBUTE_TYPE,
+            "EnvAttribute",
+            tp.Dict[str, "EnvAttribute"],
+        ]
+    ) -> None:
+        self._value = value
+
+    @property
+    def value(
+        self: "EnvAttribute"
+    ) -> tp.Union[
+        types.ENV_ATTRIBUTE_TYPE,
+        "EnvAttribute",
+        tp.Dict[str, "EnvAttribute"],
+    ]:
+        return self._value
+
+    @exceptions.handle_unknown_exception
+    def __getattr__(
+        self: "EnvAttribute",
+        item: str,
+    ) -> tp.Union[
+        types.ENV_ATTRIBUTE_TYPE,
+        "EnvAttribute",
+        tp.Dict[str, "EnvAttribute"],
+    ]:
+        if isinstance(self._value, dict):
+            try:
+                return self._value[item.lower()]
             except KeyError as exc:
                 raise KeyError(f"Key `{item}` doesn't exist...") from exc
 
