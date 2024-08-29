@@ -5,20 +5,20 @@ site_url: https://realkarych.github.io/rxconf/
 theme:
   name: 'material'
   palette:
-  - media: "(prefers-color-scheme: light)"
-    scheme: default
-    primary: pink
-    accent: pink
-    toggle:
-      icon: material/lightbulb-outline
-      name: "Switch to dark mode"
-  - media: "(prefers-color-scheme: dark)"
-    scheme: slate
-    primary: pink
-    accent: pink
-    toggle:
-      icon: material/lightbulb
-      name: "Switch to light mode"
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: pink
+      accent: pink
+      toggle:
+        icon: material/lightbulb-outline
+        name: "Switch to dark mode"
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: pink
+      accent: pink
+      toggle:
+        icon: material/lightbulb
+        name: "Switch to light mode"
   features:
     - content.tabs.link
     - content.code.annotate
@@ -35,16 +35,14 @@ theme:
     - navigation.tracking
     - search.suggest
     - toc.follow
+    - palette.toggle
   favicon: assets/favicon.ico
-  palette:
-    primary: pink
 
 nav:
   - Get Started:
       - Welcome to RxConf: index.md
       - Why RxConf: get-started/why.md
-      - Installation: get-started/installation.md
-      - Hello World: get-started/hello-world.md
+      - Quick dive: get-started/hello-world.md
   - Concepts:
       - RxConf: concepts/rxconf.md
       - Observers: concepts/observers.md
@@ -57,12 +55,12 @@ nav:
       - Associate extensions: examples/associate-extensions.md
       - Projects uses RxConf: examples/projects.md
   - Contributing:
-      - Environment setup: development/setup.md
-      - Guidelines: development/guidelines.md
-      - Submit bugs & issues: development/issues.md
+      - Environment setup: contributing/setup.md
+      - Guidelines: contributing/guidelines.md
+      - Submitting: contributing/issues.md
 
 watch:
-- rxconf
+  - rxconf
 
 plugins:
   - search
@@ -74,7 +72,6 @@ markdown_extensions:
   - toc:
       permalink: true
       title: Page contents
-  - admonition
   - pymdownx.details
   - pymdownx.superfences
   - pymdownx.highlight:

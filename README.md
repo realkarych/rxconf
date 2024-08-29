@@ -22,6 +22,8 @@
 
 **Source code:** <https://github.com/realkarych/rxconf/>
 
+**TL;DR:** `pip install rxconf`
+
 ---
 
 <h1 align="center">
