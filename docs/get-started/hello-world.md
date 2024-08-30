@@ -2,11 +2,11 @@
 
 !!! warning
     It is assumed that you are using Python version >= 3.9 and either CPython or PyPy.
-    It is assumed that Python is installed in [https://en.wikipedia.org/wiki/PATH_(variable)](PATH).
+    It is assumed that Python is installed in [PATH](https://en.wikipedia.org/wiki/PATH_\(variable\)).
 
 ## Prepare project
 
-Create directory `hello world` and open it.
+Create directory `hello_world` and open it.
 
 ### On Unix or MacOS
 
@@ -52,7 +52,7 @@ world_key: World
 
 Create `main.py` in the same directory and open it in your favorite code editor / IDE.
 
-Firstly, we want to load our configs:
+### Firstly, we want to load our configs
 
 ```python
 from rxconf import RxConf
@@ -65,7 +65,18 @@ env_conf = RxConf.from_env()
 !!! note
     RxConf has single interface for all config-types and interface for loading env-variables.
 
-Secondly, we want to access variables:
+### So what are `yaml_conf`, `toml_conf` and `env_conf`?
+
+If you try to execute `type()` for them, you will see the heir of `ConfigType`.
+
+This is layer that incapsulate Attributes structure model.
+
+You can `print()` them or call `repr()` to see this structure.
+
+!!! note
+    JFYI: we have ConfigResolver that resolves what concrete FileConfigType should be created based on extension.
+
+### Secondly, we want to access variables
 
 ```python
 hello_var = yaml_conf.app.hello_key
@@ -74,10 +85,12 @@ exclamation_mark = env_conf.app_exclamation_mark
 ```
 
 !!! note
-    RxConf has single interface to access all variables for all types of configs.
+    RxConf has single interface to create indistinguishable interaction interface for all types of configs.
     So it doesn't matter which register you use, `yaml_conf.APp.WoRld_KEY` will work too.
 
-If you try to execute `type()` for any of vars, you will see the heir of `AttributeType`.
+### So what are `hello_var`, `world_var` and `exclamation_mark`?
+
+If you try to execute `type()` for them, you will see the heir of `AttributeType`.
 
 But there are very smart objects.
 They overrides primitive types, operands etc. and your can work with them as primitives:
@@ -88,13 +101,29 @@ hello_var + " " + world_var + exclamation_mark == "Hello World!"
 
 If you will print the result, you will get `True`.
 
+### Types support & Type casting
+
 So AttributeTypes can be converted to primitives if you want:
 
-`str(hello_var)` — the string representation of `hello_var` value.
+`str(hello_var) == "Hello"` — the string representation of `hello_var` value.
 
-We supports all types that supports config you chose.
+#### We supports all types that supports ConfigType you chose
 
-You can iterate via `AttributeType` if it's value is iterable, hash it if it's hashable etc.
+| Type       | Yaml           | Toml           | Json           | Dotenv         |
+|------------|----------------|----------------|----------------|----------------|
+| `str`      | ✅              | ✅              | ✅              | ✅              |
+| `int`      | ✅              | ✅              | ✅              | ✅              |
+| `float`    | ✅              | ✅              | ✅              | ✅              |
+| `bool`     | ✅              | ✅              | ✅              | ✅              |
+| `None`     | ✅              | ❌              | ❌              | ✅              |
+| `list`     | ✅              | ✅              | ✅              | ❌              |
+| `set`      | ✅              | ❌              | ❌              | ❌              |
+| `date`     | ✅              | ✅              | ❌              | ❌              |
+| `datetime` | ✅              | ✅              | ❌              | ❌              |
+
+!!! note
+    You can iterate via `AttributeType` if it's value it's primitive representation is iterable,
+    hash it if it's hashable etc.
 
 ## Observers & Hot-Reload
 
