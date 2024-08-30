@@ -42,20 +42,20 @@ nav:
   - Get Started:
       - Welcome to RxConf: index.md
       - Why RxConf: get-started/why.md
-      - Quick dive: get-started/hello-world.md
+      - Quick Dive: get-started/hello-world.md
   - Concepts:
       - RxConf: concepts/rxconf.md
       - Observers: concepts/observers.md
       - Triggers: concepts/triggers.md
-      - Asynchronous mode: concepts/asynchronous.md
+      - Asynchronous Mode: concepts/asynchronous.md
   - API Docs:
       - RxConf: api/rxconf.md
   - Examples:
-      - Custom config: examples/custom-config.md
-      - Associate extensions: examples/associate-extensions.md
-      - Projects uses RxConf: examples/projects.md
+      - Custom Config: examples/custom-config.md
+      - Associate Extensions: examples/associate-extensions.md
+      - Projects Uses RxConf: examples/projects.md
   - Contributing:
-      - Environment setup: contributing/setup.md
+      - Environment Setup: contributing/setup.md
       - Guidelines: contributing/guidelines.md
       - Submitting: contributing/issues.md
 

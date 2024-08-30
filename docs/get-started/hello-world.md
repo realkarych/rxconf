@@ -122,8 +122,21 @@ So AttributeTypes can be converted to primitives if you want:
 | `datetime` | ✅              | ✅              | ❌              | ❌              |
 
 !!! note
-    You can iterate via `AttributeType` if it's value it's primitive representation is iterable,
+    You can iterate via `AttributeType` if it's value's primitive representation is iterable,
     hash it if it's hashable etc.
+
+### Exceptions handling
+
+All exceptions can be raised by RxConf are inherited from `rxconf.exceptions.RxConfError`.
+
+There are some of them:
+
+- Not-existing file: `rxconf.exceptions.ConfigNotFoundError`.
+- Unknown extension (that is not specified in any `FileConfigType` registered in `ConfigResolver`): `rxconf.exceptions.InvalidExtensionError`.
+- Config with broken schema: `rxconf.exceptions.BrokenConfigSchemaError`.
+- Unknown attribute (e.g. `yaml_conf.some.unknown.attr`): `rxconf.exceptions.InvalidAttributeError`.
+
+All existing exceptions your can check in [exceptions.py](https://github.com/realkarych/rxconf/blob/main/rxconf/exceptions.py).
 
 ## Observers & Hot-Reload
 
