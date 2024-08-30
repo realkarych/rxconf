@@ -1,16 +1,66 @@
 site_name: RxConf
+site_description: Python realtime configurations
+site_url: https://realkarych.github.io/rxconf/
+
 theme:
-  name: material
-  logo: assets/logo.webp
-  favicon: assets/favicon.ico
+  name: 'material'
   palette:
-    primary: pink
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: pink
+      accent: pink
+      toggle:
+        icon: material/lightbulb-outline
+        name: "Switch to dark mode"
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: pink
+      accent: pink
+      toggle:
+        icon: material/lightbulb
+        name: "Switch to light mode"
+  features:
+    - content.tabs.link
+    - content.code.annotate
+    - content.code.copy
+    - announce.dismiss
+    - navigation.tabs
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.instant.preview
+    - navigation.instant.progress
+    - navigation.path
+    - navigation.sections
+    - navigation.top
+    - navigation.tracking
+    - search.suggest
+    - toc.follow
+    - palette.toggle
+  favicon: assets/favicon.ico
 
 nav:
-  - Home: index.md
-  - Development:
-      - Contributing: development/contributing.md
-      - Setup: development/setup.md
+  - Get Started:
+      - Welcome to RxConf: index.md
+      - Why RxConf: get-started/why.md
+      - Quick Dive: get-started/quick-dive.md
+  - Concepts:
+      - RxConf: concepts/rxconf.md
+      - Observers: concepts/observers.md
+      - Triggers: concepts/triggers.md
+      - Asynchronous Mode: concepts/asynchronous.md
+  - API Docs:
+      - RxConf: api/rxconf.md
+  - Examples:
+      - Custom Config: examples/custom-config.md
+      - Associate Extensions: examples/associate-extensions.md
+      - Projects Uses RxConf: examples/projects.md
+  - Contributing:
+      - Environment Setup: contributing/setup.md
+      - Guidelines: contributing/guidelines.md
+      - Submitting: contributing/issues.md
+
+watch:
+  - rxconf
 
 plugins:
   - search
@@ -18,6 +68,20 @@ plugins:
 markdown_extensions:
   - admonition
   - codehilite
+  - tables
+  - toc:
+      permalink: true
+      title: Page contents
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      pygments_lang_class: true
+  - pymdownx.extra
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.tabbed:
+      alternate_style: true
 
 repo_name: realkarych/rxconf
 repo_url: https://github.com/realkarych/rxconf

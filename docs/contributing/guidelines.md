@@ -4,15 +4,6 @@ Thank you for your interest in contributing to RxConf!
 
 Please take a moment to review the following guidelines before submitting your contribution.
 
-## Table of Contents
-
-- [Getting Started](#getting-started)
-- [Submitting Contributions](#submitting-contributions)
-- [Code Style](#code-style)
-- [Testing](#testing)
-- [Documentation](#documentation)
-- [Issue Reporting](#issue-reporting)
-
 ## Getting Started
 
 Setup your development environment: [Setup guide](setup.md).

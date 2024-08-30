@@ -1,15 +1,5 @@
 # Environment setup
 
-## Table of Contents
-
-- [Clone repository](#clone-repository)
-- [Install poetry](#install-poetry)
-- [Install dev-dependencies](#install-dev-dependencies)
-- [Install Act — local CI](#install-act--local-ci)
-- [Build & deploy docs locally](#build--deploy-docs-locally)
-- [Build & deploy docs on prod](#build--deploy-docs-on-prod)
-- [Deploying on PyPI](#deploying-on-pypi)
-
 ## Clone repository
 
 - Via https: `git clone https://github.com/realkarych/rxconf.git`
