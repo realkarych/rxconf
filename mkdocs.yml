@@ -42,7 +42,7 @@ nav:
   - Get Started:
       - Welcome to RxConf: index.md
       - Why RxConf: get-started/why.md
-      - Quick Dive: get-started/hello-world.md
+      - Quick Dive: get-started/quick-dive.md
   - Concepts:
       - RxConf: concepts/rxconf.md
       - Observers: concepts/observers.md
