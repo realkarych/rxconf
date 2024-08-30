@@ -39,7 +39,7 @@ ENV_ATTRIBUTE_TYPE: TypeAlias = tp.Union[
 
 
 def map_primitive(value: str) -> tp.Union[int, float, bool, None, str]:
-    if value.lower() == "none":
+    if value.lower() == "none" or value.lower() == "null":
         return None
     if value.lower() == "true":
         return True

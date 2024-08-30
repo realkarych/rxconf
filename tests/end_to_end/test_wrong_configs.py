@@ -50,8 +50,3 @@ def test_not_existing_ini() -> None:
 def test_broken_schema_ini() -> None:
     with pytest.raises(exceptions.BrokenConfigSchemaError):
         assert RxConf.from_file(config_path=_RESOURCE_DIR / "broken_schema.ini")
-
-
-def test_unsupported_ini_type() -> None:
-    with pytest.raises(exceptions.BrokenConfigSchemaError):
-        assert RxConf.from_file(config_path=_RESOURCE_DIR / "unsupported_data_type.ini")
