@@ -7,11 +7,16 @@ from abc import ABCMeta, abstractmethod
 from pathlib import PurePath
 
 import yaml
+from dotenv import load_dotenv
+
+from rxconf import types
 
 if sys.version_info >= (3, 11):
     import tomllib as toml
 else:
     import toml
+
+import configparser
 
 import rxconf
 from rxconf import attributes as attrs
@@ -28,9 +33,9 @@ class ConfigType(metaclass=ABCMeta):  # pragma: no cover
 class FileConfigType(ConfigType, metaclass=ABCMeta):  # pragma: no cover
 
     def __init__(
-        self: "FileConfigType",
-        root_attribute: rxconf.AttributeType,
-        path: PurePath,
+            self: "FileConfigType",
+            root_attribute: rxconf.AttributeType,
+            path: PurePath,
     ) -> None:
         pass
 
@@ -49,15 +54,14 @@ class FileConfigType(ConfigType, metaclass=ABCMeta):  # pragma: no cover
 
 
 class YamlConfig(FileConfigType):
-
     _allowed_extensions: tp.Final[frozenset] = frozenset({".yaml", ".yml"})
     _root: tp.Final[rxconf.YamlAttribute]
     _path: tp.Final[PurePath]
 
     def __init__(
-        self: "YamlConfig",
-        root_attribute: rxconf.YamlAttribute,
-        path: PurePath,
+            self: "YamlConfig",
+            root_attribute: rxconf.YamlAttribute,
+            path: PurePath,
     ) -> None:
         self._root = root_attribute
         self._path = path
@@ -114,15 +118,14 @@ class YamlConfig(FileConfigType):
 
 
 class JsonConfig(FileConfigType):
-
     _allowed_extensions: tp.Final[frozenset] = frozenset({".json"})
     _root: tp.Final[rxconf.JsonAttribute]
     _path: tp.Final[PurePath]
 
     def __init__(
-        self: "JsonConfig",
-        root_attribute: rxconf.JsonAttribute,
-        path: PurePath,
+            self: "JsonConfig",
+            root_attribute: rxconf.JsonAttribute,
+            path: PurePath,
     ) -> None:
         self._root = root_attribute
         self._path = path
@@ -175,15 +178,14 @@ class JsonConfig(FileConfigType):
 
 
 class TomlConfig(FileConfigType):
-
     _allowed_extensions: tp.Final[frozenset] = frozenset({".toml"})
     _root: tp.Final[rxconf.TomlAttribute]
     _path: tp.Final[PurePath]
 
     def __init__(
-        self: "TomlConfig",
-        root_attribute: rxconf.TomlAttribute,
-        path: PurePath,
+            self: "TomlConfig",
+            root_attribute: rxconf.TomlAttribute,
+            path: PurePath,
     ) -> None:
         self._root = root_attribute
         self._path = path
@@ -241,3 +243,118 @@ class TomlConfig(FileConfigType):
             return attrs.TomlAttribute(value=data)
         else:
             raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
+
+
+class IniConfig(FileConfigType):
+    _allowed_extensions: tp.Final[frozenset] = frozenset({".ini"})
+    _root: tp.Final[rxconf.IniAttribute]
+    _path: tp.Final[PurePath]
+
+    def __init__(
+            self: "IniConfig",
+            root_attribute: rxconf.IniAttribute,
+            path: PurePath,
+    ) -> None:
+        self._root = root_attribute
+        self._path = path
+
+    @property
+    def allowed_extensions(self) -> tp.FrozenSet[str]:
+        return self._allowed_extensions
+
+    @classmethod
+    @exceptions.handle_unknown_exception
+    def load_from_path(cls, path: tp.Union[str, PurePath]) -> "IniConfig":
+        if not os.path.isfile(str(path)):
+            raise exceptions.ConfigNotFoundError(f"Config file not found: {path}")
+
+        config = configparser.ConfigParser()
+        try:
+            config.read(str(path))
+        except configparser.Error as exc:
+            raise exceptions.BrokenConfigSchemaError(
+                f"Error while parsing ini config: {path}"
+            ) from exc
+
+        ini_data: tp.Dict[tp.Any, tp.Any] = dict()
+        for section in config.sections():
+            keys = section.split('.')
+            current_level = ini_data
+            for key in keys[:-1]:
+                if key not in current_level:
+                    current_level[key] = dict()
+                current_level = current_level[key]
+            current_level[keys[-1]] = dict(config.items(section))
+        return cls(
+            root_attribute=cls._process_data(ini_data),
+            path=path if isinstance(path, PurePath) else PurePath(path),
+        )
+
+    @exceptions.handle_unknown_exception
+    def __getattr__(self, item: str) -> tp.Any:
+        return getattr(self._root, item.lower())
+
+    @classmethod
+    @exceptions.handle_unknown_exception
+    def _process_data(cls, data: tp.Any) -> attrs.IniAttribute:
+        if isinstance(data, dict):
+            return attrs.IniAttribute(
+                value={k.lower(): cls._process_data(v) for k, v in data.items()}
+            )
+        elif isinstance(data, str):
+            return attrs.IniAttribute(value=types.map_primitive(data))
+        else:
+            raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
+
+
+class EnvConfig(ConfigType):
+    _root: tp.Final[rxconf.EnvAttribute]
+
+    def __init__(self: "EnvConfig", root_attribute: rxconf.EnvAttribute) -> None:
+        self._root = root_attribute
+
+    def __repr__(self) -> str:
+        return repr(self._root)
+
+    @exceptions.handle_unknown_exception
+    def __getattr__(self, item: str) -> tp.Any:
+        return getattr(self._root, item.lower())
+
+    @classmethod
+    @exceptions.handle_unknown_exception
+    def load_from_environment(cls, prefix: tp.Optional[str] = None, **kwargs) -> "EnvConfig":
+        env_vars = {
+            k.lower(): v for k, v in os.environ.items()
+            if prefix is None or k.lower().startswith(prefix.lower())
+        }
+        root_attribute = cls._process_data(env_vars)
+        return cls(root_attribute=root_attribute, **kwargs)
+
+    @classmethod
+    @exceptions.handle_unknown_exception
+    def _process_data(cls, data: tp.Dict[str, str]) -> attrs.EnvAttribute:
+        processed_data = {k.lower(): attrs.EnvAttribute(value=types.map_primitive(v)) for k, v in data.items()}
+        return attrs.EnvAttribute(value=processed_data)
+
+
+class DotenvConfig(FileConfigType, EnvConfig):
+    _allowed_extensions: tp.Final[frozenset] = frozenset({".env"})
+    _path: tp.Final[PurePath]
+
+    def __init__(
+            self: "DotenvConfig",
+            root_attribute: rxconf.EnvAttribute,
+            path: PurePath,
+    ) -> None:
+        self._root = root_attribute  # type: ignore
+        self._path = path
+
+    @property
+    def allowed_extensions(self) -> tp.FrozenSet[str]:
+        return self._allowed_extensions
+
+    @classmethod
+    @exceptions.handle_unknown_exception
+    def load_from_path(cls, path: tp.Union[str, PurePath] = ".env") -> FileConfigType:
+        load_dotenv(dotenv_path=path)
+        return cls.load_from_environment(path=path)

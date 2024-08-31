@@ -40,3 +40,13 @@ def test_broken_schema_toml() -> None:
 def test_unrecognized_extension() -> None:
     with pytest.raises(exceptions.InvalidExtensionError):
         assert RxConf.from_file(config_path=_RESOURCE_DIR / "something.tpl")
+
+
+def test_not_existing_ini() -> None:
+    with pytest.raises(exceptions.ConfigNotFoundError):
+        assert RxConf.from_file(config_path=_RESOURCE_DIR / "something_not_exist.ini")
+
+
+def test_broken_schema_ini() -> None:
+    with pytest.raises(exceptions.BrokenConfigSchemaError):
+        assert RxConf.from_file(config_path=_RESOURCE_DIR / "broken_schema.ini")
