@@ -114,4 +114,3 @@ def test_creates_nested_dict():
     assert config.database.main.settings.password == 'secret'
     assert config.database.main.connection.host == 'localhost'
     assert config.database.main.connection.port == 3306
-
