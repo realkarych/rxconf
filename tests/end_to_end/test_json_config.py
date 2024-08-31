@@ -19,7 +19,7 @@ def test_primitive_types() -> None:
     assert conf.integer == 42
     assert conf.float == 36.6
     assert conf.string == "Hello world =)"
-    assert conf.boolean
+    assert conf.boolean == True  # noqa: E712
     assert not conf.none
 
 
@@ -79,4 +79,4 @@ def test_inner_structures() -> None:
     assert conf.config.address.address == "123 Main St"
     assert not conf.config.address.city
     assert list(conf.config.preferences.favorites) == ["a", "b", "c"]
-    assert conf.config.is_active
+    assert conf.config.is_active == True  # noqa: E712

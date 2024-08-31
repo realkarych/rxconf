@@ -20,8 +20,8 @@ def test_primitive_types() -> None:
     assert conf.integer == 42
     assert conf.float == 36.6
     assert conf.string == "Hello world =)"
-    assert conf.boolean
-    assert not conf.another_bool
+    assert conf.boolean == True  # noqa: E712
+    assert conf.another_bool == False  # noqa: E712
 
 
 def test_key_cases() -> None:
@@ -92,8 +92,8 @@ def test_primitive_types_from_env() -> None:
     assert conf.integer == 42
     assert conf.float == 36.6
     assert conf.string == "Hello world =)"
-    assert conf.boolean
-    assert not conf.another_bool
+    assert conf.boolean == True  # noqa: E712
+    assert conf.another_bool == False  # noqa: E712
 
 
 def test_key_cases_from_env() -> None:

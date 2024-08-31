@@ -19,7 +19,7 @@ def test_primitive_types() -> None:
     assert conf.primitives.integer == 42
     assert conf.primitives.float == 36.6
     assert conf.primitives.string == "Hello world =)"
-    assert conf.primitives.boolean
+    assert conf.primitives.boolean == True  # noqa: E712
 
 
 def test_key_cases() -> None:
@@ -61,7 +61,7 @@ def test_inner_structures() -> None:
     assert conf.config.age == 42
     assert conf.config.address.address == "123 Main St"
     assert not conf.config.address.city
-    assert conf.config.active.is_active
+    assert conf.config.active.is_active == True  # noqa: E712
 
 
 def test_structures() -> None:
@@ -78,7 +78,7 @@ def test_structures() -> None:
     assert config.database.max_connections == 100
     assert config.database.timeout == 30.5
 
-    assert config.api.enabled
+    assert config.api.enabled == True  # noqa: E712
     assert config.api.base_url == "https://api.example.com"
     assert config.api.retry_attempts == 5
     assert config.api.timeout_seconds == 10.0
@@ -91,7 +91,7 @@ def test_structures() -> None:
     assert config.caches.type == "redis"
     assert config.caches.host == "127.0.0.1"
     assert config.caches.port == 6379
-    assert config.caches.enabled
+    assert config.caches.enabled == True  # noqa: E712
 
     assert config.features.enabled_features == "feature1"
     assert config.features.feature1.description == "This is feature 1"
@@ -102,9 +102,9 @@ def test_structures() -> None:
     assert config.users.admin_users == "alice"
     assert config.users.regular_users == "dave"
     assert config.users.alice.email == "alice@example.com"
-    assert config.users.alice.is_active
+    assert config.users.alice.is_active == True  # noqa: E712
     assert config.users.bob.email == "bob@example.com"
-    assert not config.users.bob.is_active
+    assert config.users.bob.is_active == False  # noqa: E712
 
 
 def test_creates_nested_dict():

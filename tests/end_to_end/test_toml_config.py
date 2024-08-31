@@ -43,7 +43,7 @@ def test_primitive_types() -> None:
     assert conf.integer == 42
     assert conf.float == 36.6
     assert conf.string == "Hello world =)"
-    assert conf.boolean
+    assert conf.boolean == True  # noqa: E712
 
 
 def test_pritive_collections() -> None:
@@ -110,5 +110,5 @@ def test_inner_structures() -> None:
     assert conf.config.age == 42
     assert conf.config.address.address == "123 Main St"
     assert list(conf.config.hobbies.hobbies) == ["1", "2", "3"]
-    assert conf.config.hobbies.is_active
+    assert conf.config.hobbies.is_active == True  # noqa: E712
     assert conf.second.element == "value"
