@@ -276,7 +276,7 @@ class IniConfig(FileConfigType):
                 f"Error while parsing ini config: {path}"
             ) from exc
 
-        ini_data = dict()
+        ini_data: tp.Dict[tp.Any, tp.Any] = dict()
         for section in config.sections():
             keys = section.split('.')
             current_level = ini_data
