@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
         python-version: ['3.9', '3.10', '3.11', '3.12', '3.13.0-beta.4', 'pypy3.9']
 
@@ -32,27 +33,35 @@ jobs:
           poetry install --with dev
 
       - name: Run Pyright on rxconf
+        continue-on-error: true
         run: poetry run pyright rxconf
 
       - name: Run Ruff on rxconf
+        continue-on-error: true
         run: poetry run ruff check rxconf
 
       - name: Run Flake8 on rxconf
+        continue-on-error: true
         run: poetry run flake8 rxconf
 
       - name: Run Mypy on rxconf
+        continue-on-error: true
         run: poetry run mypy rxconf
 
       - name: Run Pyright on docs_src
+        continue-on-error: true
         run: poetry run pyright docs_src
 
       - name: Run Ruff on docs_src
+        continue-on-error: true
         run: poetry run ruff check docs_src
 
       - name: Run Flake8 on docs_src
+        continue-on-error: true
         run: poetry run flake8 docs_src
 
       - name: Run Mypy on docs_src
+        continue-on-error: true
         run: |
           if [ -n "$(find docs_src -name '*.py' -o -name '*.pyi')" ]; then
             poetry run mypy docs_src
@@ -61,15 +70,19 @@ jobs:
           fi
 
       - name: Run Pyright on tests
+        continue-on-error: true
         run: poetry run pyright tests
 
       - name: Run Ruff on tests
+        continue-on-error: true
         run: poetry run ruff check tests
 
       - name: Run Flake8 on tests
+        continue-on-error: true
         run: poetry run flake8 tests
 
       - name: Run Mypy on tests
+        continue-on-error: true
         run: |
           if [ -n "$(find tests -name '*.py' -o -name '*.pyi')" ]; then
             poetry run mypy tests

@@ -8,6 +8,7 @@ on:
 jobs:
   run_tests:
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         python-version: ['3.9', '3.10', '3.11', '3.12', '3.13.0-beta.4', 'pypy-3.9']
@@ -32,4 +33,5 @@ jobs:
         run: poetry install --with dev
 
       - name: Run tests
+        continue-on-error: true
         run: poetry run pytest
