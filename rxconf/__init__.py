@@ -5,6 +5,7 @@ from .attributes import (
     YamlAttribute,
     JsonAttribute,
     TomlAttribute,
+    IniAttribute,
     EnvAttribute,
 )
 from .config_resolver import ConfigResolver
@@ -12,6 +13,7 @@ from .config_types import (
     YamlConfig,
     JsonConfig,
     TomlConfig,
+    IniConfig,
     EnvConfig,
     DotenvConfig,
 )
@@ -30,11 +32,13 @@ __all__ = [
     "YamlAttribute",
     "JsonAttribute",
     "TomlAttribute",
+    "IniAttribute",
     "EnvAttribute",
     "ConfigResolver",
     "YamlConfig",
     "JsonConfig",
     "TomlConfig",
+    "IniConfig",
     "EnvConfig",
     "DotenvConfig",
     "BrokenConfigSchemaError",

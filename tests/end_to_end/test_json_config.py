@@ -53,10 +53,10 @@ def test_key_cases() -> None:
 def test_numeric_casts() -> None:
     conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.json")
 
-    assert conf.integer-1 < conf.integer < conf.integer+1
-    assert conf.integer-0.1 < conf.integer <= int(conf.integer+0.1)
+    assert conf.integer - 1 < conf.integer < conf.integer + 1
+    assert conf.integer - 0.1 < conf.integer <= int(conf.integer + 0.1)
     assert int(conf.integer) == conf.integer
-    assert int(conf.integer * 2 / 2) == conf.integer**1
+    assert int(conf.integer * 2 / 2) == conf.integer ** 1
     assert conf.big_integer > conf.integer
 
 
