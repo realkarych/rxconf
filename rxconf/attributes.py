@@ -418,6 +418,7 @@ class IniAttribute(AttributeType):
     ) -> tp.Union[
         types.INI_ATTRIBUTE_TYPE,
         tp.Dict[str, "IniAttribute"],
+        "IniAttribute"
     ]:
         if isinstance(self._value, dict):
             try:

@@ -303,7 +303,7 @@ class IniConfig(FileConfigType):
             return attrs.IniAttribute(
                 value={k.lower(): cls._process_data(v) for k, v in data.items()}
             )
-        elif isinstance(data, (bool, int, str, float, type(None))):
+        elif isinstance(data, str):
             return attrs.IniAttribute(value=types.map_primitive(data))
         else:
             raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
