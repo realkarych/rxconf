@@ -30,12 +30,12 @@
 Currently in develop...
 </h1>
 
-- [ ] Implement RxConf DAO
+- [x] Implement RxConf DAO
   - [x] Implement base DAO
   - [x] Implement env-vars & dotenv-files DAO
   - [x] Implement `yaml` DAO
   - [x] Implement `toml` DAO
-  - [ ] Implement `ini` DAO
+  - [x] Implement `ini` DAO
   - [x] Implement `json` DAO
 - [ ] Implement concurrent IO mode for DAOs
 - [ ] Implement observers
