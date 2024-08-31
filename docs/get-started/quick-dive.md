@@ -85,8 +85,7 @@ exclamation_mark = env_conf.app_exclamation_mark
 ```
 
 !!! note
-    RxConf has single interface to create indistinguishable interaction interface for all types of configs.
-    So it doesn't matter which register you use, `yaml_conf.APp.WoRld_KEY` will work too.
+    RxConf has single interface to create indistinguishable interface for all types of configs.
 
 ### So what are `hello_var`, `world_var` and `exclamation_mark`?
 
@@ -109,17 +108,17 @@ So AttributeTypes can be converted to primitives if you want:
 
 #### We supports all types that supports ConfigType you chose
 
-| Type       | Yaml           | Toml           | Json           | Dotenv         |
-|------------|----------------|----------------|----------------|----------------|
-| `str`      | ✅              | ✅              | ✅              | ✅              |
-| `int`      | ✅              | ✅              | ✅              | ✅              |
-| `float`    | ✅              | ✅              | ✅              | ✅              |
-| `bool`     | ✅              | ✅              | ✅              | ✅              |
-| `None`     | ✅              | ❌              | ❌              | ✅              |
-| `list`     | ✅              | ✅              | ✅              | ❌              |
-| `set`      | ✅              | ❌              | ❌              | ❌              |
-| `date`     | ✅              | ✅              | ❌              | ❌              |
-| `datetime` | ✅              | ✅              | ❌              | ❌              |
+| Type       | Yaml           | Toml           | Json           | Dotenv         | Ini            |
+|------------|----------------|----------------|----------------|----------------|----------------|
+| `str`      | ✅              | ✅              | ✅              | ✅              | ✅              |
+| `int`      | ✅              | ✅              | ✅              | ✅              | ✅              |
+| `float`    | ✅              | ✅              | ✅              | ✅              | ✅              |
+| `bool`     | ✅              | ✅              | ✅              | ✅              | ✅              |
+| `None`     | ✅              | ❌              | ❌              | ✅              | ✅              |
+| `list`     | ✅              | ✅              | ✅              | ❌              | ❌              |
+| `set`      | ✅              | ❌              | ❌              | ❌              | ❌              |
+| `date`     | ✅              | ✅              | ❌              | ❌              | ❌              |
+| `datetime` | ✅              | ✅              | ❌              | ❌              | ❌              |
 
 !!! note
     You can iterate via `AttributeType` if it's value's primitive representation is iterable,
@@ -138,6 +137,8 @@ There are some of them:
 
 All existing exceptions your can check in [exceptions.py](https://github.com/realkarych/rxconf/blob/main/rxconf/exceptions.py).
 
+## Async RxConf
+
 ## Observers & Hot-Reload
 
-In-develop...
+*In-develop...*
