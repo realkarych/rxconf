@@ -40,7 +40,7 @@ app:
 
 ```toml
 [app]
-world_key: World
+world_key = "World"
 ```
 
 ### Add env variable
