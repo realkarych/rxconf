@@ -23,7 +23,6 @@ from rxconf import attributes as attrs
 from rxconf import exceptions
 
 
-
 class ConfigType(metaclass=ABCMeta):  # pragma: no cover
 
     @abstractmethod
@@ -294,7 +293,6 @@ class IniConfig(FileConfigType):
     @exceptions.handle_unknown_exception
     def __getattr__(self, item: str) -> tp.Any:
         return getattr(self._root, item.lower())
-
 
     @classmethod
     @exceptions.handle_unknown_exception

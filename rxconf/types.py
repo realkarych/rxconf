@@ -54,4 +54,3 @@ def map_primitive(value: str) -> tp.Union[int, float, bool, None, str]:
     except ValueError:
         pass
     return value
-
