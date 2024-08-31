@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 
 from rxconf import types
 
+
 if sys.version_info >= (3, 11):
     import tomllib as toml
 else:
@@ -308,6 +309,7 @@ class IniConfig(FileConfigType):
 
 
 class EnvConfig(ConfigType):
+
     _root: tp.Final[rxconf.EnvAttribute]
 
     def __init__(self: "EnvConfig", root_attribute: rxconf.EnvAttribute) -> None:
@@ -338,13 +340,14 @@ class EnvConfig(ConfigType):
 
 
 class DotenvConfig(FileConfigType, EnvConfig):
+
     _allowed_extensions: tp.Final[frozenset] = frozenset({".env"})
     _path: tp.Final[PurePath]
 
     def __init__(
-            self: "DotenvConfig",
-            root_attribute: rxconf.EnvAttribute,
-            path: PurePath,
+        self: "DotenvConfig",
+        root_attribute: rxconf.EnvAttribute,
+        path: PurePath,
     ) -> None:
         self._root = root_attribute  # type: ignore
         self._path = path
