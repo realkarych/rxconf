@@ -69,7 +69,7 @@ def test_structures() -> None:
 
     assert config.general.app_name == "MyApp"
     assert config.general.version == "1.2.3"
-    assert config.general.debug_mode == True
+    assert config.general.debug_mode
 
     assert config.database.host == "localhost"
     assert config.database.port == 3306
@@ -78,20 +78,20 @@ def test_structures() -> None:
     assert config.database.max_connections == 100
     assert config.database.timeout == 30.5
 
-    assert config.api.enabled == True
+    assert config.api.enabled
     assert config.api.base_url == "https://api.example.com"
     assert config.api.retry_attempts == 5
     assert config.api.timeout_seconds == 10.0
 
     assert config.logging.log_level == "DEBUG"
     assert config.logging.log_file == "/var/log/myapp.log"
-    assert config.logging.api.log_requests == True
-    assert config.logging.api.log_responses == False
+    assert config.logging.api.log_requests
+    assert not config.logging.api.log_responses
 
     assert config.caches.type == "redis"
     assert config.caches.host == "127.0.0.1"
     assert config.caches.port == 6379
-    assert config.caches.enabled == True
+    assert config.caches.enabled
 
     assert config.features.enabled_features == "feature1"
     assert config.features.feature1.description == "This is feature 1"
@@ -102,9 +102,9 @@ def test_structures() -> None:
     assert config.users.admin_users == "alice"
     assert config.users.regular_users == "dave"
     assert config.users.alice.email == "alice@example.com"
-    assert config.users.alice.is_active == True
+    assert config.users.alice.is_active
     assert config.users.bob.email == "bob@example.com"
-    assert config.users.bob.is_active == False
+    assert not config.users.bob.is_active
 
 
 def test_creates_nested_dict():
