@@ -1,7 +1,7 @@
 import unittest
 from rxconf import exceptions
 
-from rxconf.attributes import(
+from rxconf.attributes import (
     JsonAttribute, MockAttribute, YamlAttribute, TomlAttribute, IniAttribute, EnvAttribute
 )
 
