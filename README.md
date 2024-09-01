@@ -37,5 +37,7 @@ Currently in develop...
   - [x] Implement `toml` DAO
   - [x] Implement `ini` DAO
   - [x] Implement `json` DAO
-- [ ] Implement concurrent IO mode for DAOs
+- [x] Implement concurrent IO mode for DAOs
 - [ ] Implement observers
+  - [ ] Add base observer
+  - [ ] Add decorator that provides DI mechanism to inject actual config state
