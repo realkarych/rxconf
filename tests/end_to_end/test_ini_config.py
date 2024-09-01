@@ -83,7 +83,6 @@ async def test_numeric_casts_async() -> None:
     assert conf.primitives.big_integer > conf.primitives.integer
 
 
-
 def test_string_casts() -> None:
     conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.ini")
 

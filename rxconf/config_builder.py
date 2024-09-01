@@ -18,7 +18,7 @@ class ConfigBuilder(metaclass=abc.ABCMeta):  # pragma: no cover
 class FileConfigBuilder(ConfigBuilder):
 
     def __init__(self, config_resolver: FileConfigResolver) -> None:
-        self._config_resolver = config_resolver
+        self._config_resolver: FileConfigResolver = config_resolver
 
     def build(self, path: tp.Union[str, pathlib.PurePath]) -> FileConfigType:
         return self._config_resolver.resolve(path=path).load_from_path(path)
