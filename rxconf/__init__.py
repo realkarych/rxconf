@@ -24,10 +24,12 @@ from .exceptions import (
 )
 from .rxconf import (
     RxConf,
+    AsyncRxConf,
 )
 
 __all__ = [
     "RxConf",
+    "AsyncRxConf",
     "AttributeType",
     "YamlAttribute",
     "JsonAttribute",

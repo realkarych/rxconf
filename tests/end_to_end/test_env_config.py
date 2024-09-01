@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from rxconf import RxConf, exceptions
+from rxconf import AsyncRxConf, RxConf, exceptions
 from rxconf.config_types import EnvConfig
 
 _RESOURCE_DIR = Path.cwd() / Path("tests/resources")
@@ -142,3 +142,60 @@ def test_repr():
     config = EnvConfig.load_from_environment(prefix="TEST_")
     expected_repr = repr(config._root)
     assert repr(config) == expected_repr
+
+
+@pytest.mark.asyncio
+async def test_empty_async() -> None:
+    conf = await AsyncRxConf.from_file_async(config_path=_RESOURCE_DIR / "empty.env")
+
+    assert conf
+
+
+@pytest.mark.asyncio
+async def test_primitive_types_async() -> None:
+    conf = await AsyncRxConf.from_file_async(config_path=_RESOURCE_DIR / "primitives.env")
+
+    assert conf.integer == 42
+    assert conf.float == 36.6
+    assert conf.string == "Hello world =)"
+    assert conf.boolean == True  # noqa: E712
+    assert conf.another_bool == False  # noqa: E712
+
+
+@pytest.mark.asyncio
+async def test_key_cases_async() -> None:
+    conf = await AsyncRxConf.from_file_async(config_path=_RESOURCE_DIR / "primitives.env")
+
+    assert conf.STRANGECASE
+    assert conf.STRanGeCasE
+
+
+@pytest.mark.asyncio
+async def test_numeric_casts_async() -> None:
+    conf = await AsyncRxConf.from_file_async(config_path=_RESOURCE_DIR / "primitives.env")
+
+    assert conf.integer-1 < conf.integer < conf.integer+1
+    assert conf.integer-0.1 < conf.integer <= int(conf.integer+0.1)
+    assert int(conf.integer) == conf.integer
+    assert int(conf.integer * 2 / 2) == conf.integer**1
+    assert conf.big_integer > conf.integer
+
+
+@pytest.mark.asyncio
+async def test_string_casts_async() -> None:
+    conf = await AsyncRxConf.from_file_async(config_path=_RESOURCE_DIR / "primitives.env")
+
+    assert conf.STRING[0] == "H"
+    assert conf.string[1:-1] == "ello world ="
+    assert str(conf.string).upper() == "HELLO WORLD =)"
+    assert conf.string + "!" == "Hello world =)!"
+    with pytest.raises(exceptions.RxConfError):
+        assert conf.string.unknown
+
+
+@pytest.mark.asyncio
+async def test_not_existing_attribute_async() -> None:
+    conf = await AsyncRxConf.from_file_async(config_path=_RESOURCE_DIR / "primitives.env")
+
+    with pytest.raises(exceptions.RxConfError):
+        assert conf.string.unknown

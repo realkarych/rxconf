@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 import pytest
 
-from rxconf import RxConf, exceptions
+from rxconf import AsyncRxConf, RxConf, exceptions
 
 _RESOURCE_DIR = Path.cwd() / Path("tests/resources")
 
@@ -37,8 +37,25 @@ def test_empty() -> None:
     assert conf
 
 
+@pytest.mark.asyncio
+async def test_empty_async() -> None:
+    conf = await AsyncRxConf.from_file_async(config_path=_RESOURCE_DIR / "empty.toml")
+
+    assert conf
+
+
 def test_primitive_types() -> None:
     conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.toml")
+
+    assert conf.integer == 42
+    assert conf.float == 36.6
+    assert conf.string == "Hello world =)"
+    assert conf.boolean == True  # noqa: E712
+
+
+@pytest.mark.asyncio
+async def test_primitive_types_async() -> None:
+    conf = await AsyncRxConf.from_file_async(config_path=_RESOURCE_DIR / "primitives.toml")
 
     assert conf.integer == 42
     assert conf.float == 36.6
@@ -98,6 +115,14 @@ def test_dates() -> None:
 
 def test_not_existing_attribute() -> None:
     conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.toml")
+
+    with pytest.raises(exceptions.RxConfError):
+        assert conf.string.unknown
+
+
+@pytest.mark.asyncio
+async def test_not_existing_attribute_async() -> None:
+    conf = await AsyncRxConf.from_file_async(config_path=_RESOURCE_DIR / "primitives.toml")
 
     with pytest.raises(exceptions.RxConfError):
         assert conf.string.unknown
