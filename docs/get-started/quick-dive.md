@@ -139,6 +139,27 @@ All existing exceptions your can check in [exceptions.py](https://github.com/rea
 
 ## Async RxConf
 
+RxConf is compatible with Asyncio. To use, import extension for base `RxConf`:
+
+```python
+from rxconf import AsyncRxConf
+```
+
+Then load config:
+
+```python
+async def main():
+    conf = await AsyncRxConf.from_file_async(path="...")
+    # Then use conf as same as RxConf
+```
+
+To test, you can run this function with asyncio:
+
+```python
+import asyncio
+asyncio.run(main())
+```
+
 ## Observers & Hot-Reload
 
 *In-develop...*
