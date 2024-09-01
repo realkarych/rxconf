@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from rxconf import RxConf, exceptions
+from rxconf import AsyncRxConf, RxConf, exceptions
 
 _RESOURCE_DIR = Path.cwd() / Path("tests/resources")
 
@@ -14,8 +14,26 @@ def test_empty() -> None:
     assert conf
 
 
+@pytest.mark.asyncio
+async def test_empty_async() -> None:
+    conf = await AsyncRxConf.from_file_async(config_path=_RESOURCE_DIR / "empty.yaml")
+
+    assert conf
+
+
 def test_primitive_types() -> None:
     conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.yml")
+
+    assert conf.integer == 42
+    assert conf.float == 36.6
+    assert conf.string == "Hello world =)"
+    assert conf.boolean == True  # noqa: E712
+    assert not conf.none
+
+
+@pytest.mark.asyncio
+async def test_primitive_types_async() -> None:
+    conf = await AsyncRxConf.from_file_async(config_path=_RESOURCE_DIR / "primitives.yml")
 
     assert conf.integer == 42
     assert conf.float == 36.6

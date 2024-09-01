@@ -2,13 +2,20 @@ from pathlib import Path
 
 import pytest
 
-from rxconf import RxConf, exceptions
+from rxconf import AsyncRxConf, RxConf, exceptions
 
 _RESOURCE_DIR = Path.cwd() / Path("tests/resources")
 
 
 def test_empty() -> None:
     conf = RxConf.from_file(config_path=_RESOURCE_DIR / "empty.ini")
+
+    assert conf
+
+
+@pytest.mark.asyncio
+async def test_empty_async() -> None:
+    conf = await AsyncRxConf.from_file_async(config_path=_RESOURCE_DIR / "empty.ini")
 
     assert conf
 
@@ -22,8 +29,30 @@ def test_primitive_types() -> None:
     assert conf.primitives.boolean == True  # noqa: E712
 
 
+@pytest.mark.asyncio
+async def test_primitive_types_async() -> None:
+    conf = await AsyncRxConf.from_file_async(config_path=_RESOURCE_DIR / "primitives.ini")
+
+    assert conf.primitives.integer == 42
+    assert conf.primitives.float == 36.6
+    assert conf.primitives.string == "Hello world =)"
+    assert conf.primitives.boolean == True  # noqa: E712
+
+
 def test_key_cases() -> None:
     conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.ini")
+
+    assert conf.primitives.camelcase
+    assert conf.primitives.CamelCase
+    assert conf.primitives.snake_case
+    assert conf.primitives.SNAKE_CASE
+    assert conf.primitives.strangecase
+    assert conf.primitives.STRanGeCasE
+
+
+@pytest.mark.asyncio
+async def test_key_cases_async() -> None:
+    conf = await AsyncRxConf.from_file_async(config_path=_RESOURCE_DIR / "primitives.ini")
 
     assert conf.primitives.camelcase
     assert conf.primitives.CamelCase
@@ -43,6 +72,18 @@ def test_numeric_casts() -> None:
     assert conf.primitives.big_integer > conf.primitives.integer
 
 
+@pytest.mark.asyncio
+async def test_numeric_casts_async() -> None:
+    conf = await AsyncRxConf.from_file_async(config_path=_RESOURCE_DIR / "primitives.ini")
+
+    assert conf.primitives.integer - 1 < conf.primitives.integer < conf.primitives.integer + 1
+    assert conf.primitives.integer - 0.1 < conf.primitives.integer <= int(conf.primitives.integer + 0.1)
+    assert int(conf.primitives.integer) == conf.primitives.integer
+    assert int(conf.primitives.integer * 2 / 2) == conf.primitives.integer ** 1
+    assert conf.primitives.big_integer > conf.primitives.integer
+
+
+
 def test_string_casts() -> None:
     conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.ini")
 
@@ -54,8 +95,31 @@ def test_string_casts() -> None:
         assert conf.primitives.string.unknown
 
 
+@pytest.mark.asyncio
+async def test_string_casts_async() -> None:
+    conf = await AsyncRxConf.from_file_async(config_path=_RESOURCE_DIR / "primitives.ini")
+
+    assert conf.primitives.string[0] == "H"
+    assert conf.primitives.string[1:-1] == "ello world ="
+    assert str(conf.primitives.string).upper() == "HELLO WORLD =)"
+    assert conf.primitives.string + "!" == "Hello world =)!"
+    with pytest.raises(exceptions.RxConfError):
+        assert conf.primitives.string.unknown
+
+
 def test_inner_structures() -> None:
     conf = RxConf.from_file(config_path=_RESOURCE_DIR / "inner_structures.ini")
+
+    assert conf.config.name == "John Doe"
+    assert conf.config.age == 42
+    assert conf.config.address.address == "123 Main St"
+    assert not conf.config.address.city
+    assert conf.config.active.is_active == True  # noqa: E712
+
+
+@pytest.mark.asyncio
+async def test_inner_structures_async() -> None:
+    conf = await AsyncRxConf.from_file_async(config_path=_RESOURCE_DIR / "inner_structures.ini")
 
     assert conf.config.name == "John Doe"
     assert conf.config.age == 42

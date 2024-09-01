@@ -2,13 +2,20 @@ from pathlib import Path
 
 import pytest
 
-from rxconf import RxConf, exceptions
+from rxconf import AsyncRxConf, RxConf, exceptions
 
 _RESOURCE_DIR = Path.cwd() / Path("tests/resources")
 
 
 def test_empty() -> None:
     conf = RxConf.from_file(config_path=_RESOURCE_DIR / "empty.json")
+
+    assert conf
+
+
+@pytest.mark.asyncio
+async def test_empty_async() -> None:
+    conf = await AsyncRxConf.from_file_async(config_path=_RESOURCE_DIR / "empty.json")
 
     assert conf
 
@@ -23,8 +30,36 @@ def test_primitive_types() -> None:
     assert not conf.none
 
 
+@pytest.mark.asyncio
+async def test_primitive_types_async() -> None:
+    conf = await AsyncRxConf.from_file_async(config_path=_RESOURCE_DIR / "primitives.json")
+
+    assert conf.integer == 42
+    assert conf.float == 36.6
+    assert conf.string == "Hello world =)"
+    assert conf.boolean == True  # noqa: E712
+    assert not conf.none
+
+
 def test_pritive_collections() -> None:
     conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.json")
+    expected_list = [1, 2, 3]
+    expected_set = {"a", "b", "c"}
+
+    got_list = conf.list
+    got_set = conf.set
+
+    for item, expected in zip(got_list, expected_list):
+        assert expected == item
+
+    assert list(got_list) == expected_list
+    assert sorted(list(got_set)) == sorted(list(expected_set))
+    assert set(got_set) == expected_set
+
+
+@pytest.mark.asyncio
+async def test_pritive_collections_async() -> None:
+    conf = await AsyncRxConf.from_file_async(config_path=_RESOURCE_DIR / "primitives.json")
     expected_list = [1, 2, 3]
     expected_set = {"a", "b", "c"}
 
@@ -50,8 +85,31 @@ def test_key_cases() -> None:
     assert conf.STRanGeCasE
 
 
+@pytest.mark.asyncio
+async def test_key_cases_async() -> None:
+    conf = await AsyncRxConf.from_file_async(config_path=_RESOURCE_DIR / "primitives.json")
+
+    assert conf.camelcase
+    assert conf.CamelCase
+    assert conf.snake_case
+    assert conf.SNAKE_CASE
+    assert conf.strangecase
+    assert conf.STRanGeCasE
+
+
 def test_numeric_casts() -> None:
     conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.json")
+
+    assert conf.integer - 1 < conf.integer < conf.integer + 1
+    assert conf.integer - 0.1 < conf.integer <= int(conf.integer + 0.1)
+    assert int(conf.integer) == conf.integer
+    assert int(conf.integer * 2 / 2) == conf.integer ** 1
+    assert conf.big_integer > conf.integer
+
+
+@pytest.mark.asyncio
+async def test_numeric_casts_async() -> None:
+    conf = await AsyncRxConf.from_file_async(config_path=_RESOURCE_DIR / "primitives.json")
 
     assert conf.integer - 1 < conf.integer < conf.integer + 1
     assert conf.integer - 0.1 < conf.integer <= int(conf.integer + 0.1)

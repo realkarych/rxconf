@@ -6,6 +6,7 @@ import typing as tp
 from abc import ABCMeta, abstractmethod
 from pathlib import PurePath
 
+import aiofiles
 import yaml
 from dotenv import load_dotenv
 
@@ -50,8 +51,13 @@ class FileConfigType(ConfigType, metaclass=ABCMeta):  # pragma: no cover
     def load_from_path(cls, path: tp.Union[str, PurePath]) -> "FileConfigType":
         pass
 
+    @classmethod
+    @abstractmethod
+    async def load_from_path_async(cls, path: tp.Union[str, PurePath]) -> "FileConfigType":
+        pass
+
     def __repr__(self) -> str:
-        return self._root.__repr__()
+        return repr(self._root)
 
 
 class YamlConfig(FileConfigType):
@@ -72,17 +78,35 @@ class YamlConfig(FileConfigType):
         return self._allowed_extensions
 
     @classmethod
+    def _load_yaml_data(cls, content: str, path: tp.Union[str, PurePath]) -> tp.Dict:
+        try:
+            return yaml.safe_load(content)
+        except yaml.YAMLError as exc:
+            raise exceptions.BrokenConfigSchemaError(
+                f"Error while parsing yaml config: {path}"
+            ) from exc
+
+    @classmethod
     @exceptions.handle_unknown_exception
     def load_from_path(cls, path: tp.Union[str, PurePath]) -> "YamlConfig":
         if not os.path.isfile(str(path)):
             raise exceptions.ConfigNotFoundError(f"Config file not found: {path}")
         with open(str(path)) as file:
-            try:
-                yaml_data = yaml.safe_load(file)
-            except yaml.YAMLError as exc:
-                raise exceptions.BrokenConfigSchemaError(
-                    f"Error while parsing yaml config: {path}"
-                ) from exc
+            yaml_data = cls._load_yaml_data(file.read(), path)
+
+        return cls(
+            root_attribute=cls._process_data(yaml_data),
+            path=path if isinstance(path, PurePath) else PurePath(path)
+        )
+
+    @classmethod
+    @exceptions.handle_unknown_exception
+    async def load_from_path_async(cls, path: tp.Union[str, PurePath]) -> "YamlConfig":
+        if not os.path.isfile(str(path)):
+            raise exceptions.ConfigNotFoundError(f"Config file not found: {path}")
+        async with aiofiles.open(str(path), mode='r') as file:
+            content = await file.read()
+            yaml_data = cls._load_yaml_data(content, path)
 
         return cls(
             root_attribute=cls._process_data(yaml_data),
@@ -136,17 +160,36 @@ class JsonConfig(FileConfigType):
         return self._allowed_extensions
 
     @classmethod
+    def _load_json_data(cls, content: str, path: tp.Union[str, PurePath]) -> tp.Dict:
+        try:
+            return json.loads(content)
+        except json.JSONDecodeError as exc:
+            raise exceptions.BrokenConfigSchemaError(
+                f"Error while parsing json config: {path}"
+            ) from exc
+
+    @classmethod
     @exceptions.handle_unknown_exception
     def load_from_path(cls, path: tp.Union[str, PurePath]) -> "JsonConfig":
         if not os.path.isfile(str(path)):
             raise exceptions.ConfigNotFoundError(f"Config file not found: {path}")
         with open(str(path)) as file:
-            try:
-                json_data = json.load(file)
-            except json.JSONDecodeError as exc:
-                raise exceptions.BrokenConfigSchemaError(
-                    f"Error while parsing json config: {path}"
-                ) from exc
+            content = file.read()
+            json_data = cls._load_json_data(content, path)
+
+        return cls(
+            root_attribute=cls._process_data(json_data),
+            path=path if isinstance(path, PurePath) else PurePath(path)
+        )
+
+    @classmethod
+    @exceptions.handle_unknown_exception
+    async def load_from_path_async(cls, path: tp.Union[str, PurePath]) -> "JsonConfig":
+        if not os.path.isfile(str(path)):
+            raise exceptions.ConfigNotFoundError(f"Config file not found: {path}")
+        async with aiofiles.open(str(path), mode='r') as file:
+            content = await file.read()
+            json_data = cls._load_json_data(content, path)
 
         return cls(
             root_attribute=cls._process_data(json_data),
@@ -196,25 +239,44 @@ class TomlConfig(FileConfigType):
         return self._allowed_extensions
 
     @classmethod
+    def _load_toml_data(cls, content: str, path: tp.Union[str, PurePath]) -> tp.Dict:
+        toml_decode_exc = (
+            toml.TOMLDecodeError  # type: ignore
+            if sys.version_info >= (3, 11)
+            else toml.TomlDecodeError  # type: ignore
+        )
+        try:
+            if sys.version_info >= (3, 11):
+                return toml.loads(content)
+            else:
+                return toml.loads(content)  # pragma: no cover
+        except toml_decode_exc as exc:
+            raise exceptions.BrokenConfigSchemaError(
+                f"Error while parsing toml config: {path}"
+            ) from exc
+
+    @classmethod
     @exceptions.handle_unknown_exception
     def load_from_path(cls, path: tp.Union[str, PurePath]) -> "TomlConfig":
         if not os.path.isfile(str(path)):
             raise exceptions.ConfigNotFoundError(f"Config file not found: {path}")
         with open(str(path), "r", encoding="utf-8") as file:
-            toml_decode_exc = (
-                toml.TOMLDecodeError  # type: ignore
-                if sys.version_info >= (3, 11)
-                else toml.TomlDecodeError  # type: ignore
-            )
-            try:
-                if sys.version_info >= (3, 11):
-                    toml_data = toml.loads(file.read())
-                else:
-                    toml_data = toml.load(file)  # pragma: no cover
-            except toml_decode_exc as exc:
-                raise exceptions.BrokenConfigSchemaError(
-                    f"Error while parsing toml config: {path}"
-                ) from exc
+            content = file.read()
+            toml_data = cls._load_toml_data(content, path)
+
+        return cls(
+            root_attribute=cls._process_data(toml_data),
+            path=path if isinstance(path, PurePath) else PurePath(path)
+        )
+
+    @classmethod
+    @exceptions.handle_unknown_exception
+    async def load_from_path_async(cls, path: tp.Union[str, PurePath]) -> "TomlConfig":
+        if not os.path.isfile(str(path)):
+            raise exceptions.ConfigNotFoundError(f"Config file not found: {path}")
+        async with aiofiles.open(str(path), "r", encoding="utf-8") as file:
+            content = await file.read()
+            toml_data = cls._load_toml_data(content, path)
 
         return cls(
             root_attribute=cls._process_data(toml_data),
@@ -264,14 +326,10 @@ class IniConfig(FileConfigType):
         return self._allowed_extensions
 
     @classmethod
-    @exceptions.handle_unknown_exception
-    def load_from_path(cls, path: tp.Union[str, PurePath]) -> "IniConfig":
-        if not os.path.isfile(str(path)):
-            raise exceptions.ConfigNotFoundError(f"Config file not found: {path}")
-
+    def _load_ini_data(cls, content: str, path: tp.Union[str, PurePath]) -> tp.Dict:
         config = configparser.ConfigParser()
         try:
-            config.read(str(path))
+            config.read_string(content)
         except configparser.Error as exc:
             raise exceptions.BrokenConfigSchemaError(
                 f"Error while parsing ini config: {path}"
@@ -286,6 +344,31 @@ class IniConfig(FileConfigType):
                     current_level[key] = dict()
                 current_level = current_level[key]
             current_level[keys[-1]] = dict(config.items(section))
+        return ini_data
+
+    @classmethod
+    @exceptions.handle_unknown_exception
+    def load_from_path(cls, path: tp.Union[str, PurePath]) -> "IniConfig":
+        if not os.path.isfile(str(path)):
+            raise exceptions.ConfigNotFoundError(f"Config file not found: {path}")
+        with open(str(path), mode='r', encoding='utf-8') as file:
+            content = file.read()
+            ini_data = cls._load_ini_data(content, path)
+
+        return cls(
+            root_attribute=cls._process_data(ini_data),
+            path=path if isinstance(path, PurePath) else PurePath(path),
+        )
+
+    @classmethod
+    @exceptions.handle_unknown_exception
+    async def load_from_path_async(cls, path: tp.Union[str, PurePath]) -> "IniConfig":
+        if not os.path.isfile(str(path)):
+            raise exceptions.ConfigNotFoundError(f"Config file not found: {path}")
+        async with aiofiles.open(str(path), mode='r', encoding='utf-8') as file:
+            content = await file.read()
+            ini_data = cls._load_ini_data(content, path)
+
         return cls(
             root_attribute=cls._process_data(ini_data),
             path=path if isinstance(path, PurePath) else PurePath(path),
@@ -361,3 +444,10 @@ class DotenvConfig(FileConfigType, EnvConfig):
     def load_from_path(cls, path: tp.Union[str, PurePath] = ".env") -> FileConfigType:
         load_dotenv(dotenv_path=path)
         return cls.load_from_environment(path=path)
+
+    @classmethod
+    @exceptions.handle_unknown_exception
+    async def load_from_path_async(cls, path: tp.Union[str, PurePath] = ".env") -> "FileConfigType":
+        return cls.load_from_path(
+            path=path,
+        )
