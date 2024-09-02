@@ -48,12 +48,20 @@ class FileConfigType(ConfigType, metaclass=ABCMeta):  # pragma: no cover
 
     @classmethod
     @abstractmethod
-    def load_from_path(cls, path: tp.Union[str, PurePath]) -> "FileConfigType":
+    def load_from_path(
+        cls,
+        path: tp.Union[str, PurePath],
+        encoding: str,
+    ) -> "FileConfigType":
         pass
 
     @classmethod
     @abstractmethod
-    async def load_from_path_async(cls, path: tp.Union[str, PurePath]) -> "FileConfigType":
+    async def load_from_path_async(
+        cls,
+        path: tp.Union[str, PurePath],
+        encoding: str,
+    ) -> "FileConfigType":
         pass
 
     def __repr__(self) -> str:
@@ -88,10 +96,14 @@ class YamlConfig(FileConfigType):
 
     @classmethod
     @exceptions.handle_unknown_exception
-    def load_from_path(cls, path: tp.Union[str, PurePath]) -> "YamlConfig":
+    def load_from_path(
+        cls,
+        path: tp.Union[str, PurePath],
+        encoding: str,
+    ) -> "YamlConfig":
         if not os.path.isfile(str(path)):
             raise exceptions.ConfigNotFoundError(f"Config file not found: {path}")
-        with open(str(path)) as file:
+        with open(str(path), encoding=encoding) as file:
             yaml_data = cls._load_yaml_data(file.read(), path)
 
         return cls(
@@ -101,10 +113,14 @@ class YamlConfig(FileConfigType):
 
     @classmethod
     @exceptions.handle_unknown_exception
-    async def load_from_path_async(cls, path: tp.Union[str, PurePath]) -> "YamlConfig":
+    async def load_from_path_async(
+        cls,
+        path: tp.Union[str, PurePath],
+        encoding: str,
+    ) -> "YamlConfig":
         if not os.path.isfile(str(path)):
             raise exceptions.ConfigNotFoundError(f"Config file not found: {path}")
-        async with aiofiles.open(str(path), mode='r') as file:
+        async with aiofiles.open(str(path), mode='r', encoding=encoding) as file:
             content = await file.read()
             yaml_data = cls._load_yaml_data(content, path)
 
@@ -170,10 +186,14 @@ class JsonConfig(FileConfigType):
 
     @classmethod
     @exceptions.handle_unknown_exception
-    def load_from_path(cls, path: tp.Union[str, PurePath]) -> "JsonConfig":
+    def load_from_path(
+        cls,
+        path: tp.Union[str, PurePath],
+        encoding: str,
+    ) -> "JsonConfig":
         if not os.path.isfile(str(path)):
             raise exceptions.ConfigNotFoundError(f"Config file not found: {path}")
-        with open(str(path)) as file:
+        with open(str(path), encoding=encoding) as file:
             content = file.read()
             json_data = cls._load_json_data(content, path)
 
@@ -184,10 +204,14 @@ class JsonConfig(FileConfigType):
 
     @classmethod
     @exceptions.handle_unknown_exception
-    async def load_from_path_async(cls, path: tp.Union[str, PurePath]) -> "JsonConfig":
+    async def load_from_path_async(
+        cls,
+        path: tp.Union[str, PurePath],
+        encoding: str,
+    ) -> "JsonConfig":
         if not os.path.isfile(str(path)):
             raise exceptions.ConfigNotFoundError(f"Config file not found: {path}")
-        async with aiofiles.open(str(path), mode='r') as file:
+        async with aiofiles.open(str(path), mode='r', encoding=encoding) as file:
             content = await file.read()
             json_data = cls._load_json_data(content, path)
 
@@ -257,7 +281,11 @@ class TomlConfig(FileConfigType):
 
     @classmethod
     @exceptions.handle_unknown_exception
-    def load_from_path(cls, path: tp.Union[str, PurePath]) -> "TomlConfig":
+    def load_from_path(
+        cls,
+        path: tp.Union[str, PurePath],
+        encoding: str,
+    ) -> "TomlConfig":
         if not os.path.isfile(str(path)):
             raise exceptions.ConfigNotFoundError(f"Config file not found: {path}")
         with open(str(path), "r", encoding="utf-8") as file:
@@ -271,7 +299,11 @@ class TomlConfig(FileConfigType):
 
     @classmethod
     @exceptions.handle_unknown_exception
-    async def load_from_path_async(cls, path: tp.Union[str, PurePath]) -> "TomlConfig":
+    async def load_from_path_async(
+        cls,
+        path: tp.Union[str, PurePath],
+        encoding: str,
+    ) -> "TomlConfig":
         if not os.path.isfile(str(path)):
             raise exceptions.ConfigNotFoundError(f"Config file not found: {path}")
         async with aiofiles.open(str(path), "r", encoding="utf-8") as file:
@@ -348,7 +380,11 @@ class IniConfig(FileConfigType):
 
     @classmethod
     @exceptions.handle_unknown_exception
-    def load_from_path(cls, path: tp.Union[str, PurePath]) -> "IniConfig":
+    def load_from_path(
+        cls,
+        path: tp.Union[str, PurePath],
+        encoding: str,
+    ) -> "IniConfig":
         if not os.path.isfile(str(path)):
             raise exceptions.ConfigNotFoundError(f"Config file not found: {path}")
         with open(str(path), mode='r', encoding='utf-8') as file:
@@ -362,7 +398,11 @@ class IniConfig(FileConfigType):
 
     @classmethod
     @exceptions.handle_unknown_exception
-    async def load_from_path_async(cls, path: tp.Union[str, PurePath]) -> "IniConfig":
+    async def load_from_path_async(
+        cls,
+        path: tp.Union[str, PurePath],
+        encoding: str,
+    ) -> "IniConfig":
         if not os.path.isfile(str(path)):
             raise exceptions.ConfigNotFoundError(f"Config file not found: {path}")
         async with aiofiles.open(str(path), mode='r', encoding='utf-8') as file:
@@ -441,13 +481,22 @@ class DotenvConfig(FileConfigType, EnvConfig):
 
     @classmethod
     @exceptions.handle_unknown_exception
-    def load_from_path(cls, path: tp.Union[str, PurePath] = ".env") -> FileConfigType:
+    def load_from_path(
+        cls,
+        path: tp.Union[str, PurePath] = ".env",
+        encoding: str = "utf-8",
+    ) -> FileConfigType:
         load_dotenv(dotenv_path=path)
         return cls.load_from_environment(path=path)
 
     @classmethod
     @exceptions.handle_unknown_exception
-    async def load_from_path_async(cls, path: tp.Union[str, PurePath] = ".env") -> "FileConfigType":
+    async def load_from_path_async(
+        cls,
+        path: tp.Union[str, PurePath] = ".env",
+        encoding: str = "utf-8",
+    ) -> "FileConfigType":
         return cls.load_from_path(
             path=path,
+            encoding=encoding,
         )

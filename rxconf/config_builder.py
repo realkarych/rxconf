@@ -20,8 +20,22 @@ class FileConfigBuilder(ConfigBuilder):
     def __init__(self, config_resolver: FileConfigResolver) -> None:
         self._config_resolver: FileConfigResolver = config_resolver
 
-    def build(self, path: tp.Union[str, pathlib.PurePath]) -> FileConfigType:
-        return self._config_resolver.resolve(path=path).load_from_path(path)
+    def build(
+        self: "FileConfigBuilder",
+        path: tp.Union[str, pathlib.PurePath],
+        encoding: str,
+    ) -> FileConfigType:
+        return self._config_resolver.resolve(path=path).load_from_path(
+            path=path,
+            encoding=encoding,
+        )
 
-    async def build_async(self, path: tp.Union[str, pathlib.PurePath]) -> FileConfigType:
-        return await self._config_resolver.resolve(path=path).load_from_path_async(path)
+    async def build_async(
+        self,
+        path: tp.Union[str, pathlib.PurePath],
+        encoding: str,
+    ) -> FileConfigType:
+        return await self._config_resolver.resolve(path=path).load_from_path_async(
+            path=path,
+            encoding=encoding,
+        )
