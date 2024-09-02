@@ -24,6 +24,7 @@ class RxConf(MetaRxConf):
     def from_file(
         cls: tp.Type["RxConf"],
         config_path: tp.Union[str, pathlib.PurePath],
+        encoding: str = "utf-8",
         file_config_resolver: config_resolver.FileConfigResolver = config_resolver.DefaultFileConfigResolver,
     ) -> "RxConf":
         return cls(
@@ -31,6 +32,7 @@ class RxConf(MetaRxConf):
                 config_resolver=file_config_resolver,
             ).build(
                 path=config_path,
+                encoding=encoding,
             )
         )
 
@@ -58,6 +60,7 @@ class AsyncRxConf(RxConf):
     async def from_file_async(
         cls: tp.Type["AsyncRxConf"],
         config_path: tp.Union[str, pathlib.PurePath],
+        encoding: str = "utf-8",
         file_config_resolver: config_resolver.FileConfigResolver = config_resolver.DefaultFileConfigResolver,
     ) -> "AsyncRxConf":
         return cls(
@@ -65,5 +68,6 @@ class AsyncRxConf(RxConf):
                 config_resolver=file_config_resolver,
             ).build_async(
                 path=config_path,
+                encoding=encoding,
             )
         )
