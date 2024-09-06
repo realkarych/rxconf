@@ -1,4 +1,5 @@
 import abc
+import functools
 import pathlib
 import typing as tp
 
@@ -71,3 +72,38 @@ class AsyncRxConf(RxConf):
                 encoding=encoding,
             )
         )
+
+
+class MetaReniewableRxConf(metaclass=abc.ABCMeta):
+
+    @abc.abstractmethod
+    def renew(self) -> RxConf:
+        pass
+
+
+class RenewableRxConf(MetaReniewableRxConf):
+
+    def __init__(self, base_config: RxConf):
+        self._base_rxconf = base_config
+
+    def renew(self) -> RxConf:
+        # TODO: Implement renewing logic
+        return self._base_rxconf
+
+
+class MetaObservable(metaclass=abc.ABCMeta):
+    pass
+
+
+class ObservableRxConf(MetaObservable):
+
+    def __init__(self, renewable_rxconf: MetaReniewableRxConf) -> None:
+        self._renewable_rxconf = renewable_rxconf
+
+    def include_config(self, func: tp.Callable[..., tp.Any]) -> tp.Callable[..., tp.Any]:
+        @functools.wraps(func)
+        def wrapper(*args: tp.Any, **kwargs: tp.Any) -> tp.Any:
+            kwargs["config"] = self._renewable_rxconf.renew()
+            return func(*args, **kwargs)
+
+        return wrapper
