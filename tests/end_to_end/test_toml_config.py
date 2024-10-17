@@ -39,7 +39,7 @@ def test_empty() -> None:
 
 @pytest.mark.asyncio
 async def test_empty_async() -> None:
-    conf = await AsyncRxConf.from_file_async(config_path=_RESOURCE_DIR / "empty.toml")
+    conf = await AsyncRxConf.from_file(config_path=_RESOURCE_DIR / "empty.toml")
 
     assert conf
 
@@ -55,7 +55,7 @@ def test_primitive_types() -> None:
 
 @pytest.mark.asyncio
 async def test_primitive_types_async() -> None:
-    conf = await AsyncRxConf.from_file_async(config_path=_RESOURCE_DIR / "primitives.toml")
+    conf = await AsyncRxConf.from_file(config_path=_RESOURCE_DIR / "primitives.toml")
 
     assert conf.integer == 42
     assert conf.float == 36.6
@@ -122,7 +122,7 @@ def test_not_existing_attribute() -> None:
 
 @pytest.mark.asyncio
 async def test_not_existing_attribute_async() -> None:
-    conf = await AsyncRxConf.from_file_async(config_path=_RESOURCE_DIR / "primitives.toml")
+    conf = await AsyncRxConf.from_file(config_path=_RESOURCE_DIR / "primitives.toml")
 
     with pytest.raises(exceptions.RxConfError):
         assert conf.string.unknown

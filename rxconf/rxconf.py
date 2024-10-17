@@ -14,6 +14,10 @@ class MetaRxConf(metaclass=abc.ABCMeta):
     ) -> None:
         self._config = config
 
+    @abc.abstractmethod
+    def __getattr__(self, item: str) -> tp.Any:
+        pass
+
 
 class RxConf(MetaRxConf):
 
@@ -54,10 +58,13 @@ class RxConf(MetaRxConf):
         return repr(self._config)
 
 
-class AsyncRxConf(RxConf):
+class AsyncRxConf(MetaRxConf):
+
+    def __init__(self, config: config_types.ConfigType) -> None:
+        super().__init__(config)
 
     @classmethod
-    async def from_file_async(
+    async def from_file(
         cls: tp.Type["AsyncRxConf"],
         config_path: tp.Union[str, pathlib.PurePath],
         encoding: str = "utf-8",
@@ -71,3 +78,20 @@ class AsyncRxConf(RxConf):
                 encoding=encoding,
             )
         )
+
+    @classmethod
+    def from_env(
+        cls: tp.Type["RxConf"],
+        prefix: tp.Optional[str] = None,
+    ) -> "RxConf":
+        return cls(
+            config=config_types.EnvConfig.load_from_environment(
+                prefix=prefix,
+            ),
+        )
+
+    def __getattr__(self, item: str) -> tp.Any:
+        return getattr(self._config, item.lower())
+
+    def __repr__(self) -> str:
+        return repr(self._config)

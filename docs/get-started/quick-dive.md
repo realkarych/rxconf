@@ -149,7 +149,7 @@ Then load config:
 
 ```python
 async def main():
-    conf = await AsyncRxConf.from_file_async(path="...")
+    conf = await AsyncRxConf.from_file(path="...")
     # Then use conf as same as RxConf
 ```
 
