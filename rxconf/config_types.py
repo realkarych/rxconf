@@ -500,3 +500,12 @@ class DotenvConfig(FileConfigType, EnvConfig):
             path=path,
             encoding=encoding,
         )
+
+
+BASE_CONFIG_TYPES: tp.Final[tp.Tuple[ConfigType, ...]] = (
+    YamlConfig,
+    JsonConfig,
+    TomlConfig,
+    IniConfig,
+    DotenvConfig,
+)

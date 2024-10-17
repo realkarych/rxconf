@@ -12,7 +12,7 @@ class ConfigResolver(metaclass=ABCMeta):
 
 class FileConfigResolver(ConfigResolver):
 
-    def __init__(self, config_types: tp.List[tp.Type[config_types.FileConfigType]]) -> None:
+    def __init__(self, config_types: tp.Iterable[tp.Type[config_types.FileConfigType]]) -> None:
         self._config_types = config_types
 
     def resolve(
@@ -36,11 +36,5 @@ class FileConfigResolver(ConfigResolver):
 
 
 DefaultFileConfigResolver: tp.Final[FileConfigResolver] = FileConfigResolver(
-    config_types=[
-        config_types.YamlConfig,
-        config_types.JsonConfig,
-        config_types.TomlConfig,
-        config_types.IniConfig,
-        config_types.DotenvConfig,
-    ]
+    config_types=config_types.BASE_CONFIG_TYPES,
 )
