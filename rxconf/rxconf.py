@@ -6,16 +6,58 @@ from rxconf import config_resolver, config_types
 from rxconf.config_builder import FileConfigBuilder
 
 
-class MetaRxConf(metaclass=abc.ABCMeta):
+class MetaTree(metaclass=abc.ABCMeta):
 
     def __init__(
-        self: "MetaRxConf",
+        self: "MetaTree",
         config: config_types.ConfigType,
     ) -> None:
         self._config = config
 
     @abc.abstractmethod
     def __getattr__(self, item: str) -> tp.Any:
+        pass
+
+
+class MetaRxConf(MetaTree, metaclass=abc.ABCMeta):
+
+    @classmethod
+    @abc.abstractmethod
+    def from_file(
+        cls: tp.Type["MetaRxConf"],
+        config_path: tp.Union[str, pathlib.PurePath],
+        encoding: str,
+        file_config_resolver: config_resolver.FileConfigResolver,
+    ) -> "MetaRxConf":
+        pass
+
+    @classmethod
+    @abc.abstractmethod
+    def from_env(
+        cls: tp.Type["MetaRxConf"],
+        prefix: tp.Optional[str] = None,
+    ) -> "MetaRxConf":
+        pass
+
+
+class AsyncMetaRxConf(MetaTree, metaclass=abc.ABCMeta):
+
+    @classmethod
+    @abc.abstractmethod
+    async def from_file(
+        cls: tp.Type["AsyncMetaRxConf"],
+        config_path: tp.Union[str, pathlib.PurePath],
+        encoding: str,
+        file_config_resolver: config_resolver.FileConfigResolver,
+    ) -> "AsyncMetaRxConf":
+        pass
+
+    @classmethod
+    @abc.abstractmethod
+    async def from_env(
+        cls: tp.Type["AsyncMetaRxConf"],
+        prefix: tp.Optional[str] = None,
+    ) -> "AsyncMetaRxConf":
         pass
 
 
@@ -58,7 +100,7 @@ class RxConf(MetaRxConf):
         return repr(self._config)
 
 
-class AsyncRxConf(MetaRxConf):
+class AsyncRxConf(AsyncMetaRxConf):
 
     def __init__(self, config: config_types.ConfigType) -> None:
         super().__init__(config)
@@ -80,10 +122,10 @@ class AsyncRxConf(MetaRxConf):
         )
 
     @classmethod
-    def from_env(
-        cls: tp.Type["RxConf"],
+    async def from_env(
+        cls: tp.Type["AsyncRxConf"],
         prefix: tp.Optional[str] = None,
-    ) -> "RxConf":
+    ) -> "AsyncRxConf":
         return cls(
             config=config_types.EnvConfig.load_from_environment(
                 prefix=prefix,

@@ -502,7 +502,7 @@ class DotenvConfig(FileConfigType, EnvConfig):
         )
 
 
-BASE_CONFIG_TYPES: tp.Final[tp.Tuple[tp.Type[ConfigType], ...]] = (
+BASE_FILE_CONFIG_TYPES: tp.Final[tp.Tuple[tp.Type[FileConfigType], ...]] = (
     YamlConfig,
     JsonConfig,
     TomlConfig,

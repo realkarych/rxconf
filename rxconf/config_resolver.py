@@ -36,5 +36,5 @@ class FileConfigResolver(ConfigResolver):
 
 
 DefaultFileConfigResolver: tp.Final[FileConfigResolver] = FileConfigResolver(
-    config_types=config_types.BASE_CONFIG_TYPES,
+    config_types=config_types.BASE_FILE_CONFIG_TYPES,
 )
