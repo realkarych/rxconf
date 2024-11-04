@@ -15,7 +15,7 @@ def test_empty() -> None:
 
 @pytest.mark.asyncio
 async def test_empty_async() -> None:
-    conf = await AsyncRxConf.from_file_async(config_path=_RESOURCE_DIR / "empty.json")
+    conf = await AsyncRxConf.from_file(config_path=_RESOURCE_DIR / "empty.json")
 
     assert conf
 
@@ -32,7 +32,7 @@ def test_primitive_types() -> None:
 
 @pytest.mark.asyncio
 async def test_primitive_types_async() -> None:
-    conf = await AsyncRxConf.from_file_async(config_path=_RESOURCE_DIR / "primitives.json")
+    conf = await AsyncRxConf.from_file(config_path=_RESOURCE_DIR / "primitives.json")
 
     assert conf.integer == 42
     assert conf.float == 36.6
@@ -59,7 +59,7 @@ def test_pritive_collections() -> None:
 
 @pytest.mark.asyncio
 async def test_pritive_collections_async() -> None:
-    conf = await AsyncRxConf.from_file_async(config_path=_RESOURCE_DIR / "primitives.json")
+    conf = await AsyncRxConf.from_file(config_path=_RESOURCE_DIR / "primitives.json")
     expected_list = [1, 2, 3]
     expected_set = {"a", "b", "c"}
 
@@ -87,7 +87,7 @@ def test_key_cases() -> None:
 
 @pytest.mark.asyncio
 async def test_key_cases_async() -> None:
-    conf = await AsyncRxConf.from_file_async(config_path=_RESOURCE_DIR / "primitives.json")
+    conf = await AsyncRxConf.from_file(config_path=_RESOURCE_DIR / "primitives.json")
 
     assert conf.camelcase
     assert conf.CamelCase
@@ -109,7 +109,7 @@ def test_numeric_casts() -> None:
 
 @pytest.mark.asyncio
 async def test_numeric_casts_async() -> None:
-    conf = await AsyncRxConf.from_file_async(config_path=_RESOURCE_DIR / "primitives.json")
+    conf = await AsyncRxConf.from_file(config_path=_RESOURCE_DIR / "primitives.json")
 
     assert conf.integer - 1 < conf.integer < conf.integer + 1
     assert conf.integer - 0.1 < conf.integer <= int(conf.integer + 0.1)
