@@ -120,7 +120,7 @@ class YamlConfig(FileConfigType):
     ) -> "YamlConfig":
         if not os.path.isfile(str(path)):
             raise exceptions.ConfigNotFoundError(f"Config file not found: {path}")
-        async with aiofiles.open(str(path), mode='r', encoding=encoding) as file:
+        async with aiofiles.open(str(path), mode="r", encoding=encoding) as file:
             content = await file.read()
             yaml_data = cls._load_yaml_data(content, path)
 
@@ -211,7 +211,7 @@ class JsonConfig(FileConfigType):
     ) -> "JsonConfig":
         if not os.path.isfile(str(path)):
             raise exceptions.ConfigNotFoundError(f"Config file not found: {path}")
-        async with aiofiles.open(str(path), mode='r', encoding=encoding) as file:
+        async with aiofiles.open(str(path), mode="r", encoding=encoding) as file:
             content = await file.read()
             json_data = cls._load_json_data(content, path)
 
@@ -288,7 +288,7 @@ class TomlConfig(FileConfigType):
     ) -> "TomlConfig":
         if not os.path.isfile(str(path)):
             raise exceptions.ConfigNotFoundError(f"Config file not found: {path}")
-        with open(str(path), "r", encoding="utf-8") as file:
+        with open(str(path), "r", encoding=encoding) as file:
             content = file.read()
             toml_data = cls._load_toml_data(content, path)
 
@@ -306,7 +306,7 @@ class TomlConfig(FileConfigType):
     ) -> "TomlConfig":
         if not os.path.isfile(str(path)):
             raise exceptions.ConfigNotFoundError(f"Config file not found: {path}")
-        async with aiofiles.open(str(path), "r", encoding="utf-8") as file:
+        async with aiofiles.open(str(path), "r", encoding=encoding) as file:
             content = await file.read()
             toml_data = cls._load_toml_data(content, path)
 
@@ -387,7 +387,7 @@ class IniConfig(FileConfigType):
     ) -> "IniConfig":
         if not os.path.isfile(str(path)):
             raise exceptions.ConfigNotFoundError(f"Config file not found: {path}")
-        with open(str(path), mode='r', encoding='utf-8') as file:
+        with open(str(path), mode="r", encoding=encoding) as file:
             content = file.read()
             ini_data = cls._load_ini_data(content, path)
 
@@ -405,7 +405,7 @@ class IniConfig(FileConfigType):
     ) -> "IniConfig":
         if not os.path.isfile(str(path)):
             raise exceptions.ConfigNotFoundError(f"Config file not found: {path}")
-        async with aiofiles.open(str(path), mode='r', encoding='utf-8') as file:
+        async with aiofiles.open(str(path), mode="r", encoding=encoding) as file:
             content = await file.read()
             ini_data = cls._load_ini_data(content, path)
 
