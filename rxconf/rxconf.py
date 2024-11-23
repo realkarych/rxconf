@@ -36,6 +36,7 @@ class MetaRxConf(MetaTree, metaclass=abc.ABCMeta):
     def from_env(
         cls: tp.Type["MetaRxConf"],
         prefix: tp.Optional[str] = None,
+        remove_prefix: tp.Optional[bool] = False,
     ) -> "MetaRxConf":
         pass
 
@@ -57,6 +58,7 @@ class AsyncMetaRxConf(MetaTree, metaclass=abc.ABCMeta):
     async def from_env(
         cls: tp.Type["AsyncMetaRxConf"],
         prefix: tp.Optional[str] = None,
+        remove_prefix: tp.Optional[bool] = False,
     ) -> "AsyncMetaRxConf":
         pass
 
@@ -86,10 +88,12 @@ class RxConf(MetaRxConf):
     def from_env(
         cls: tp.Type["RxConf"],
         prefix: tp.Optional[str] = None,
+        remove_prefix: tp.Optional[bool] = False,
     ) -> "RxConf":
         return cls(
             config=config_types.EnvConfig.load_from_environment(
                 prefix=prefix,
+                remove_prefix=remove_prefix,
             ),
         )
 
@@ -125,10 +129,12 @@ class AsyncRxConf(AsyncMetaRxConf):
     async def from_env(
         cls: tp.Type["AsyncRxConf"],
         prefix: tp.Optional[str] = None,
+        remove_prefix: tp.Optional[bool] = False,
     ) -> "AsyncRxConf":
         return cls(
             config=config_types.EnvConfig.load_from_environment(
                 prefix=prefix,
+                remove_prefix=remove_prefix,
             ),
         )
 
