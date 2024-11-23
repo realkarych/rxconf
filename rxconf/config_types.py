@@ -5,8 +5,6 @@ import sys
 import typing as tp
 from abc import ABCMeta, abstractmethod
 from pathlib import PurePath
-from selectors import SelectSelector
-
 import aiofiles
 import yaml
 from dotenv import load_dotenv
