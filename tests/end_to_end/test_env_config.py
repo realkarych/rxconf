@@ -1,4 +1,3 @@
-from os import remove
 from pathlib import Path
 
 import pytest
