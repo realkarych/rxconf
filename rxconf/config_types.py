@@ -450,7 +450,6 @@ class EnvConfig(ConfigType):
             cls,
             prefix: tp.Optional[str] = None,
             remove_prefix: tp.Optional[bool] = False,
-            **kwargs
     ) -> "EnvConfig":
         if prefix and remove_prefix:
             env_vars = {
@@ -467,7 +466,7 @@ class EnvConfig(ConfigType):
         else:
             env_vars = {k.lower(): v for k, v in os.environ.items()}
         root_attribute = cls._process_data(env_vars)
-        return cls(root_attribute=root_attribute, **kwargs)
+        return cls(root_attribute=root_attribute)
 
     @classmethod
     @exceptions.handle_unknown_exception
@@ -500,7 +499,7 @@ class DotenvConfig(FileConfigType, EnvConfig):
         path: tp.Union[str, PurePath] = ".env",
         encoding: str = "utf-8",
     ) -> FileConfigType:
-        load_dotenv(dotenv_path=path)
+        load_dotenv(dotenv_path=path, encoding=encoding)
         return cls.load_from_environment(path=path)
 
     @classmethod
