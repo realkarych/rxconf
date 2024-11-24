@@ -1,3 +1,4 @@
+from os import remove
 from pathlib import Path
 
 import pytest
@@ -72,6 +73,7 @@ def set_env_vars(monkeypatch):
         "StrANGEcAse": "abc",
         "soME_Prefix_value1": "1",
         "some_prefix_value2": "2",
+        "SomePrefixValue3": "3",
     }
     for key, value in env_vars.items():
         monkeypatch.setenv(key, value)
@@ -132,10 +134,16 @@ def test_not_existing_attribute_from_env() -> None:
 
 
 def test_env_prefix() -> None:
-    conf = RxConf.from_env(prefix="some_prefix_")
+    conf1 = RxConf.from_env(prefix="some_prefix_")
+    assert conf1.some_prefix_value1 == 1
+    assert conf1.some_PREFIX_value2 == 2
 
-    assert conf.some_prefix_value1 == 1
-    assert conf.some_PREFIX_value2 == 2
+    conf2 = RxConf.from_env(prefix="some_prefix", remove_prefix=True)
+    assert conf2.value1 == 1
+    assert conf2.value2 == 2
+
+    conf3 = RxConf.from_env(prefix="somePrefix", remove_prefix=True)
+    assert conf3.value3 == 3
 
 
 def test_repr():
