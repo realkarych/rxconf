@@ -500,7 +500,11 @@ class DotenvConfig(FileConfigType, EnvConfig):
         encoding: str = "utf-8",
     ) -> FileConfigType:
         load_dotenv(dotenv_path=path, encoding=encoding)
-        return cls.load_from_environment(path=path)
+        env_config = EnvConfig.load_from_environment()
+        return cls(
+            root_attribute=env_config._root,
+            path=path if isinstance(path, PurePath) else PurePath(path),
+        )
 
     @classmethod
     @exceptions.handle_unknown_exception
