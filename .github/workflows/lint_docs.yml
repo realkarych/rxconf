@@ -31,5 +31,4 @@ jobs:
         run: npm install -g markdownlint-cli
 
       - name: Lint Markdown files
-        continue-on-error: true
         run: markdownlint .
