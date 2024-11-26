@@ -7,7 +7,7 @@ from rxconf import exceptions, types
 def _patch_other_value(func: tp.Callable[..., tp.Any]) -> tp.Callable[..., tp.Any]:
     def wrapper(self: "AttributeType", other: tp.Any) -> tp.Any:
         if isinstance(other, AttributeType):
-            other = other.value
+            other = other._value
         return func(self, other)
     return wrapper
 
@@ -17,11 +17,6 @@ class AttributeType(metaclass=ABCMeta):
 
     def __init__(self, value: tp.Any) -> None:  # pragma: no cover
         self._value = value
-
-    @property
-    @abstractmethod
-    def value(self) -> tp.Any:  # pragma: no cover
-        raise NotImplementedError()
 
     @abstractmethod
     def __getattr__(self, item: str) -> tp.Any:  # pragma: no cover
@@ -186,10 +181,6 @@ class MockAttribute(AttributeType):  # pragma: no cover
     def __init__(self, value: tp.Any = None) -> None:
         self._value = value
 
-    @property
-    def value(self) -> None:
-        pass
-
     def __getattr__(self, item: str) -> None:
         pass
 
@@ -214,18 +205,6 @@ class YamlAttribute(AttributeType):
         ]
     ) -> None:
         self._value = value
-
-    @property
-    def value(
-        self: "YamlAttribute"
-    ) -> tp.Union[
-        types.YAML_ATTRIBUTE_TYPE,
-        "YamlAttribute",
-        tp.List["YamlAttribute"],
-        tp.Set["YamlAttribute"],
-        tp.Dict[str, "YamlAttribute"],
-    ]:
-        return self._value
 
     @exceptions.handle_unknown_exception
     def __getattr__(
@@ -266,17 +245,6 @@ class JsonAttribute(AttributeType):
     ) -> None:
         self._value = value
 
-    @property
-    def value(
-        self: "JsonAttribute"
-    ) -> tp.Union[
-        types.JSON_ATTRIBUTE_TYPE,
-        "JsonAttribute",
-        tp.List["JsonAttribute"],
-        tp.Dict[str, "JsonAttribute"],
-    ]:
-        return self._value
-
     @exceptions.handle_unknown_exception
     def __getattr__(
         self: "JsonAttribute",
@@ -315,17 +283,6 @@ class TomlAttribute(AttributeType):
     ) -> None:
         self._value = value
 
-    @property
-    def value(
-        self: "TomlAttribute"
-    ) -> tp.Union[
-        types.TOML_ATTRIBUTE_TYPE,
-        "TomlAttribute",
-        tp.List["TomlAttribute"],
-        tp.Dict[str, "TomlAttribute"],
-    ]:
-        return self._value
-
     @exceptions.handle_unknown_exception
     def __getattr__(
         self: "TomlAttribute",
@@ -362,16 +319,6 @@ class EnvAttribute(AttributeType):
     ) -> None:
         self._value = value
 
-    @property
-    def value(
-        self: "EnvAttribute"
-    ) -> tp.Union[
-        types.ENV_ATTRIBUTE_TYPE,
-        "EnvAttribute",
-        tp.Dict[str, "EnvAttribute"],
-    ]:
-        return self._value
-
     @exceptions.handle_unknown_exception
     def __getattr__(
         self: "EnvAttribute",
@@ -401,15 +348,6 @@ class IniAttribute(AttributeType):
         tp.Dict[str, "IniAttribute"]
     ]) -> None:
         self._value = value
-
-    @property
-    def value(
-            self: "IniAttribute"
-    ) -> tp.Union[
-        types.INI_ATTRIBUTE_TYPE,
-        tp.Dict[str, "IniAttribute"]
-    ]:
-        return self._value
 
     @exceptions.handle_unknown_exception
     def __getattr__(
