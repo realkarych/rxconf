@@ -29,6 +29,7 @@ def test_key_cases() -> None:
 
     assert conf.STRANGECASE
     assert conf.STRanGeCasE
+    assert conf.value == "x"
 
 
 def test_numeric_casts() -> None:
