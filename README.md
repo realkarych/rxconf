@@ -18,6 +18,8 @@
 
 ---
 
+**Library is in develop, versions may not be backward compatible. THE FIRST STABLE VERSION WILL BE 1.0.0**
+
 **Documentation:** <https://realkarych.github.io/rxconf/>
 
 **Source code:** <https://github.com/realkarych/rxconf/>
