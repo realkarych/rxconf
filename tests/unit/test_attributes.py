@@ -22,7 +22,7 @@ class TestAttributeType(unittest.TestCase):
 
     def test_str_conversion(self):
         attr = MockAttribute("test")
-        self.assertEqual(str(attr), "test")
+        self.assertEqual(str(attr), "AttributeType(test)")
 
     def test_bool_conversion(self):
         attr = MockAttribute(True)

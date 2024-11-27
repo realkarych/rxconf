@@ -100,7 +100,7 @@ def test_string_casts() -> None:
 
     assert conf.string[0] == "H"
     assert conf.string[1:-1] == "ello world ="
-    assert str(conf.string).upper() == "HELLO WORLD =)"
+    assert str(conf.string).upper() == "ATTRIBUTETYPE(HELLO WORLD =))"
     assert conf.string + "!" == "Hello world =)!"
     with pytest.raises(exceptions.RxConfError):
         assert conf.string.unknown

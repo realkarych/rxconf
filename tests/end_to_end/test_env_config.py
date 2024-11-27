@@ -47,7 +47,7 @@ def test_string_casts() -> None:
 
     assert conf.STRING[0] == "H"
     assert conf.string[1:-1] == "ello world ="
-    assert str(conf.string).upper() == "HELLO WORLD =)"
+    assert str(conf.string).upper() == "ATTRIBUTETYPE(HELLO WORLD =))"
     assert conf.string + "!" == "Hello world =)!"
     with pytest.raises(exceptions.RxConfError):
         assert conf.string.unknown
@@ -120,7 +120,7 @@ def test_string_casts_from_env() -> None:
 
     assert conf.STRING[0] == "H"
     assert conf.string[1:-1] == "ello world ="
-    assert str(conf.string).upper() == "HELLO WORLD =)"
+    assert str(conf.string).upper() == "ATTRIBUTETYPE(HELLO WORLD =))"
     assert conf.string + "!" == "Hello world =)!"
     with pytest.raises(exceptions.RxConfError):
         assert conf.string.unknown
@@ -195,7 +195,7 @@ async def test_string_casts_async() -> None:
 
     assert conf.STRING[0] == "H"
     assert conf.string[1:-1] == "ello world ="
-    assert str(conf.string).upper() == "HELLO WORLD =)"
+    assert str(conf.string).upper() == "ATTRIBUTETYPE(HELLO WORLD =))"
     assert conf.string + "!" == "Hello world =)!"
     with pytest.raises(exceptions.RxConfError):
         assert conf.string.unknown
