@@ -30,6 +30,10 @@
 Currently in develop...
 </h1>
 
+<h3 align="center">
+The first stable version will be 1.0.0
+</h3>
+
 - [x] Implement RxConf DAO
   - [x] Implement base DAO
   - [x] Implement env-vars & dotenv-files DAO
