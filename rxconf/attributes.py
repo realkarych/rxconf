@@ -32,7 +32,7 @@ class AttributeType(metaclass=ABCMeta):
 
     @exceptions.handle_unknown_exception
     def __str__(self) -> str:
-        return str(self._value)  # type: ignore
+        return f"AttributeType({self._value})"  # type: ignore
 
     @exceptions.handle_unknown_exception
     def __bool__(self) -> bool:
