@@ -18,8 +18,6 @@
 
 ---
 
-**Library is in develop, versions may not be backward compatible. THE FIRST STABLE VERSION WILL BE 1.0.0**
-
 **Documentation:** <https://realkarych.github.io/rxconf/>
 
 **Source code:** <https://github.com/realkarych/rxconf/>
@@ -31,6 +29,10 @@
 <h1 align="center">
 Currently in develop...
 </h1>
+
+<h3 align="center">
+The first stable version will be 1.0.0
+</h3>
 
 - [x] Implement RxConf DAO
   - [x] Implement base DAO
