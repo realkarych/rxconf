@@ -135,11 +135,11 @@ class YamlConfig(FileConfigType):
     @classmethod
     @exceptions.handle_unknown_exception
     def _process_data(cls, data: tp.Any) -> attrs.YamlAttribute:
-        if isinstance(data, tp.Dict):
+        if isinstance(data, dict):
             return attrs.YamlAttribute(
                 value={k.lower(): cls._process_data(v) for k, v in data.items()}
             )
-        elif isinstance(data, tp.List):
+        elif isinstance(data, list):
             return attrs.YamlAttribute(
                 value=[
                     cls._process_data(item) if not isinstance(item, dict) else attrs.YamlAttribute(
@@ -147,7 +147,7 @@ class YamlConfig(FileConfigType):
                     ) for item in data
                 ]
             )
-        elif isinstance(data, tp.Set):
+        elif isinstance(data, set):
             return attrs.YamlAttribute(  # pragma: no cover
                 value={cls._process_data(item) for item in data}
             )
