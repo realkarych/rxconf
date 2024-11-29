@@ -6,10 +6,12 @@ def hash_to_int(value: str) -> int:
     """Hash the value and return it as integer"""
     return int(sha256(value.encode('utf-8')).hexdigest(), 16)
 
+
 struct_hash = {
         "list": hash_to_int("[]"),
         "set": hash_to_int("()"),
     }
+
 
 def compute_conf_hash(attribute: AttributeType, hash_sum: int = 0) -> int:
     if isinstance(attribute._value, dict):
