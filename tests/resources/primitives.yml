@@ -5,10 +5,10 @@ string: "Hello world =)"
 boolean: True
 none: Null
 list: [1, 2, 3]
-set:
-  - a
-  - b
-  - c
+set: !!set
+  ? a
+  ? b
+  ? c
 CamelCase: ok
 snake_case: ok
 StRanGeCasE: ok
