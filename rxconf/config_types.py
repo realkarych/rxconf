@@ -79,7 +79,6 @@ class YamlConfig(FileConfigType):
     _allowed_extensions: tp.Final[frozenset] = frozenset({".yaml", ".yml"})
     _root: tp.Final[rxconf.YamlAttribute]
     _path: tp.Final[PurePath]
-    _hash: tp.Final[int]
 
     def __init__(
             self: "YamlConfig",
@@ -178,7 +177,6 @@ class JsonConfig(FileConfigType):
     _allowed_extensions: tp.Final[frozenset] = frozenset({".json"})
     _root: tp.Final[rxconf.JsonAttribute]
     _path: tp.Final[PurePath]
-    _hash: tp.Final[int]
 
     def __init__(
             self: "JsonConfig",
@@ -274,7 +272,6 @@ class TomlConfig(FileConfigType):
     _allowed_extensions: tp.Final[frozenset] = frozenset({".toml"})
     _root: tp.Final[rxconf.TomlAttribute]
     _path: tp.Final[PurePath]
-    _hash: tp.Final[int]
 
     def __init__(
             self: "TomlConfig",
@@ -378,7 +375,6 @@ class IniConfig(FileConfigType):
     _allowed_extensions: tp.Final[frozenset] = frozenset({".ini"})
     _root: tp.Final[rxconf.IniAttribute]
     _path: tp.Final[PurePath]
-    _hash: tp.Final[int]
 
     def __init__(
             self: "IniConfig",
@@ -531,7 +527,6 @@ class DotenvConfig(FileConfigType, EnvConfig):
 
     _allowed_extensions: tp.Final[frozenset] = frozenset({".env"})
     _path: tp.Final[PurePath]
-    _hash: tp.Final[int]
 
     def __init__(
         self: "DotenvConfig",
