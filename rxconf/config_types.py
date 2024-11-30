@@ -7,7 +7,7 @@ from abc import ABCMeta, abstractmethod
 from pathlib import PurePath
 import aiofiles
 import yaml
-from dotenv import load_dotenv
+import dotenv
 from rxconf import types
 from rxconf import hashtools
 
@@ -554,7 +554,7 @@ class DotenvConfig(FileConfigType, EnvConfig):
         path: tp.Union[str, PurePath] = ".env",
         encoding: str = "utf-8",
     ) -> FileConfigType:
-        load_dotenv(dotenv_path=path, encoding=encoding)
+        dotenv.load_dotenv(dotenv_path=path, encoding=encoding)
         env_config = EnvConfig.load_from_environment()
         return cls(
             root_attribute=env_config._root,
