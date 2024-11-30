@@ -52,6 +52,5 @@ class TestComputeConfHash(unittest.TestCase):
         conf2 = RxConf.from_file(config_path=_CONF_HASH_DIR / "simple_structure.yml")
 
         self.assertEqual(conf1 == conf2, False)
-
-
-    # ---------- AsyncRxConf --------
+    # --------------------------------------
+    # ------------ AsyncRxConf -------------
