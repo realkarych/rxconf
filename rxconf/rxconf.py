@@ -158,7 +158,7 @@ class AsyncRxConf(AsyncMetaRxConf):
             ),
         )
 
-    async def _get_hash(self) -> bool:
+    def _get_hash(self) -> bool:
         return self._config._get_hash()
 
     def __eq__(self, other) -> bool:
