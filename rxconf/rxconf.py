@@ -45,7 +45,7 @@ class MetaRxConf(MetaTree, metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def get_hash(self) -> bool:
+    def _get_hash(self) -> bool:
         pass
 
 
@@ -69,6 +69,12 @@ class AsyncMetaRxConf(MetaTree, metaclass=abc.ABCMeta):
         remove_prefix: tp.Optional[bool] = False,
     ) -> "AsyncMetaRxConf":
         pass
+
+    def _get_hash(self) -> bool:
+        return self._config.get_hash()
+
+    def __eq__(self, other) -> bool:
+        return self._get_hash() == other._get_hash()
 
 
 class RxConf(MetaRxConf):
@@ -105,11 +111,11 @@ class RxConf(MetaRxConf):
             ),
         )
 
-    def get_hash(self) -> bool:
-        return self._config.get_hash()
+    def _get_hash(self) -> bool:
+        return self._config._get_hash()
 
     def __eq__(self, other) -> bool:
-        return self.get_hash() == other.get_hash()
+        return self._get_hash() == other._get_hash()
 
     def __getattr__(self, item: str) -> tp.Any:
         return getattr(self._config, item.lower())
@@ -152,11 +158,11 @@ class AsyncRxConf(AsyncMetaRxConf):
             ),
         )
 
-    async def get_hash(self) -> bool:
-        return self._config.get_hash()
+    async def _get_hash(self) -> bool:
+        return self._config._get_hash()
 
     def __eq__(self, other) -> bool:
-        return self.get_hash() == other.get_hash()
+        return self._get_hash() == other._get_hash()
 
     def __getattr__(self, item: str) -> tp.Any:
         return getattr(self._config, item.lower())
