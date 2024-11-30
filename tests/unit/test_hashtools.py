@@ -1,10 +1,10 @@
 import unittest
 from pathlib import Path
-from rxconf import AsyncRxConf, RxConf, exceptions
+from rxconf import RxConf
+
 
 _RESOURCE_DIR = Path.cwd() / Path("tests/resources")
 _CONF_HASH_DIR = Path.cwd() / Path("tests/resources/conf_hashing")
-
 
 
 class TestComputeConfHash(unittest.TestCase):
