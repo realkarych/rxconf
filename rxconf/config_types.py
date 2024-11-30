@@ -8,9 +8,8 @@ from pathlib import PurePath
 import aiofiles
 import yaml
 from dotenv import load_dotenv
-
 from rxconf import types
-from rxconf.hashtools import compute_conf_hash
+from rxconf import hashtools
 
 if sys.version_info >= (3, 11):
     import tomllib as toml
@@ -68,7 +67,7 @@ class FileConfigType(ConfigType, metaclass=ABCMeta):  # pragma: no cover
         pass
 
     @abstractmethod
-    def get_hash(self) -> int:
+    def _get_hash(self) -> int:
         raise NotImplementedError()
 
     def __repr__(self) -> str:
@@ -87,7 +86,7 @@ class YamlConfig(FileConfigType):
     ) -> None:
         self._root = root_attribute
         self._path = path
-        self._hash = compute_conf_hash(root_attribute)
+        self._hash = hashtools.compute_conf_hash(root_attribute)
 
     @property
     def allowed_extensions(self) -> tp.FrozenSet[str]:
@@ -137,12 +136,12 @@ class YamlConfig(FileConfigType):
             path=path if isinstance(path, PurePath) else PurePath(path)
         )
 
-    def get_hash(self) -> int:
+    def _get_hash(self) -> int:
         return self._hash
 
     @exceptions.handle_unknown_exception
     def __eq__(self, other) -> int:
-        return self.get_hash == other.get_hash()
+        return self._get_hash == other._get_hash()
 
     @exceptions.handle_unknown_exception
     def __getattr__(self, item: str) -> tp.Any:
@@ -185,7 +184,7 @@ class JsonConfig(FileConfigType):
     ) -> None:
         self._root = root_attribute
         self._path = path
-        self._hash = compute_conf_hash(root_attribute)
+        self._hash = hashtools.compute_conf_hash(root_attribute)
 
     @property
     def allowed_extensions(self) -> tp.FrozenSet[str]:
@@ -236,12 +235,12 @@ class JsonConfig(FileConfigType):
             path=path if isinstance(path, PurePath) else PurePath(path)
         )
 
-    def get_hash(self) -> int:
+    def _get_hash(self) -> int:
         return self._hash
 
     @exceptions.handle_unknown_exception
     def __eq__(self, other) -> bool:
-        return self.get_hash() == other.get_hash()
+        return self._get_hash() == other._get_hash()
 
     @exceptions.handle_unknown_exception
     def __getattr__(self, item: str) -> tp.Any:
@@ -280,7 +279,7 @@ class TomlConfig(FileConfigType):
     ) -> None:
         self._root = root_attribute
         self._path = path
-        self._hash = compute_conf_hash(root_attribute)
+        self._hash = hashtools.compute_conf_hash(root_attribute)
 
     @property
     def allowed_extensions(self) -> tp.FrozenSet[str]:
@@ -339,12 +338,12 @@ class TomlConfig(FileConfigType):
             path=path if isinstance(path, PurePath) else PurePath(path)
         )
 
-    def get_hash(self) -> int:
+    def _get_hash(self) -> int:
         return self._hash
 
     @exceptions.handle_unknown_exception
     def __eq__(self, other) -> bool:
-        return self.get_hash() == other.get_hash()
+        return self._get_hash() == other._get_hash()
 
     @exceptions.handle_unknown_exception
     def __getattr__(self, item: str) -> tp.Any:
@@ -383,7 +382,7 @@ class IniConfig(FileConfigType):
     ) -> None:
         self._root = root_attribute
         self._path = path
-        self._hash = compute_conf_hash(root_attribute)
+        self._hash = hashtools.compute_conf_hash(root_attribute)
 
     @property
     def allowed_extensions(self) -> tp.FrozenSet[str]:
@@ -446,12 +445,12 @@ class IniConfig(FileConfigType):
             path=path if isinstance(path, PurePath) else PurePath(path),
         )
 
-    def get_hash(self) -> int:
+    def _get_hash(self) -> int:
         return self._hash
 
     @exceptions.handle_unknown_exception
     def __eq__(self, other) -> bool:
-        return self.get_hash() == other.get_hash()
+        return self._get_hash() == other._get_hash()
 
     @exceptions.handle_unknown_exception
     def __getattr__(self, item: str) -> tp.Any:
@@ -476,7 +475,7 @@ class EnvConfig(ConfigType):
 
     def __init__(self: "EnvConfig", root_attribute: rxconf.EnvAttribute) -> None:
         self._root = root_attribute
-        self._hash = compute_conf_hash(root_attribute)
+        self._hash = hashtools.compute_conf_hash(root_attribute)
 
     def __repr__(self) -> str:
         return repr(self._root)
@@ -535,14 +534,14 @@ class DotenvConfig(FileConfigType, EnvConfig):
     ) -> None:
         self._root = root_attribute  # type: ignore
         self._path = path
-        self._hash = compute_conf_hash(root_attribute)
+        self._hash = hashtools.compute_conf_hash(root_attribute)
 
-    def get_hash(self) -> int:
+    def _get_hash(self) -> int:
         return self._hash
 
     @exceptions.handle_unknown_exception
     def __eq__(self, other) -> bool:
-        return self.get_hash() == other.get_hash()
+        return self._get_hash() == other._get_hash()
 
     @property
     def allowed_extensions(self) -> tp.FrozenSet[str]:
