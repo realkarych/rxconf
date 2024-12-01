@@ -19,6 +19,10 @@ class MetaTree(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
+    def __ne__(self, other) -> bool:
+        pass
+
+    @abc.abstractmethod
     def __getattr__(self, item: str) -> tp.Any:
         pass
 
@@ -76,6 +80,9 @@ class AsyncMetaRxConf(MetaTree, metaclass=abc.ABCMeta):
     def __eq__(self, other) -> bool:
         return self._get_hash() == other._get_hash()
 
+    def __ne__(self, other) -> bool:
+        return not self.__eq__(other)
+
 
 class RxConf(MetaRxConf):
 
@@ -116,6 +123,9 @@ class RxConf(MetaRxConf):
 
     def __eq__(self, other) -> bool:
         return self._get_hash() == other._get_hash()
+
+    def __ne__(self, other) -> bool:
+        return not self.__eq__(other)
 
     def __getattr__(self, item: str) -> tp.Any:
         return getattr(self._config, item.lower())
@@ -163,6 +173,9 @@ class AsyncRxConf(AsyncMetaRxConf):
 
     def __eq__(self, other) -> bool:
         return self._get_hash() == other._get_hash()
+
+    def __ne__(self, other) -> bool:
+        return not self.__eq__(other)
 
     def __getattr__(self, item: str) -> tp.Any:
         return getattr(self._config, item.lower())
