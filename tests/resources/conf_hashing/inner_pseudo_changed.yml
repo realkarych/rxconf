@@ -2,7 +2,7 @@ second:
   element: "value"
 
 config:
-  age: 42'
+  age: 42
   name: "John Doe"
   AdDRess:
     ADDRESS: "123 Main St"
