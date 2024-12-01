@@ -146,7 +146,7 @@ async def test_async_key_order():
 
 
 @pytest.mark.asyncio
-async def test_set_order_no_matter():
+async def test_async_set_order_no_matter():
     conf1 = await AsyncRxConf.from_file(config_path=_CONF_HASH_DIR / "set_123.yml")
     conf2 = await AsyncRxConf.from_file(config_path=_CONF_HASH_DIR / "set_132.yml")
 
@@ -154,7 +154,7 @@ async def test_set_order_no_matter():
 
 
 @pytest.mark.asyncio
-async def test_real_conf():
+async def test_async_real_conf():
     conf1 = await AsyncRxConf.from_file(config_path=_CONF_HASH_DIR / "real_conf_file_1.yml")
     conf2 = await AsyncRxConf.from_file(config_path=_CONF_HASH_DIR / "real_conf_file_2.yml")
 
