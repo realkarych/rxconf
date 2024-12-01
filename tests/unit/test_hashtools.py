@@ -64,6 +64,20 @@ def test_key_order():
 
     assert conf1 != conf2
 
+
+def test_set_order_no_matter():
+    conf1 = RxConf.from_file(config_path=_CONF_HASH_DIR / "set_123.yml")
+    conf2 = RxConf.from_file(config_path=_CONF_HASH_DIR / "set_132.yml")
+
+    assert conf1 == conf2
+
+
+def test_real_conf():
+    conf1 = RxConf.from_file(config_path=_CONF_HASH_DIR / "real_conf_file_1.yml")
+    conf2 = RxConf.from_file(config_path=_CONF_HASH_DIR / "real_conf_file_2.yml")
+
+    assert conf1 != conf2
+
 # --------------------------------------
 # ------------ AsyncRxConf -------------
 
@@ -127,5 +141,21 @@ async def test_async_to_differ_str_and_int():
 async def test_async_key_order():
     conf1 = await AsyncRxConf.from_file(config_path=_CONF_HASH_DIR / "key_order_1_2.yml")
     conf2 = await AsyncRxConf.from_file(config_path=_CONF_HASH_DIR / "key_order_2_1.yml")
+
+    assert conf1 != conf2
+
+
+@pytest.mark.asyncio
+async def test_set_order_no_matter():
+    conf1 = await AsyncRxConf.from_file(config_path=_CONF_HASH_DIR / "set_123.yml")
+    conf2 = await AsyncRxConf.from_file(config_path=_CONF_HASH_DIR / "set_132.yml")
+
+    assert conf1 == conf2
+
+
+@pytest.mark.asyncio
+async def test_real_conf():
+    conf1 = await AsyncRxConf.from_file(config_path=_CONF_HASH_DIR / "real_conf_file_1.yml")
+    conf2 = await AsyncRxConf.from_file(config_path=_CONF_HASH_DIR / "real_conf_file_2.yml")
 
     assert conf1 != conf2
