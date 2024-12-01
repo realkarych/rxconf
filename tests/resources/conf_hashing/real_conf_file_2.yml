@@ -1,0 +1,40 @@
+development:
+  flux_capacitor:
+    version_20:
+      name: Flux Capacitor Version 3.0
+      price_in_cents: 12_000_00
+      manual_pdf_url: "whoami.pdf"
+      components:
+        - Miniature Chrono-Levitation Chamber (mCLC)
+        - Single Gravitational Displacement Coil (SGDC)
+        - Simple Quantum Flux Transducer (SQFT)
+        - Basic Time-Space Navigation System (BTN)
+    pro_version:
+      name: Flux Capacitor Professional
+      price_in_cents: 23_000_00
+      manual_pdf_url: "random.pdf"
+      components:
+        - Advanced Chrono-Levitation Chamber (ACL)
+        - Dual Gravitational Displacement Coils (DGDCs)
+        - Advanced Quantum Flux Transducer (AQFT)
+        - Professional Time-Space Navigation System (PTNS)
+    enterprise_version:
+      name: Flux Capacitor Enterpise
+      price_in_cents: 1_600_000_00
+      manual_pdf_url: "aima.net"
+      components:
+        - Super-Advanced Chrono-Levitation Chamber (SACL)
+        - Quadruple Gravitational Displacement Coils (QGDCs)
+        - Ultra-Advanced Quantum Flux Transducer (UAQFT)
+        - Enterprise Time-Space Navigation System (ETNS)
+test:
+  flux_capacitor:
+    test_version:
+      name: Yadayada
+      price_in_cents: 6_66
+      manual_pdf_url: "bal_bla_bla.pdf"
+      components:
+        - Experimental Chrono-Levitation Chamber (ECLC)
+        - Modular Gravitational Displacement Coils (MGDCs)
+        - Variable Quantum Flux Transducer (VQFT)
+        - Development Time-Space Navigation System (DTNS)
