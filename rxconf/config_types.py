@@ -66,10 +66,6 @@ class FileConfigType(ConfigType, metaclass=ABCMeta):  # pragma: no cover
     ) -> "FileConfigType":
         pass
 
-    @abstractmethod
-    def _get_hash(self) -> int:
-        raise NotImplementedError()
-
     def __repr__(self) -> str:
         return repr(self._root)
 
@@ -136,12 +132,9 @@ class YamlConfig(FileConfigType):
             path=path if isinstance(path, PurePath) else PurePath(path)
         )
 
-    def _get_hash(self) -> int:
-        return self._hash
-
     @exceptions.handle_unknown_exception
     def __eq__(self, other) -> int:
-        return self._get_hash == other._get_hash()
+        return self._hash == other._hash
 
     @exceptions.handle_unknown_exception
     def __getattr__(self, item: str) -> tp.Any:
@@ -235,12 +228,9 @@ class JsonConfig(FileConfigType):
             path=path if isinstance(path, PurePath) else PurePath(path)
         )
 
-    def _get_hash(self) -> int:
-        return self._hash
-
     @exceptions.handle_unknown_exception
     def __eq__(self, other) -> bool:
-        return self._get_hash() == other._get_hash()
+        return self._hash == other._hash
 
     @exceptions.handle_unknown_exception
     def __getattr__(self, item: str) -> tp.Any:
@@ -338,12 +328,9 @@ class TomlConfig(FileConfigType):
             path=path if isinstance(path, PurePath) else PurePath(path)
         )
 
-    def _get_hash(self) -> int:
-        return self._hash
-
     @exceptions.handle_unknown_exception
     def __eq__(self, other) -> bool:
-        return self._get_hash() == other._get_hash()
+        return self._hash == other._hash
 
     @exceptions.handle_unknown_exception
     def __getattr__(self, item: str) -> tp.Any:
@@ -445,12 +432,9 @@ class IniConfig(FileConfigType):
             path=path if isinstance(path, PurePath) else PurePath(path),
         )
 
-    def _get_hash(self) -> int:
-        return self._hash
-
     @exceptions.handle_unknown_exception
     def __eq__(self, other) -> bool:
-        return self._get_hash() == other._get_hash()
+        return self._hash == other._hash
 
     @exceptions.handle_unknown_exception
     def __getattr__(self, item: str) -> tp.Any:
@@ -536,12 +520,9 @@ class DotenvConfig(FileConfigType, EnvConfig):
         self._path = path
         self._hash = hashtools.compute_conf_hash(root_attribute)
 
-    def _get_hash(self) -> int:
-        return self._hash
-
     @exceptions.handle_unknown_exception
     def __eq__(self, other) -> bool:
-        return self._get_hash() == other._get_hash()
+        return self._hash == other._hash
 
     @property
     def allowed_extensions(self) -> tp.FrozenSet[str]:
