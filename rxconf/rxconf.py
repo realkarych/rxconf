@@ -15,11 +15,11 @@ class MetaTree(metaclass=abc.ABCMeta):
         self._config = config
 
     @abc.abstractmethod
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: object) -> bool:
         pass
 
     @abc.abstractmethod
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: object) -> bool:
         pass
 
     @abc.abstractmethod
@@ -70,12 +70,6 @@ class AsyncMetaRxConf(MetaTree, metaclass=abc.ABCMeta):
     ) -> "AsyncMetaRxConf":
         pass
 
-    def __eq__(self, other) -> bool:
-        return self._config == other._config
-
-    def __ne__(self, other) -> bool:
-        return not self.__eq__(other)
-
 
 class RxConf(MetaRxConf):
 
@@ -111,10 +105,14 @@ class RxConf(MetaRxConf):
             ),
         )
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: "RxConf") -> bool:
+        if not isinstance(other, RxConf):
+            raise TypeError("RxConf is comparable only to RxConf")
         return self._config == other._config
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: "RxConf") -> bool:
+        if not isinstance(other, RxConf):
+            raise TypeError("RxConf is comparable only to RxConf")
         return not self.__eq__(other)
 
     def __getattr__(self, item: str) -> tp.Any:
@@ -158,10 +156,14 @@ class AsyncRxConf(AsyncMetaRxConf):
             ),
         )
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: "AsyncRxConf") -> bool:
+        if not isinstance(other, AsyncRxConf):
+            raise TypeError("AsyncRxConf is comparable only to AsyncRxConf")
         return self._config == other._config
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: "AsyncRxConf") -> bool:
+        if not isinstance(other, AsyncRxConf):
+            raise TypeError("AsyncRxConf is comparable only to AsyncRxConf")
         return not self.__eq__(other)
 
     def __getattr__(self, item: str) -> tp.Any:
