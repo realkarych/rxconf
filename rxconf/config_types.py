@@ -26,7 +26,7 @@ from rxconf import exceptions
 class ConfigType(metaclass=ABCMeta):  # pragma: no cover
 
     @abstractmethod
-    def __eq__(self, other: "ConfigType") -> bool:
+    def __eq__(self, other: object) -> bool:
         raise NotImplementedError()
 
     @abstractmethod
@@ -133,7 +133,9 @@ class YamlConfig(FileConfigType):
         )
 
     @exceptions.handle_unknown_exception
-    def __eq__(self, other: "ConfigType") -> int:
+    def __eq__(self, other: ConfigType) -> int:
+        if not isinstance(other, ConfigType):
+            raise TypeError("ConfigType is comparable only to ConfigType")
         return self._hash == other._hash
 
     @exceptions.handle_unknown_exception
@@ -229,7 +231,9 @@ class JsonConfig(FileConfigType):
         )
 
     @exceptions.handle_unknown_exception
-    def __eq__(self, other: "ConfigType") -> bool:
+    def __eq__(self, other: ConfigType) -> bool:
+        if not isinstance(other, ConfigType):
+            raise TypeError("ConfigType is comparable only to ConfigType")
         return self._hash == other._hash
 
     @exceptions.handle_unknown_exception
@@ -329,7 +333,9 @@ class TomlConfig(FileConfigType):
         )
 
     @exceptions.handle_unknown_exception
-    def __eq__(self, other: "ConfigType") -> bool:
+    def __eq__(self, other: ConfigType) -> bool:
+        if not isinstance(other, ConfigType):
+            raise TypeError("ConfigType is comparable only to ConfigType")
         return self._hash == other._hash
 
     @exceptions.handle_unknown_exception
@@ -433,7 +439,9 @@ class IniConfig(FileConfigType):
         )
 
     @exceptions.handle_unknown_exception
-    def __eq__(self, other: "ConfigType") -> bool:
+    def __eq__(self, other: ConfigType) -> bool:
+        if not isinstance(other, ConfigType):
+            raise TypeError("ConfigType is comparable only to ConfigType")
         return self._hash == other._hash
 
     @exceptions.handle_unknown_exception
@@ -465,7 +473,9 @@ class EnvConfig(ConfigType):
         return repr(self._root)
 
     @exceptions.handle_unknown_exception
-    def __eq__(self, other: "ConfigType") -> bool:
+    def __eq__(self, other: ConfigType) -> bool:
+        if not isinstance(other, ConfigType):
+            raise TypeError("ConfigType is comparable only to ConfigType")
         return self._hash == other._hash
 
     @exceptions.handle_unknown_exception
@@ -518,7 +528,9 @@ class DotenvConfig(FileConfigType, EnvConfig):
         self._hash = hashtools.compute_conf_hash(root_attribute)
 
     @exceptions.handle_unknown_exception
-    def __eq__(self, other: "ConfigType") -> bool:
+    def __eq__(self, other: ConfigType) -> bool:
+        if not isinstance(other, ConfigType):
+            raise TypeError("ConfigType is comparable only to ConfigType")
         return self._hash == other._hash
 
     @property
