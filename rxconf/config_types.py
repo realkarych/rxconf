@@ -26,7 +26,7 @@ from rxconf import exceptions
 class ConfigType(metaclass=ABCMeta):  # pragma: no cover
 
     @abstractmethod
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: "ConfigType") -> bool:
         raise NotImplementedError()
 
     @abstractmethod
@@ -133,7 +133,7 @@ class YamlConfig(FileConfigType):
         )
 
     @exceptions.handle_unknown_exception
-    def __eq__(self, other) -> int:
+    def __eq__(self, other: "ConfigType") -> int:
         return self._hash == other._hash
 
     @exceptions.handle_unknown_exception
@@ -229,7 +229,7 @@ class JsonConfig(FileConfigType):
         )
 
     @exceptions.handle_unknown_exception
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: "ConfigType") -> bool:
         return self._hash == other._hash
 
     @exceptions.handle_unknown_exception
@@ -329,7 +329,7 @@ class TomlConfig(FileConfigType):
         )
 
     @exceptions.handle_unknown_exception
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: "ConfigType") -> bool:
         return self._hash == other._hash
 
     @exceptions.handle_unknown_exception
@@ -433,7 +433,7 @@ class IniConfig(FileConfigType):
         )
 
     @exceptions.handle_unknown_exception
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: "ConfigType") -> bool:
         return self._hash == other._hash
 
     @exceptions.handle_unknown_exception
@@ -464,12 +464,9 @@ class EnvConfig(ConfigType):
     def __repr__(self) -> str:
         return repr(self._root)
 
-    def get_hash(self) -> int:
-        return self._hash
-
     @exceptions.handle_unknown_exception
-    def __eq__(self, other) -> bool:
-        return self.get_hash() == other.get_hash()
+    def __eq__(self, other: "ConfigType") -> bool:
+        return self._hash== other._hash
 
     @exceptions.handle_unknown_exception
     def __getattr__(self, item: str) -> tp.Any:
@@ -521,7 +518,7 @@ class DotenvConfig(FileConfigType, EnvConfig):
         self._hash = hashtools.compute_conf_hash(root_attribute)
 
     @exceptions.handle_unknown_exception
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: "ConfigType") -> bool:
         return self._hash == other._hash
 
     @property
