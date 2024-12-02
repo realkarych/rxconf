@@ -48,10 +48,6 @@ class MetaRxConf(MetaTree, metaclass=abc.ABCMeta):
     ) -> "MetaRxConf":
         pass
 
-    @abc.abstractmethod
-    def _get_hash(self) -> bool:
-        pass
-
 
 class AsyncMetaRxConf(MetaTree, metaclass=abc.ABCMeta):
 
@@ -74,11 +70,8 @@ class AsyncMetaRxConf(MetaTree, metaclass=abc.ABCMeta):
     ) -> "AsyncMetaRxConf":
         pass
 
-    def _get_hash(self) -> bool:
-        return self._config.get_hash()
-
     def __eq__(self, other) -> bool:
-        return self._get_hash() == other._get_hash()
+        return self._config == other._config
 
     def __ne__(self, other) -> bool:
         return not self.__eq__(other)
@@ -118,11 +111,8 @@ class RxConf(MetaRxConf):
             ),
         )
 
-    def _get_hash(self) -> bool:
-        return self._config._get_hash()
-
     def __eq__(self, other) -> bool:
-        return self._get_hash() == other._get_hash()
+        return self._config == other._config
 
     def __ne__(self, other) -> bool:
         return not self.__eq__(other)
@@ -168,11 +158,8 @@ class AsyncRxConf(AsyncMetaRxConf):
             ),
         )
 
-    def _get_hash(self) -> bool:
-        return self._config._get_hash()
-
     def __eq__(self, other) -> bool:
-        return self._get_hash() == other._get_hash()
+        return self._config == other._config
 
     def __ne__(self, other) -> bool:
         return not self.__eq__(other)
