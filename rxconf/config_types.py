@@ -466,7 +466,7 @@ class EnvConfig(ConfigType):
 
     @exceptions.handle_unknown_exception
     def __eq__(self, other: "ConfigType") -> bool:
-        return self._hash== other._hash
+        return self._hash == other._hash
 
     @exceptions.handle_unknown_exception
     def __getattr__(self, item: str) -> tp.Any:
