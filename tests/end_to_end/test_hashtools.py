@@ -8,6 +8,7 @@ _CONF_HASH_DIR = Path.cwd() / Path("tests/resources/conf_hashing")
 
 
 # ---------- RxConf ------------
+# TODO: uncomment these lines to check if empty files are hashed properly (issue #83)
 # def test_empty_to_equal():
 #     conf1 = RxConf.from_file(config_path=_RESOURCE_DIR / "empty.ini")
 #     conf2 = RxConf.from_file(config_path=_RESOURCE_DIR / "empty.yaml")
@@ -19,6 +20,21 @@ _CONF_HASH_DIR = Path.cwd() / Path("tests/resources/conf_hashing")
 #     assert conf2 == conf3
 #     assert conf3 == conf4
 #     assert conf4 == conf5
+
+
+def test_error_comparing_with_not_rxconf():
+    conf1 = RxConf.from_file(config_path=_RESOURCE_DIR / "empty.ini")
+    conf2 = RxConf.from_file(config_path=_RESOURCE_DIR / "empty.yaml")
+    conf3 = RxConf.from_file(config_path=_RESOURCE_DIR / "empty.env")
+    conf4 = RxConf.from_file(config_path=_RESOURCE_DIR / "empty.toml")
+    conf5 = RxConf.from_file(config_path=_RESOURCE_DIR / "empty.json")
+
+    with pytest.raises(TypeError):
+        assert conf1 == 1
+        assert conf2 == "conf3"
+        assert conf3 == 6.6
+        assert "conf4" == conf4
+        assert 1 == conf5
 
 
 def test_same_attribute_structures():
@@ -81,6 +97,7 @@ def test_real_conf():
 # --------------------------------------
 # ------------ AsyncRxConf -------------
 
+# TODO: uncomment these lines to check if empty files hashed properly (issue #83)
 # @pytest.mark.asyncio
 # async def test_async_empty_to_equal():
 #     conf1 = await AsyncRxConf.from_file(config_path=_RESOURCE_DIR / "empty.ini")
@@ -159,3 +176,19 @@ async def test_async_real_conf():
     conf2 = await AsyncRxConf.from_file(config_path=_CONF_HASH_DIR / "real_conf_file_2.yml")
 
     assert conf1 != conf2
+
+
+@pytest.mark.asyncio
+async def test_async_error_comparing_with_not_rxconf():
+    conf1 = await AsyncRxConf.from_file(config_path=_RESOURCE_DIR / "empty.ini")
+    conf2 = await AsyncRxConf.from_file(config_path=_RESOURCE_DIR / "empty.yaml")
+    conf3 = await AsyncRxConf.from_file(config_path=_RESOURCE_DIR / "empty.env")
+    conf4 = await AsyncRxConf.from_file(config_path=_RESOURCE_DIR / "empty.toml")
+    conf5 = await AsyncRxConf.from_file(config_path=_RESOURCE_DIR / "empty.json")
+
+    with pytest.raises(TypeError):
+        assert conf1 == 1
+        assert conf2 == "conf3"
+        assert conf3 == 6.6
+        assert "conf4" == conf4
+        assert 1 == conf5
