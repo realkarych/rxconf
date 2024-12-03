@@ -15,6 +15,14 @@ class MetaTree(metaclass=abc.ABCMeta):
         self._config = config
 
     @abc.abstractmethod
+    def __eq__(self, other: object) -> bool:
+        raise NotImplementedError()
+
+    @abc.abstractmethod
+    def __ne__(self, other: object) -> bool:
+        raise NotImplementedError()
+
+    @abc.abstractmethod
     def __getattr__(self, item: str) -> tp.Any:
         pass
 
@@ -97,6 +105,16 @@ class RxConf(MetaRxConf):
             ),
         )
 
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, RxConf):
+            raise TypeError("RxConf is comparable only to RxConf")
+        return self._config == other._config
+
+    def __ne__(self, other: object) -> bool:
+        if not isinstance(other, RxConf):
+            raise TypeError("RxConf is comparable only to RxConf")
+        return not self.__eq__(other)
+
     def __getattr__(self, item: str) -> tp.Any:
         return getattr(self._config, item.lower())
 
@@ -137,6 +155,16 @@ class AsyncRxConf(AsyncMetaRxConf):
                 remove_prefix=remove_prefix,
             ),
         )
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, AsyncRxConf):
+            raise TypeError("AsyncRxConf is comparable only to AsyncRxConf")
+        return self._config == other._config
+
+    def __ne__(self, other: object) -> bool:
+        if not isinstance(other, AsyncRxConf):
+            raise TypeError("AsyncRxConf is comparable only to AsyncRxConf")
+        return not self.__eq__(other)
 
     def __getattr__(self, item: str) -> tp.Any:
         return getattr(self._config, item.lower())

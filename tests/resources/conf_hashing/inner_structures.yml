@@ -1,0 +1,15 @@
+config:
+  name: "John Doe"
+  age: 42
+  AdDRess:
+    ADDRESS: "123 Main St"
+  hobbies:
+    - "1"
+    - "2"
+    - "3"
+  preferences:
+    FaVoriteS: ["a", "b", "c"]
+  is_active: true
+
+second:
+  element: "value"
