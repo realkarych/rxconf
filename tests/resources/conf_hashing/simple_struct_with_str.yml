@@ -1,0 +1,9 @@
+config:
+  integer: "42"
+  big_integer: 100500
+  float: 36.6
+  string: "Hello world =)"
+  boolean: true
+  CamelCase: ok
+  snake_case: ok
+  StRanGeCasE: ok

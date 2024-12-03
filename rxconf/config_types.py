@@ -7,10 +7,9 @@ from abc import ABCMeta, abstractmethod
 from pathlib import PurePath
 import aiofiles
 import yaml
-from dotenv import load_dotenv
-
+import dotenv
 from rxconf import types
-
+from rxconf import hashtools
 
 if sys.version_info >= (3, 11):
     import tomllib as toml
@@ -25,6 +24,10 @@ from rxconf import exceptions
 
 
 class ConfigType(metaclass=ABCMeta):  # pragma: no cover
+
+    @abstractmethod
+    def __eq__(self, other: object) -> bool:
+        raise NotImplementedError()
 
     @abstractmethod
     def __getattr__(self, item: str) -> tp.Any:
@@ -79,6 +82,7 @@ class YamlConfig(FileConfigType):
     ) -> None:
         self._root = root_attribute
         self._path = path
+        self._hash = hashtools.compute_conf_hash(root_attribute)
 
     @property
     def allowed_extensions(self) -> tp.FrozenSet[str]:
@@ -129,6 +133,12 @@ class YamlConfig(FileConfigType):
         )
 
     @exceptions.handle_unknown_exception
+    def __eq__(self, other: ConfigType) -> int:
+        if not isinstance(other, ConfigType):
+            raise TypeError("ConfigType is comparable only to ConfigType")
+        return self._hash == other._hash
+
+    @exceptions.handle_unknown_exception
     def __getattr__(self, item: str) -> tp.Any:
         return getattr(self._root, item.lower())
 
@@ -169,6 +179,7 @@ class JsonConfig(FileConfigType):
     ) -> None:
         self._root = root_attribute
         self._path = path
+        self._hash = hashtools.compute_conf_hash(root_attribute)
 
     @property
     def allowed_extensions(self) -> tp.FrozenSet[str]:
@@ -220,6 +231,12 @@ class JsonConfig(FileConfigType):
         )
 
     @exceptions.handle_unknown_exception
+    def __eq__(self, other: ConfigType) -> bool:
+        if not isinstance(other, ConfigType):
+            raise TypeError("ConfigType is comparable only to ConfigType")
+        return self._hash == other._hash
+
+    @exceptions.handle_unknown_exception
     def __getattr__(self, item: str) -> tp.Any:
         return getattr(self._root, item.lower())
 
@@ -256,6 +273,7 @@ class TomlConfig(FileConfigType):
     ) -> None:
         self._root = root_attribute
         self._path = path
+        self._hash = hashtools.compute_conf_hash(root_attribute)
 
     @property
     def allowed_extensions(self) -> tp.FrozenSet[str]:
@@ -315,6 +333,12 @@ class TomlConfig(FileConfigType):
         )
 
     @exceptions.handle_unknown_exception
+    def __eq__(self, other: ConfigType) -> bool:
+        if not isinstance(other, ConfigType):
+            raise TypeError("ConfigType is comparable only to ConfigType")
+        return self._hash == other._hash
+
+    @exceptions.handle_unknown_exception
     def __getattr__(self, item: str) -> tp.Any:
         return getattr(self._root, item.lower())
 
@@ -351,6 +375,7 @@ class IniConfig(FileConfigType):
     ) -> None:
         self._root = root_attribute
         self._path = path
+        self._hash = hashtools.compute_conf_hash(root_attribute)
 
     @property
     def allowed_extensions(self) -> tp.FrozenSet[str]:
@@ -414,6 +439,12 @@ class IniConfig(FileConfigType):
         )
 
     @exceptions.handle_unknown_exception
+    def __eq__(self, other: ConfigType) -> bool:
+        if not isinstance(other, ConfigType):
+            raise TypeError("ConfigType is comparable only to ConfigType")
+        return self._hash == other._hash
+
+    @exceptions.handle_unknown_exception
     def __getattr__(self, item: str) -> tp.Any:
         return getattr(self._root, item.lower())
 
@@ -436,9 +467,16 @@ class EnvConfig(ConfigType):
 
     def __init__(self: "EnvConfig", root_attribute: rxconf.EnvAttribute) -> None:
         self._root = root_attribute
+        self._hash = hashtools.compute_conf_hash(root_attribute)
 
     def __repr__(self) -> str:
         return repr(self._root)
+
+    @exceptions.handle_unknown_exception
+    def __eq__(self, other: ConfigType) -> bool:
+        if not isinstance(other, ConfigType):
+            raise TypeError("ConfigType is comparable only to ConfigType")
+        return self._hash == other._hash
 
     @exceptions.handle_unknown_exception
     def __getattr__(self, item: str) -> tp.Any:
@@ -487,6 +525,13 @@ class DotenvConfig(FileConfigType, EnvConfig):
     ) -> None:
         self._root = root_attribute  # type: ignore
         self._path = path
+        self._hash = hashtools.compute_conf_hash(root_attribute)
+
+    @exceptions.handle_unknown_exception
+    def __eq__(self, other: ConfigType) -> bool:
+        if not isinstance(other, ConfigType):
+            raise TypeError("ConfigType is comparable only to ConfigType")
+        return self._hash == other._hash
 
     @property
     def allowed_extensions(self) -> tp.FrozenSet[str]:
@@ -499,7 +544,7 @@ class DotenvConfig(FileConfigType, EnvConfig):
         path: tp.Union[str, PurePath] = ".env",
         encoding: str = "utf-8",
     ) -> FileConfigType:
-        load_dotenv(dotenv_path=path, encoding=encoding)
+        dotenv.load_dotenv(dotenv_path=path, encoding=encoding)
         env_config = EnvConfig.load_from_environment()
         return cls(
             root_attribute=env_config._root,
