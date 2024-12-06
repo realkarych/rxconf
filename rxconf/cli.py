@@ -1,5 +1,3 @@
-from types import NoneType
-
 import click
 from rxconf import RxConf, AttributeType
 
@@ -35,8 +33,10 @@ def extract_class_signature(conf: AttributeType, indent_level: int = 0, result: 
                 result += shift(indent_level) + f"class {key}:\n"
             elif isinstance(val._value, str):
                 result += shift(indent_level) + f"{key}: {get_attr_val_type(val)} = '{val._value}'\n"
-            elif isinstance(val._value, (int, float, NoneType)):
+            elif isinstance(val._value, (int, float)):
                 result += shift(indent_level) + f"{key}: {get_attr_val_type(val)} = {val._value}\n"
+            elif val._value is None:
+                result += shift(indent_level) + f"{key}: {None} = {val._value}\n"
             elif isinstance(val._value, list):
                 result += shift(indent_level) + f"{key}: {get_attr_val_type(val)} = ["
                 for i in range(len(val._value) - 1):
