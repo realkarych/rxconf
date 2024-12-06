@@ -49,17 +49,17 @@ def extract_class_signature(conf: AttributeType, indent_level: int = 0, result: 
                 else:
                     result += f"{val._value[-1]._value}]\n"
             elif isinstance(val._value, set):
+                set_values = list(val._value)
                 result += shift(indent_level) + f"{key}: {get_attr_val_type(val)} = ("
-                for i in range(len(val._value) - 1):
-                    if isinstance(val._value[i]._value, str):
-                        result += f"'{val._value[i]._value}', "
+                for i in range(len(set_values) - 1):
+                    if isinstance(set_values[i]._value, str):
+                        result += f"'{set_values[i]._value}', "
                     else:
-                        result += f"{val._value[i]._value}, "
-                if isinstance(val._value[-1]._value, str):
-                    result += f"'{val._value[-1]._value}']\n"
+                        result += f"{set_values[i]._value}, "
+                if isinstance(set_values[-1]._value, str):
+                    result += f"'{set_values[-1]._value}']\n"
                 else:
-                    result += f"{val._value[-1]._value})\n"
-
+                    result += f"{set_values[-1]._value})\n"
 
             result = extract_class_signature(val, indent_level + 1, result)
 
