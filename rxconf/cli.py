@@ -62,8 +62,8 @@ def create_annotation(attr_name: str, attr: AttributeType, indent_level: int = 0
         result += shift(indent_level) + f"{attr_name}: {get_attr_val_type(attr)} = '{attr._value}'\n"
     elif isinstance(attr._value, (int, float)):
         result += shift(indent_level) + f"{attr_name}: {get_attr_val_type(attr)} = {attr._value}\n"
-    elif attr._value is None:
-        result += shift(indent_level) + f"{attr_name}: {None} = {attr._value}\n"
+    else:
+        result += shift(indent_level) + f"{attr_name}: {None} = {None}\n"
 
     return result
 
