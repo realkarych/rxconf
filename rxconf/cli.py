@@ -68,7 +68,7 @@ def parse_for_annotations(script_path: pathlib.Path, *paths) -> str:
     return result
 
 
-def add_annotation(line: str, conf_type: str) -> (str, str):
+def add_annotation(line: str, conf_type: str) -> tuple[str, str]:
     """
     Add annotation "Union[{var_name}_annotated, RxConf]"
     """
