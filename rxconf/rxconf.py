@@ -131,12 +131,12 @@ class RxConf(MetaRxConf):
 
     @classmethod
     def from_vault(
-            cls: tp.Type["RxConf"],
-            token: str,
-            ip: str,
-            path: tp.Union[str, pathlib.PurePath],
-            ext: str,
-            vault_config_resolver: config_resolver.VaultConfigResolver = config_resolver.DefaultVaultConfigResolver,
+        cls: tp.Type["RxConf"],
+        token: str,
+        ip: str,
+        path: tp.Union[str, pathlib.PurePath],
+        ext: str,
+        vault_config_resolver: config_resolver.VaultConfigResolver = config_resolver.DefaultVaultConfigResolver,
     ) -> "RxConf":
         return cls(
             config=VaultConfigBuilder(
