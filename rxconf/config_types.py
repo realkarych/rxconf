@@ -1,7 +1,7 @@
 import datetime
 import json
-import hvac
-from hvac.exceptions import VaultError
+import hvac  # type: ignore
+from hvac.exceptions import VaultError  # type: ignore
 import os
 import sys
 import typing as tp
