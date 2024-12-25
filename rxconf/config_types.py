@@ -1,5 +1,7 @@
 import datetime
 import json
+import hvac
+from hvac.exceptions import VaultError
 import os
 import sys
 import typing as tp
@@ -59,12 +61,32 @@ class FileConfigType(ConfigType, metaclass=ABCMeta):  # pragma: no cover
 
     @classmethod
     @abstractmethod
+    def load_from_vault(
+        cls,
+        token: str,
+        ip: str,
+        path: tp.Union[str, PurePath],
+    ) -> "FileConfigType":
+        pass
+
+    @classmethod
+    @abstractmethod
     async def load_from_path_async(
         cls,
         path: tp.Union[str, PurePath],
         encoding: str,
     ) -> "FileConfigType":
         pass
+
+    @classmethod
+    @abstractmethod
+    async def load_from_vault_async(
+        cls,
+        token: str,
+        ip: str,
+        path: tp.Union[str, PurePath],
+    ) -> "FileConfigType":
+        raise NotImplementedError()
 
     def __repr__(self) -> str:
         return repr(self._root)
@@ -116,6 +138,25 @@ class YamlConfig(FileConfigType):
 
     @classmethod
     @exceptions.handle_unknown_exception
+    def load_from_vault(
+        cls,
+        token: str,
+        ip: str,
+        path: tp.Union[str, PurePath],
+    ) -> "YamlConfig":
+        try:
+            client = hvac.Client(url=ip, token=token)
+            response = client.secrets.kv.v2.read_secret_version(path=path, raise_on_deleted_version=True)
+        except VaultError as exc:
+            raise ValueError(f"Unable to retrieve Vault data from path={path}") from exc
+
+        return cls(
+            root_attribute=cls._process_data(response["data"]["data"]),
+            path=path if isinstance(path, PurePath) else PurePath(path),
+        )
+
+    @classmethod
+    @exceptions.handle_unknown_exception
     async def load_from_path_async(
         cls,
         path: tp.Union[str, PurePath],
@@ -131,6 +172,16 @@ class YamlConfig(FileConfigType):
             root_attribute=cls._process_data(yaml_data),
             path=path if isinstance(path, PurePath) else PurePath(path)
         )
+
+    @classmethod
+    @exceptions.handle_unknown_exception
+    async def load_from_vault_async(
+        cls,
+        token: str,
+        ip: str,
+        path: tp.Union[str, PurePath],
+    ) -> "YamlConfig":
+        raise NotImplementedError()
 
     @exceptions.handle_unknown_exception
     def __eq__(self, other: ConfigType) -> int:
@@ -214,6 +265,25 @@ class JsonConfig(FileConfigType):
 
     @classmethod
     @exceptions.handle_unknown_exception
+    def load_from_vault(
+            cls,
+            token: str,
+            ip: str,
+            path: tp.Union[str, PurePath],
+    ) -> "JsonConfig":
+        try:
+            client = hvac.Client(url=ip, token=token)
+            response = client.secrets.kv.v2.read_secret_version(path=path, raise_on_deleted_version=True)
+        except VaultError as exc:
+            raise ValueError(f"Unable to retrieve Vault data from path={path}") from exc
+
+        return cls(
+            root_attribute=cls._process_data(response["data"]["data"]),
+            path=path if isinstance(path, PurePath) else PurePath(path),
+        )
+
+    @classmethod
+    @exceptions.handle_unknown_exception
     async def load_from_path_async(
         cls,
         path: tp.Union[str, PurePath],
@@ -229,6 +299,16 @@ class JsonConfig(FileConfigType):
             root_attribute=cls._process_data(json_data),
             path=path if isinstance(path, PurePath) else PurePath(path)
         )
+
+    @classmethod
+    @exceptions.handle_unknown_exception
+    async def load_from_vault_async(
+        cls,
+        token: str,
+        ip: str,
+        path: tp.Union[str, PurePath],
+    ) -> "JsonConfig":
+        raise NotImplementedError()
 
     @exceptions.handle_unknown_exception
     def __eq__(self, other: ConfigType) -> bool:
@@ -316,6 +396,25 @@ class TomlConfig(FileConfigType):
 
     @classmethod
     @exceptions.handle_unknown_exception
+    def load_from_vault(
+            cls,
+            token: str,
+            ip: str,
+            path: tp.Union[str, PurePath],
+    ) -> "TomlConfig":
+        try:
+            client = hvac.Client(url=ip, token=token)
+            response = client.secrets.kv.v2.read_secret_version(path=path, raise_on_deleted_version=True)
+        except VaultError as exc:
+            raise ValueError(f"Unable to retrieve Vault data from path={path}") from exc
+
+        return cls(
+            root_attribute=cls._process_data(response["data"]["data"]),
+            path=path if isinstance(path, PurePath) else PurePath(path),
+        )
+
+    @classmethod
+    @exceptions.handle_unknown_exception
     async def load_from_path_async(
         cls,
         path: tp.Union[str, PurePath],
@@ -331,6 +430,16 @@ class TomlConfig(FileConfigType):
             root_attribute=cls._process_data(toml_data),
             path=path if isinstance(path, PurePath) else PurePath(path)
         )
+
+    @classmethod
+    @exceptions.handle_unknown_exception
+    async def load_from_vault_async(
+        cls,
+        token: str,
+        ip: str,
+        path: tp.Union[str, PurePath],
+    ) -> "TomlConfig":
+        raise NotImplementedError()
 
     @exceptions.handle_unknown_exception
     def __eq__(self, other: ConfigType) -> bool:
@@ -422,6 +531,25 @@ class IniConfig(FileConfigType):
 
     @classmethod
     @exceptions.handle_unknown_exception
+    def load_from_vault(
+            cls,
+            token: str,
+            ip: str,
+            path: tp.Union[str, PurePath],
+    ) -> "IniConfig":
+        try:
+            client = hvac.Client(url=ip, token=token)
+            response = client.secrets.kv.v2.read_secret_version(path=path, raise_on_deleted_version=True)
+        except VaultError as exc:
+            raise ValueError(f"Unable to retrieve Vault data from path={path}") from exc
+
+        return cls(
+            root_attribute=cls._process_data(response["data"]["data"]),
+            path=path if isinstance(path, PurePath) else PurePath(path),
+        )
+
+    @classmethod
+    @exceptions.handle_unknown_exception
     async def load_from_path_async(
         cls,
         path: tp.Union[str, PurePath],
@@ -437,6 +565,16 @@ class IniConfig(FileConfigType):
             root_attribute=cls._process_data(ini_data),
             path=path if isinstance(path, PurePath) else PurePath(path),
         )
+
+    @classmethod
+    @exceptions.handle_unknown_exception
+    async def load_from_vault_async(
+        cls,
+        token: str,
+        ip: str,
+        path: tp.Union[str, PurePath],
+    ) -> "IniConfig":
+        raise NotImplementedError()
 
     @exceptions.handle_unknown_exception
     def __eq__(self, other: ConfigType) -> bool:
@@ -553,6 +691,16 @@ class DotenvConfig(FileConfigType, EnvConfig):
 
     @classmethod
     @exceptions.handle_unknown_exception
+    def load_from_vault(
+        cls,
+        token: str,
+        ip: str,
+        path: tp.Union[str, PurePath],
+    ) -> "FileConfigType":
+        raise NotImplementedError()
+
+    @classmethod
+    @exceptions.handle_unknown_exception
     async def load_from_path_async(
         cls,
         path: tp.Union[str, PurePath] = ".env",
@@ -562,6 +710,16 @@ class DotenvConfig(FileConfigType, EnvConfig):
             path=path,
             encoding=encoding,
         )
+
+    @classmethod
+    @exceptions.handle_unknown_exception
+    async def load_from_vault_async(
+        cls,
+        token: str,
+        ip: str,
+        path: tp.Union[str, PurePath],
+    ) -> "FileConfigType":
+        raise NotImplementedError()
 
 
 BASE_FILE_CONFIG_TYPES: tp.Final[tp.Tuple[tp.Type[FileConfigType], ...]] = (
