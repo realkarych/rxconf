@@ -200,7 +200,7 @@ class AsyncRxConf(AsyncMetaRxConf):
 
     @classmethod
     async def from_vault(
-        cls: tp.Type["RxConf"],
+        cls: tp.Type["AsyncRxConf"],
         token: str,
         ip: str,
         path: tp.Union[str, pathlib.PurePath],
