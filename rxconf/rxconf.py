@@ -3,7 +3,7 @@ import pathlib
 import typing as tp
 
 from rxconf import config_resolver, config_types
-from rxconf.config_builder import FileConfigBuilder
+from rxconf.config_builder import FileConfigBuilder, VaultConfigBuilder
 
 
 class MetaTree(metaclass=abc.ABCMeta):
@@ -42,9 +42,20 @@ class MetaRxConf(MetaTree, metaclass=abc.ABCMeta):
     @classmethod
     @abc.abstractmethod
     def from_env(
-        cls: tp.Type["MetaRxConf"],
-        prefix: tp.Optional[str] = None,
-        remove_prefix: tp.Optional[bool] = False,
+            cls: tp.Type["MetaRxConf"],
+            prefix: tp.Optional[str] = None,
+            remove_prefix: tp.Optional[bool] = False,
+    ) -> "MetaRxConf":
+        pass
+
+    @classmethod
+    def from_vault(
+        cls: tp.Type["RxConf"],
+        token: str,
+        ip: str,
+        path: tp.Union[str, pathlib.PurePath],
+        ext: str,
+        vault_config_resolver: config_resolver.VaultConfigResolver = config_resolver.DefaultVaultConfigResolver,
     ) -> "MetaRxConf":
         pass
 
@@ -67,6 +78,17 @@ class AsyncMetaRxConf(MetaTree, metaclass=abc.ABCMeta):
         cls: tp.Type["AsyncMetaRxConf"],
         prefix: tp.Optional[str] = None,
         remove_prefix: tp.Optional[bool] = False,
+    ) -> "AsyncMetaRxConf":
+        pass
+
+    @classmethod
+    async def from_vault(
+        cls: tp.Type["RxConf"],
+        token: str,
+        ip: str,
+        path: tp.Union[str, pathlib.PurePath],
+        ext: str,
+        vault_config_resolver: config_resolver.VaultConfigResolver = config_resolver.DefaultVaultConfigResolver,
     ) -> "AsyncMetaRxConf":
         pass
 
@@ -103,6 +125,26 @@ class RxConf(MetaRxConf):
                 prefix=prefix,
                 remove_prefix=remove_prefix,
             ),
+        )
+
+    @classmethod
+    def from_vault(
+            cls: tp.Type["RxConf"],
+            token: str,
+            ip: str,
+            path: tp.Union[str, pathlib.PurePath],
+            ext: str,
+            vault_config_resolver: config_resolver.VaultConfigResolver = config_resolver.DefaultVaultConfigResolver,
+    ) -> "RxConf":
+        return cls(
+            config=VaultConfigBuilder(
+                config_resolver=vault_config_resolver,
+            ).build(
+                token=token,
+                ip=ip,
+                path=path,
+                ext=ext,
+            )
         )
 
     def __eq__(self, other: object) -> bool:
@@ -155,6 +197,17 @@ class AsyncRxConf(AsyncMetaRxConf):
                 remove_prefix=remove_prefix,
             ),
         )
+
+    @classmethod
+    async def from_vault(
+        cls: tp.Type["RxConf"],
+        token: str,
+        ip: str,
+        path: tp.Union[str, pathlib.PurePath],
+        ext: str,
+        vault_config_resolver: config_resolver.VaultConfigResolver = config_resolver.DefaultVaultConfigResolver,
+    ) -> "AsyncMetaRxConf":
+        raise NotImplementedError()
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, AsyncRxConf):
