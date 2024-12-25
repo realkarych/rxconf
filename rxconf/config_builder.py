@@ -66,4 +66,4 @@ class VaultConfigBuilder(ConfigBuilder):
         path: tp.Union[str, pathlib.PurePath],
         ext: str
     ) -> FileConfigType:
-        pass
+        raise NotImplementedError()
