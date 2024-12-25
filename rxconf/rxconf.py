@@ -50,7 +50,7 @@ class MetaRxConf(MetaTree, metaclass=abc.ABCMeta):
 
     @classmethod
     def from_vault(
-        cls: tp.Type["RxConf"],
+        cls: tp.Type["MetaRxConf"],
         token: str,
         ip: str,
         path: tp.Union[str, pathlib.PurePath],
@@ -83,7 +83,7 @@ class AsyncMetaRxConf(MetaTree, metaclass=abc.ABCMeta):
 
     @classmethod
     async def from_vault(
-        cls: tp.Type["RxConf"],
+        cls: tp.Type["AsyncMetaRxConf"],
         token: str,
         ip: str,
         path: tp.Union[str, pathlib.PurePath],
