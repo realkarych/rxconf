@@ -49,6 +49,7 @@ class MetaRxConf(MetaTree, metaclass=abc.ABCMeta):
         pass
 
     @classmethod
+    @abc.abstractmethod
     def from_vault(
         cls: tp.Type["MetaRxConf"],
         token: str,
@@ -82,6 +83,7 @@ class AsyncMetaRxConf(MetaTree, metaclass=abc.ABCMeta):
         pass
 
     @classmethod
+    @abc.abstractmethod
     async def from_vault(
         cls: tp.Type["AsyncMetaRxConf"],
         token: str,
@@ -90,7 +92,7 @@ class AsyncMetaRxConf(MetaTree, metaclass=abc.ABCMeta):
         ext: str,
         vault_config_resolver: config_resolver.VaultConfigResolver = config_resolver.DefaultVaultConfigResolver,
     ) -> "AsyncMetaRxConf":
-        raise NotImplementedError()
+        pass
 
 
 class RxConf(MetaRxConf):
