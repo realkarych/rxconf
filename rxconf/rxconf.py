@@ -90,7 +90,7 @@ class AsyncMetaRxConf(MetaTree, metaclass=abc.ABCMeta):
         ext: str,
         vault_config_resolver: config_resolver.VaultConfigResolver = config_resolver.DefaultVaultConfigResolver,
     ) -> "AsyncMetaRxConf":
-        pass
+        raise NotImplementedError()
 
 
 class RxConf(MetaRxConf):
