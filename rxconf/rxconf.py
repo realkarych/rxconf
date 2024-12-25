@@ -206,7 +206,7 @@ class AsyncRxConf(AsyncMetaRxConf):
         path: tp.Union[str, pathlib.PurePath],
         ext: str,
         vault_config_resolver: config_resolver.VaultConfigResolver = config_resolver.DefaultVaultConfigResolver,
-    ) -> "AsyncMetaRxConf":
+    ) -> "AsyncRxConf":
         raise NotImplementedError()
 
     def __eq__(self, other: object) -> bool:
