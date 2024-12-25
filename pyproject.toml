@@ -16,11 +16,12 @@ classifiers = [
 keywords = ["configuration", "settings", "yaml", "json", "toml", "ini", "env"]
 
 [tool.poetry.dependencies]
-python = ">=3.9"
+python = ">=3.9, <4.0"
 aiofiles = "^24.1.0"
 pyyaml = "^6.0.2"
 python-dotenv = "^1.0.1"
 toml = {version = "^0.10.2", markers = "python_version < '3.11'"}
+hvac = "^2.3.0"
 
 [tool.poetry.dev-dependencies]
 types-aiofiles = "24.1.0.20240626"
