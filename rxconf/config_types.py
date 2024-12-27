@@ -692,12 +692,21 @@ class DotenvConfig(FileConfigType, EnvConfig):
     @classmethod
     @exceptions.handle_unknown_exception
     def load_from_vault(
-        cls,
-        token: str,
-        ip: str,
-        path: tp.Union[str, PurePath],
-    ) -> "FileConfigType":
-        raise NotImplementedError()
+            cls,
+            token: str,
+            ip: str,
+            path: tp.Union[str, PurePath],
+    ) -> FileConfigType:
+        try:
+            client = hvac.Client(url=ip, token=token)
+            response = client.secrets.kv.v2.read_secret_version(path=path, raise_on_deleted_version=True)
+        except VaultError as exc:
+            raise ValueError(f"Unable to retrieve Vault data from path={path}") from exc
+
+        return cls(
+            root_attribute=cls._process_data(response["data"]["data"]),
+            path=path if isinstance(path, PurePath) else PurePath(path),
+        )
 
     @classmethod
     @exceptions.handle_unknown_exception

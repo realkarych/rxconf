@@ -44,7 +44,7 @@ class VaultConfigResolver(ConfigResolver):
         self,
         ext: str,
     ) -> tp.Type[config_types.FileConfigType]:
-        extension = "." + ext
+        extension = f".{ext}"
         for config_type in self._config_types:
             if extension in config_type(
                 root_attribute=attributes.MockAttribute(),
