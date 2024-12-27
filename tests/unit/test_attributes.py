@@ -10,7 +10,7 @@ class TestAttributeType(unittest.TestCase):
 
     def test_init(self):
         attr = MockAttribute(10)
-        self.assertEqual(attr._value, 10)
+        self.assertEqual(attr.__getattribute__("_AttributeType__value"), 10)
 
     def test_int_conversion(self):
         attr = MockAttribute(10)
