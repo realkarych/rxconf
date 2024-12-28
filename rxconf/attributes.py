@@ -194,7 +194,7 @@ class VaultAttribute(AttributeType):
             tp.List["VaultAttribute"],
             tp.Set["VaultAttribute"],
             tp.Dict[str, "VaultAttribute"],
-        ]
+        ],
     ) -> None:
         super().__init__(value)
 

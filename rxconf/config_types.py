@@ -1,7 +1,5 @@
 import datetime
 import json
-import hvac  # type: ignore
-from hvac.exceptions import VaultError  # type: ignore
 import os
 import sys
 import typing as tp
@@ -10,7 +8,9 @@ from pathlib import PurePath
 
 import aiofiles
 import dotenv
+import hvac  # type: ignore
 import yaml
+from hvac.exceptions import VaultError  # type: ignore
 
 from rxconf import hashtools, types
 
@@ -41,29 +41,29 @@ class ConfigType(metaclass=ABCMeta):  # pragma: no cover
 class VaultConfigType(ConfigType):
 
     def __init__(
-            self,
-            root_attribute: rxconf.AttributeType,
-            path: PurePath,
+        self,
+        root_attribute: rxconf.AttributeType,
+        path: PurePath,
     ) -> None:
         pass
 
     @classmethod
     @abstractmethod
     def load_from_vault(
-            cls,
-            token: str,
-            ip: str,
-            path: PurePath,
+        cls,
+        token: str,
+        ip: str,
+        path: PurePath,
     ) -> "VaultConfigType":
         pass
 
     @classmethod
     @abstractmethod
     async def load_from_vault_async(
-            cls,
-            token: str,
-            ip: str,
-            path: PurePath,
+        cls,
+        token: str,
+        ip: str,
+        path: PurePath,
     ) -> "VaultConfigType":
         raise NotImplementedError()
 
@@ -76,9 +76,9 @@ class VaultConfig(VaultConfigType):
     _path: tp.Final[PurePath]
 
     def __init__(
-            self,
-            root_attribute: rxconf.VaultAttribute,
-            path: PurePath,
+        self,
+        root_attribute: rxconf.VaultAttribute,
+        path: PurePath,
     ) -> None:
         self._root = root_attribute
         self._path = path
@@ -87,10 +87,10 @@ class VaultConfig(VaultConfigType):
     @classmethod
     @exceptions.handle_unknown_exception
     def load_from_vault(
-            cls,
-            token: str,
-            ip: str,
-            path: PurePath,
+        cls,
+        token: str,
+        ip: str,
+        path: PurePath,
     ) -> "VaultConfig":
         try:
             client = hvac.Client(url=ip, token=token)
@@ -106,10 +106,10 @@ class VaultConfig(VaultConfigType):
     @classmethod
     @exceptions.handle_unknown_exception
     def load_from_vault_async(
-            cls,
-            token: str,
-            ip: str,
-            path: PurePath,
+        cls,
+        token: str,
+        ip: str,
+        path: PurePath,
     ) -> "VaultConfig":
         raise NotImplementedError()
 
@@ -117,25 +117,23 @@ class VaultConfig(VaultConfigType):
     @exceptions.handle_unknown_exception
     def _process_data(cls, data: tp.Any) -> attrs.VaultAttribute:
         if isinstance(data, dict):
-            return attrs.VaultAttribute(
-                value={k.lower(): cls._process_data(v) for k, v in data.items()}
-            )
-        elif isinstance(data, list):
+            return attrs.VaultAttribute(value={k.lower(): cls._process_data(v) for k, v in data.items()})
+        if isinstance(data, list):
             return attrs.VaultAttribute(
                 value=[
-                    cls._process_data(item) if not isinstance(item, dict) else attrs.VaultAttribute(
-                        value={k.lower(): cls._process_data(v) for k, v in item.items()}
-                    ) for item in data
+                    (
+                        cls._process_data(item)
+                        if not isinstance(item, dict)
+                        else attrs.VaultAttribute(value={k.lower(): cls._process_data(v) for k, v in item.items()})
+                    )
+                    for item in data
                 ]
             )
-        elif isinstance(data, set):
-            return attrs.VaultAttribute(  # pragma: no cover
-                value={cls._process_data(item) for item in data}
-            )
-        elif isinstance(data, (bool, int, str, float, type(None), datetime.date, datetime.datetime)):
+        if isinstance(data, set):
+            return attrs.VaultAttribute(value={cls._process_data(item) for item in data})  # pragma: no cover
+        if isinstance(data, (bool, int, str, float, type(None), datetime.date, datetime.datetime)):
             return attrs.VaultAttribute(value=data)
-        else:
-            raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
+        raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
 
     @exceptions.handle_unknown_exception
     def __eq__(self, other: ConfigType) -> int:

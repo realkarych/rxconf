@@ -1,7 +1,15 @@
 import unittest
 
 from rxconf import exceptions
-from rxconf.attributes import EnvAttribute, IniAttribute, JsonAttribute, MockAttribute, TomlAttribute, YamlAttribute
+from rxconf.attributes import (
+    EnvAttribute,
+    IniAttribute,
+    JsonAttribute,
+    MockAttribute,
+    TomlAttribute,
+    VaultAttribute,
+    YamlAttribute,
+)
 
 
 class TestAttributeType(unittest.TestCase):

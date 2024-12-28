@@ -42,9 +42,9 @@ class MetaRxConf(MetaTree, metaclass=abc.ABCMeta):
     @classmethod
     @abc.abstractmethod
     def from_env(
-            cls: tp.Type["MetaRxConf"],
-            prefix: tp.Optional[str] = None,
-            remove_prefix: tp.Optional[bool] = False,
+        cls: tp.Type["MetaRxConf"],
+        prefix: tp.Optional[str] = None,
+        remove_prefix: tp.Optional[bool] = False,
     ) -> "MetaRxConf":
         pass
 
