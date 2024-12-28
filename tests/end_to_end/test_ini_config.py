@@ -173,7 +173,7 @@ def test_structures() -> None:
 def test_creates_nested_dict():
     config = RxConf.from_file(config_path=_RESOURCE_DIR / "deep_nesting_schema.ini")
 
-    assert config.database.main.settings.username == 'example_user'
-    assert config.database.main.settings.password == 'secret'
-    assert config.database.main.connection.host == 'localhost'
+    assert config.database.main.settings.username == "example_user"
+    assert config.database.main.settings.password == "secret"
+    assert config.database.main.connection.host == "localhost"
     assert config.database.main.connection.port == 3306

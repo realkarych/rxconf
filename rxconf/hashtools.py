@@ -9,7 +9,7 @@ def _hash_with_type(value: tp.Any) -> str:
 
 def _hash_to_int(value: str) -> int:
     """Hash the value and return it as an integer"""
-    return int(sha256(value.encode('utf-8')).hexdigest(), 16)
+    return int(sha256(value.encode("utf-8")).hexdigest(), 16)
 
 
 HASHED_STRUCTURES: tp.Final[dict[str, int]] = {
