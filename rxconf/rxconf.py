@@ -3,7 +3,7 @@ import pathlib
 import typing as tp
 
 from rxconf import config_resolver, config_types
-from rxconf.config_builder import FileConfigBuilder, VaultConfigBuilder
+from rxconf.config_builder import FileConfigBuilder
 
 
 class MetaTree(metaclass=abc.ABCMeta):
@@ -55,8 +55,6 @@ class MetaRxConf(MetaTree, metaclass=abc.ABCMeta):
         token: str,
         ip: str,
         path: tp.Union[str, pathlib.PurePath],
-        ext: str,
-        vault_config_resolver: config_resolver.VaultConfigResolver = config_resolver.DefaultVaultConfigResolver,
     ) -> "MetaRxConf":
         pass
 
@@ -89,8 +87,6 @@ class AsyncMetaRxConf(MetaTree, metaclass=abc.ABCMeta):
         token: str,
         ip: str,
         path: tp.Union[str, pathlib.PurePath],
-        ext: str,
-        vault_config_resolver: config_resolver.VaultConfigResolver = config_resolver.DefaultVaultConfigResolver,
     ) -> "AsyncMetaRxConf":
         pass
 
@@ -135,19 +131,8 @@ class RxConf(MetaRxConf):
         token: str,
         ip: str,
         path: tp.Union[str, pathlib.PurePath],
-        ext: str,
-        vault_config_resolver: config_resolver.VaultConfigResolver = config_resolver.DefaultVaultConfigResolver,
     ) -> "RxConf":
-        return cls(
-            config=VaultConfigBuilder(
-                config_resolver=vault_config_resolver,
-            ).build(
-                token=token,
-                ip=ip,
-                path=path,
-                ext=ext,
-            )
-        )
+        return cls(config=config_types.VaultConfig.load_from_vault(token=token, ip=ip, path=path))
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, RxConf):
@@ -206,8 +191,6 @@ class AsyncRxConf(AsyncMetaRxConf):
         token: str,
         ip: str,
         path: tp.Union[str, pathlib.PurePath],
-        ext: str,
-        vault_config_resolver: config_resolver.VaultConfigResolver = config_resolver.DefaultVaultConfigResolver,
     ) -> "AsyncRxConf":
         raise NotImplementedError()
 
