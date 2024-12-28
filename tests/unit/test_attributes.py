@@ -145,6 +145,18 @@ class TestAttributeType(unittest.TestCase):
         self.assertEqual(repr(attr), "AttributeType(8)")
 
 
+class TestVaultAttribute(unittest.TestCase):
+
+    def test_getattr(self):
+        attr = VaultAttribute({"key": "value"})  # type: ignore
+        self.assertEqual(attr.key, "value")
+
+    def test_getattr_key_error(self):
+        attr = VaultAttribute({"key": "value"})  # type: ignore
+        with self.assertRaises(exceptions.RxConfError):
+            _ = attr.nonexistent_key
+
+
 class TestYamlAttribute(unittest.TestCase):
 
     def test_getattr(self):
