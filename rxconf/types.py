@@ -33,6 +33,13 @@ ENV_ATTRIBUTE_TYPE: TypeAlias = tp.Union[
     bool, int, str, float, None,
 ]
 
+VAULT_ATTRIBUTE_TYPE: TypeAlias = tp.Union[
+    tp.Union[bool, int, str, float, None],
+    tp.List[tp.Union[bool, int, str, float, None]],
+    tp.Set[tp.Union[bool, int, str, float, None]],
+    tp.Union[date, datetime],
+]
+
 
 def map_primitive(value: str) -> tp.Union[int, float, bool, None, str]:
     lower_value = value.lower()
