@@ -1,4 +1,4 @@
-.PHONY: help install update test lint test-lint docs
+.PHONY: help install update test lint format check docs
 
 # Default target
 help: ## Show this help message
@@ -14,17 +14,19 @@ update: ## Update the poetry environment
 	@poetry update
 
 test: ## Run tests
-	@poetry shell
 	@poetry run pytest
 
-lint: ## Run linters (pyright, ruff, flake8, mypy)
-	@poetry shell
+format: ## Format sources
+	@poetry run black .
+	@poetry run isort .
+	@poetry run ruff check . --fix
+
+lint: ## Run linters (pyright, ruff, mypy)
 	@poetry run pyright .
 	@poetry run ruff check .
-	@poetry run flake8
 	@poetry run mypy .
 
-test-lint: test lint ## Run tests and linters
+check: test lint ## Run tests and linters
 
 docs: ## Build and serve documentation with mkdocs
 	@poetry run mkdocs serve

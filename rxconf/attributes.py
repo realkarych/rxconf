@@ -23,151 +23,151 @@ class AttributeType(metaclass=ABCMeta):
 
     @exceptions.handle_unknown_exception
     def __int__(self) -> int:
-        return int(self.__value)  # type: ignore
+        return int(self.__value)
 
     @exceptions.handle_unknown_exception
     def __float__(self) -> float:
-        return float(self.__value)  # type: ignore
+        return float(self.__value)
 
     @exceptions.handle_unknown_exception
     def __str__(self) -> str:
-        return str(self.__value)  # type: ignore
+        return str(self.__value)
 
     @exceptions.handle_unknown_exception
     def __bool__(self) -> bool:
-        return bool(self.__value)  # type: ignore
+        return bool(self.__value)
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __add__(self, other: tp.Any) -> tp.Any:
-        return self.__value + other  # type: ignore
+        return self.__value + other
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __mul__(self, other: tp.Any) -> tp.Any:
-        return self.__value * other  # type: ignore
+        return self.__value * other
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __sub__(self, other: tp.Any) -> tp.Any:
-        return self.__value - other  # type: ignore
+        return self.__value - other
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __truediv__(self, other: tp.Any) -> tp.Any:
-        return self.__value / other  # type: ignore
+        return self.__value / other
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __floordiv__(self, other: tp.Any) -> tp.Any:
-        return self.__value // other  # type: ignore
+        return self.__value // other
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __mod__(self, other: tp.Any) -> tp.Any:
-        return self.__value % other  # type: ignore
+        return self.__value % other
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __pow__(self, other: tp.Any) -> tp.Any:
-        return self.__value ** other  # type: ignore
+        return self.__value ** other
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __lshift__(self, other: tp.Any) -> tp.Any:
-        return self.__value << other  # type: ignore
+        return self.__value << other
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __rshift__(self, other: tp.Any) -> tp.Any:
-        return self.__value >> other  # type: ignore
+        return self.__value >> other
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __and__(self, other: tp.Any) -> tp.Any:
-        return self.__value & other  # type: ignore
+        return self.__value & other
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __xor__(self, other: tp.Any) -> tp.Any:
-        return self.__value ^ other  # type: ignore
+        return self.__value ^ other
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __or__(self, other: tp.Any) -> tp.Any:
-        return self.__value | other  # type: ignore
+        return self.__value | other
 
     @exceptions.handle_unknown_exception
     def __neg__(self) -> tp.Any:
-        return -self.__value  # type: ignore
+        return -self.__value
 
     @exceptions.handle_unknown_exception
     def __pos__(self) -> tp.Any:
-        return +self.__value  # type: ignore
+        return +self.__value
 
     @exceptions.handle_unknown_exception
     def __abs__(self) -> tp.Any:
-        return abs(self.__value)  # type: ignore
+        return abs(self.__value)
 
     @exceptions.handle_unknown_exception
     def __invert__(self) -> tp.Any:
-        return ~self.__value  # type: ignore
+        return ~self.__value
 
     @exceptions.handle_unknown_exception
     def __round__(self, n: int = 0) -> tp.Any:
-        return round(self.__value, n)  # type: ignore
+        return round(self.__value, n)
 
     @exceptions.handle_unknown_exception
     def __hash__(self) -> int:
-        return hash(self.__value)  # type: ignore
+        return hash(self.__value)
 
     @exceptions.handle_unknown_exception
     def __len__(self) -> int:
-        return len(self.__value)  # type: ignore
+        return len(self.__value)
 
     @exceptions.handle_unknown_exception
     def __iter__(self) -> tp.Iterator[tp.Any]:
-        return iter(self.__value)  # type: ignore
+        return iter(self.__value)
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __contains__(self, item: tp.Any) -> bool:
-        return item in self.__value  # type: ignore
+        return item in self.__value
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __getitem__(self, item: tp.Any) -> tp.Any:
-        return self.__value[item]  # type: ignore
+        return self.__value[item]
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __eq__(self, other: tp.Any) -> bool:
-        return self.__value == other  # type: ignore
+        return self.__value == other
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __ne__(self, other: tp.Any) -> bool:
-        return not self.__eq__(other)  # type: ignore
+        return not self.__eq__(other)
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __lt__(self, other: tp.Any) -> bool:
-        return self.__value < other  # type: ignore
+        return self.__value < other
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __le__(self, other: tp.Any) -> bool:
-        return self.__value <= other  # type: ignore
+        return self.__value <= other
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __gt__(self, other: tp.Any) -> bool:
-        return other < self.__value  # type: ignore
+        return other < self.__value
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __ge__(self, other: tp.Any) -> bool:
-        return other <= self.__value  # type: ignore
+        return other <= self.__value
 
     @exceptions.handle_unknown_exception
     def __repr__(self) -> str:

@@ -54,7 +54,7 @@ def test_pritive_collections() -> None:
         assert expected == item
 
     assert list(got_list) == expected_list
-    assert sorted(list(got_set)) == sorted(list(expected_set))
+    assert sorted(got_set) == sorted(expected_set)
     assert set(got_set) == expected_set
 
 
@@ -111,7 +111,7 @@ def test_inner_structures() -> None:
     assert conf.config.age == 42
     assert conf.config.address.address == "123 Main St"
     assert not conf.config.address.city
-    assert sorted(list(conf.config.hobbies)) == sorted(["1", "2", "3"])
+    assert sorted(conf.config.hobbies) == sorted(["1", "2", "3"])
     assert list(conf.config.preferences.favorites) == ["a", "b", "c"]
     assert conf.config.is_active == True  # noqa: E712
     assert conf.second.element == "value"

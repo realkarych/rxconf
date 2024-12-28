@@ -33,8 +33,8 @@ def test_error_comparing_with_not_rxconf():
         assert conf1 == 1
         assert conf2 == "conf3"
         assert conf3 == 6.6
-        assert "conf4" == conf4
-        assert 1 == conf5
+        assert conf4 == "conf4"
+        assert conf5 == 1
 
 
 def test_same_attribute_structures():
@@ -190,5 +190,5 @@ async def test_async_error_comparing_with_not_rxconf():
         assert conf1 == 1
         assert conf2 == "conf3"
         assert conf3 == 6.6
-        assert "conf4" == conf4
-        assert 1 == conf5
+        assert conf4 == "conf4"
+        assert conf5 == 1
