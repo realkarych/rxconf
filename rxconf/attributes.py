@@ -183,6 +183,41 @@ class MockAttribute(AttributeType):  # pragma: no cover
         pass
 
 
+class VaultAttribute(AttributeType):
+
+    def __init__(
+        self: "VaultAttribute",
+        value: tp.Union[
+            types.VAULT_ATTRIBUTE_TYPE,
+            "VaultAttribute",
+            tp.List["VaultAttribute"],
+            tp.Set["VaultAttribute"],
+            tp.Dict[str, "VaultAttribute"],
+        ]
+    ) -> None:
+        super().__init__(value)
+
+    @exceptions.handle_unknown_exception
+    def __getattr__(
+        self: "VaultAttribute",
+        item: str,
+    ) -> tp.Union[
+        types.YAML_ATTRIBUTE_TYPE,
+        "VaultAttribute",
+        tp.List["VaultAttribute"],
+        tp.Set["VaultAttribute"],
+        tp.Dict[str, "VaultAttribute"],
+    ]:
+        value = object.__getattribute__(self, "_AttributeType__value")
+        if isinstance(value, dict):
+            try:
+                return value[item.lower()]
+            except KeyError as exc:
+                raise KeyError(f"Key `{item}` doesn't exist...") from exc
+
+        raise KeyError(f"Key `{item}` doesn't exist...")
+
+
 class YamlAttribute(AttributeType):
 
     def __init__(
