@@ -1,6 +1,7 @@
 import abc
 import pathlib
 import typing as tp
+
 from rxconf.config_resolver import ConfigResolver, FileConfigResolver
 from rxconf.config_types import ConfigType, FileConfigType
 

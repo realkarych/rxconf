@@ -9,6 +9,7 @@ def _patch_other_value(func: tp.Callable[..., tp.Any]) -> tp.Callable[..., tp.An
         if isinstance(other, AttributeType):
             other = object.__getattribute__(other, "_AttributeType__value")
         return func(self, other)
+
     return wrapper
 
 
@@ -70,7 +71,7 @@ class AttributeType(metaclass=ABCMeta):
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __pow__(self, other: tp.Any) -> tp.Any:
-        return self.__value ** other
+        return self.__value**other
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
@@ -193,7 +194,7 @@ class YamlAttribute(AttributeType):
             tp.List["YamlAttribute"],
             tp.Set["YamlAttribute"],
             tp.Dict[str, "YamlAttribute"],
-        ]
+        ],
     ) -> None:
         super().__init__(value)
 
@@ -227,7 +228,7 @@ class JsonAttribute(AttributeType):
             "JsonAttribute",
             tp.List["JsonAttribute"],
             tp.Dict[str, "JsonAttribute"],
-        ]
+        ],
     ) -> None:
         super().__init__(value)
 
@@ -260,7 +261,7 @@ class TomlAttribute(AttributeType):
             "TomlAttribute",
             tp.List["TomlAttribute"],
             tp.Dict[str, "TomlAttribute"],
-        ]
+        ],
     ) -> None:
         super().__init__(value)
 
@@ -292,7 +293,7 @@ class EnvAttribute(AttributeType):
             types.ENV_ATTRIBUTE_TYPE,
             "EnvAttribute",
             tp.Dict[str, "EnvAttribute"],
-        ]
+        ],
     ) -> None:
         super().__init__(value)
 
@@ -317,21 +318,14 @@ class EnvAttribute(AttributeType):
 
 class IniAttribute(AttributeType):
 
-    def __init__(self: "IniAttribute", value: tp.Union[
-        types.INI_ATTRIBUTE_TYPE,
-        tp.Dict[str, "IniAttribute"]
-    ]) -> None:
+    def __init__(self: "IniAttribute", value: tp.Union[types.INI_ATTRIBUTE_TYPE, tp.Dict[str, "IniAttribute"]]) -> None:
         super().__init__(value)
 
     @exceptions.handle_unknown_exception
     def __getattr__(
-            self: "IniAttribute",
-            item: str,
-    ) -> tp.Union[
-        types.INI_ATTRIBUTE_TYPE,
-        tp.Dict[str, "IniAttribute"],
-        "IniAttribute"
-    ]:
+        self: "IniAttribute",
+        item: str,
+    ) -> tp.Union[types.INI_ATTRIBUTE_TYPE, tp.Dict[str, "IniAttribute"], "IniAttribute"]:
         value = object.__getattribute__(self, "_AttributeType__value")
         if isinstance(value, dict):
             try:

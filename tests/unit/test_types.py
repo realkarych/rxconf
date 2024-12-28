@@ -1,6 +1,6 @@
-import unittest
-from unittest.mock import patch, MagicMock
 import sys
+import unittest
+from unittest.mock import MagicMock, patch
 
 
 class TestTypeAliasImport(unittest.TestCase):
@@ -11,6 +11,7 @@ class TestTypeAliasImport(unittest.TestCase):
             if "rxconf.types" in sys.modules:
                 del sys.modules["rxconf.types"]
             import rxconf.types
+
             self.assertTrue(hasattr(rxconf.types, "TypeAlias"))
 
     @patch("sys.version_info", new=(3, 10))
@@ -19,6 +20,7 @@ class TestTypeAliasImport(unittest.TestCase):
             if "rxconf.types" in sys.modules:
                 del sys.modules["rxconf.types"]
             import rxconf.types
+
             self.assertTrue(hasattr(rxconf.types, "TypeAlias"))
 
     @patch("sys.version_info", new=(3, 10, 1))
@@ -27,4 +29,5 @@ class TestTypeAliasImport(unittest.TestCase):
             if "rxconf.types" in sys.modules:
                 del sys.modules["rxconf.types"]
             import rxconf.types
+
             self.assertTrue(hasattr(rxconf.types, "TypeAlias"))

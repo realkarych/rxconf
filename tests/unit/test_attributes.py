@@ -1,9 +1,7 @@
 import unittest
-from rxconf import exceptions
 
-from rxconf.attributes import (
-    JsonAttribute, MockAttribute, YamlAttribute, TomlAttribute, IniAttribute, EnvAttribute
-)
+from rxconf import exceptions
+from rxconf.attributes import EnvAttribute, IniAttribute, JsonAttribute, MockAttribute, TomlAttribute, YamlAttribute
 
 
 class TestAttributeType(unittest.TestCase):
@@ -54,7 +52,7 @@ class TestAttributeType(unittest.TestCase):
 
     def test_pow(self):
         attr = MockAttribute(2)
-        self.assertEqual(attr ** 3, 8)
+        self.assertEqual(attr**3, 8)
 
     def test_lshift(self):
         attr = MockAttribute(2)

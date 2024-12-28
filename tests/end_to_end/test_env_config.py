@@ -5,6 +5,7 @@ import pytest
 from rxconf import AsyncRxConf, RxConf, exceptions
 from rxconf.config_types import EnvConfig
 
+
 _RESOURCE_DIR = Path.cwd() / Path("tests/resources")
 
 
@@ -35,8 +36,8 @@ def test_key_cases() -> None:
 def test_numeric_casts() -> None:
     conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
 
-    assert conf.integer-1 < conf.integer < conf.integer+1
-    assert conf.integer-0.1 < conf.integer <= int(conf.integer+0.1)
+    assert conf.integer - 1 < conf.integer < conf.integer + 1
+    assert conf.integer - 0.1 < conf.integer <= int(conf.integer + 0.1)
     assert int(conf.integer) == conf.integer
     assert int(conf.integer * 2 / 2) == conf.integer**1
     assert conf.big_integer > conf.integer
@@ -108,8 +109,8 @@ def test_key_cases_from_env() -> None:
 def test_numeric_casts_from_env() -> None:
     conf = RxConf.from_env()
 
-    assert conf.integer-1 < conf.integer < conf.integer+1
-    assert conf.integer-0.1 < conf.integer <= int(conf.integer+0.1)
+    assert conf.integer - 1 < conf.integer < conf.integer + 1
+    assert conf.integer - 0.1 < conf.integer <= int(conf.integer + 0.1)
     assert int(conf.integer) == conf.integer
     assert int(conf.integer * 2 / 2) == conf.integer**1
     assert conf.big_integer > conf.integer
@@ -182,8 +183,8 @@ async def test_key_cases_async() -> None:
 async def test_numeric_casts_async() -> None:
     conf = await AsyncRxConf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
 
-    assert conf.integer-1 < conf.integer < conf.integer+1
-    assert conf.integer-0.1 < conf.integer <= int(conf.integer+0.1)
+    assert conf.integer - 1 < conf.integer < conf.integer + 1
+    assert conf.integer - 0.1 < conf.integer <= int(conf.integer + 0.1)
     assert int(conf.integer) == conf.integer
     assert int(conf.integer * 2 / 2) == conf.integer**1
     assert conf.big_integer > conf.integer
