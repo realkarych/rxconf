@@ -53,7 +53,7 @@ def test_pritive_collections() -> None:
         assert expected == item
 
     assert list(got_list) == expected_list
-    assert sorted(list(got_set)) == sorted(list(expected_set))
+    assert sorted(got_set) == sorted(expected_set)
     assert set(got_set) == expected_set
 
 
@@ -70,7 +70,7 @@ async def test_pritive_collections_async() -> None:
         assert expected == item
 
     assert list(got_list) == expected_list
-    assert sorted(list(got_set)) == sorted(list(expected_set))
+    assert sorted(got_set) == sorted(expected_set)
     assert set(got_set) == expected_set
 
 

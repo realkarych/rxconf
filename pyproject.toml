@@ -24,19 +24,18 @@ toml = {version = "^0.10.2", markers = "python_version < '3.11'"}
 hvac = "^2.3.0"
 
 [tool.poetry.dev-dependencies]
-types-aiofiles = "24.1.0.20240626"
-pytest = "^8.3.3"
-pytest-asyncio = "^0.24.0"
+types-aiofiles = "24.1.0.20241221"
+pytest = "^8.3.4"
+pytest-asyncio = "^0.25.0"
 pytest-cov = "^6.0.0"
-mypy = "^1.13.0"
+mypy = "^1.14.0"
 black = "^24.10.0"
 isort = "^5.13.2"
-flake8 = "^7.1.1"
-pylint = "^3.3.1"
-pyright = "^1.1.389"
-ruff = "^0.8.0"
+pylint = "^3.3.3"
+pyright = "^1.1.391"
+ruff = "^0.8.4"
 mkdocs = "^1.6.1"
-mkdocs-material = "^9.5.45"
+mkdocs-material = "^9.5.49"
 types-PyYAML = "^6.0.12"
 coverage-badge = "^1.1.2"
 typing-extensions = "^4.12.2"
@@ -46,3 +45,40 @@ types-toml = "^0.10.8.20240310"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 120
+target-version = ['py311']
+skip-string-normalization = true
+exclude = '''
+(
+  migrations
+  | \.\*
+  | files
+)
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 120
+multi_line_output = 3
+default_section = "THIRDPARTY"
+lines_after_imports = 2
+no_lines_before = "LOCALFOLDER"
+include_trailing_comma = true
+
+[tool.pyright]
+typeCheckingMode = "standard"
+reportUnusedImport = true
+reportUnnecessaryTypeIgnoreComment = false
+reportMissingImports = true
+reportGeneralTypeIssues = true
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+exclude = []
+ignore = []
+select = ["A", "B", "C", "E", "F", "N", "Q", "W"]
+extend-select = ["UP035", "SIM", "ISC", "RET", "PIE"]

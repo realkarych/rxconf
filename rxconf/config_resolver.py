@@ -1,13 +1,16 @@
 import os
 import pathlib
 import typing as tp
-from abc import ABCMeta
+from abc import ABCMeta, abstractmethod
 
 from rxconf import attributes, config_types, exceptions
 
 
 class ConfigResolver(metaclass=ABCMeta):
-    pass
+
+    @abstractmethod
+    def resolve(self, *args, **kwargs) -> tp.Type[config_types.ConfigType]:
+        raise NotImplementedError()
 
 
 class FileConfigResolver(ConfigResolver):

@@ -12,23 +12,23 @@ _RESOURCE_DIR = Path.cwd() / Path("tests/resources")
 
 
 def test_import_tomllib():
-    if 'rxconf.config_types' in sys.modules:
-        del sys.modules['rxconf.config_types']
+    if "rxconf.config_types" in sys.modules:
+        del sys.modules["rxconf.config_types"]
     import rxconf.config_types
     importlib.reload(rxconf.config_types)
     assert any((
-        'tomllib' in sys.modules and 'toml' not in sys.modules,
-        'tomllib' not in sys.modules and 'toml' in sys.modules,
+        "tomllib" in sys.modules and "toml" not in sys.modules,
+        "tomllib" not in sys.modules and "toml" in sys.modules,
     )), f"Expected 'tomllib' or 'toml' in sys.modules, but got {sys.modules.keys()}"
 
 
 def test_import_toml():
-    with patch.object(sys, 'version_info', (3, 10)):
-        if 'rxconf.config_types' in sys.modules:
-            del sys.modules['rxconf.config_types']
+    with patch.object(sys, "version_info", (3, 10)):
+        if "rxconf.config_types" in sys.modules:
+            del sys.modules["rxconf.config_types"]
         import rxconf.config_types
         importlib.reload(rxconf.config_types)
-        assert 'toml' in sys.modules, f"Expected 'toml' in sys.modules, but got {sys.modules.keys()}"
+        assert "toml" in sys.modules, f"Expected 'toml' in sys.modules, but got {sys.modules.keys()}"
 
 
 def test_empty() -> None:

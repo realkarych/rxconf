@@ -78,7 +78,7 @@ def set_env_vars(monkeypatch):
     for key, value in env_vars.items():
         monkeypatch.setenv(key, value)
     yield
-    for key in env_vars.keys():
+    for key in env_vars:
         monkeypatch.delenv(key, raising=False)
 
 

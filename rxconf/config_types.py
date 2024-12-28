@@ -261,7 +261,7 @@ class YamlConfig(FileConfigType):
             return attrs.YamlAttribute(
                 value={k.lower(): cls._process_data(v) for k, v in data.items()}
             )
-        elif isinstance(data, list):
+        if isinstance(data, list):
             return attrs.YamlAttribute(
                 value=[
                     cls._process_data(item) if not isinstance(item, dict) else attrs.YamlAttribute(
@@ -269,14 +269,13 @@ class YamlConfig(FileConfigType):
                     ) for item in data
                 ]
             )
-        elif isinstance(data, set):
+        if isinstance(data, set):
             return attrs.YamlAttribute(  # pragma: no cover
                 value={cls._process_data(item) for item in data}
             )
-        elif isinstance(data, (bool, int, str, float, type(None), datetime.date, datetime.datetime)):
+        if isinstance(data, (bool, int, str, float, type(None), datetime.date, datetime.datetime)):
             return attrs.YamlAttribute(value=data)
-        else:
-            raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
+        raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
 
 
 class JsonConfig(FileConfigType):
@@ -359,7 +358,7 @@ class JsonConfig(FileConfigType):
             return attrs.JsonAttribute(
                 value={k.lower(): cls._process_data(v) for k, v in data.items()}
             )
-        elif isinstance(data, list):
+        if isinstance(data, list):
             return attrs.JsonAttribute(
                 value=[
                     cls._process_data(item) if not isinstance(item, dict) else attrs.JsonAttribute(
@@ -367,10 +366,9 @@ class JsonConfig(FileConfigType):
                     ) for item in data
                 ]
             )
-        elif isinstance(data, (bool, int, str, float, type(None))):
+        if isinstance(data, (bool, int, str, float, type(None))):
             return attrs.JsonAttribute(value=data)
-        else:
-            raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
+        raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
 
 
 class TomlConfig(FileConfigType):
@@ -394,15 +392,14 @@ class TomlConfig(FileConfigType):
     @classmethod
     def _load_toml_data(cls, content: str, path: tp.Union[str, PurePath]) -> tp.Dict:
         toml_decode_exc = (
-            toml.TOMLDecodeError  # type: ignore
+            toml.TOMLDecodeError  # type: ignore[attr-defined]
             if sys.version_info >= (3, 11)
-            else toml.TomlDecodeError  # type: ignore
+            else toml.TomlDecodeError  # type: ignore[attr-defined]
         )
         try:
             if sys.version_info >= (3, 11):
                 return toml.loads(content)
-            else:
-                return toml.loads(content)  # pragma: no cover
+            return toml.loads(content)
         except toml_decode_exc as exc:
             raise exceptions.BrokenConfigSchemaError(
                 f"Error while parsing toml config: {path}"
@@ -461,7 +458,7 @@ class TomlConfig(FileConfigType):
             return attrs.TomlAttribute(
                 value={k.lower(): cls._process_data(v) for k, v in data.items()}
             )
-        elif isinstance(data, list):
+        if isinstance(data, list):
             return attrs.TomlAttribute(
                 value=[
                     cls._process_data(item) if not isinstance(item, dict) else attrs.TomlAttribute(
@@ -469,10 +466,9 @@ class TomlConfig(FileConfigType):
                     ) for item in data
                 ]
             )
-        elif isinstance(data, (bool, int, str, float, datetime.date, datetime.datetime)):
+        if isinstance(data, (bool, int, str, float, datetime.date, datetime.datetime)):
             return attrs.TomlAttribute(value=data)
-        else:
-            raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
+        raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
 
 
 class IniConfig(FileConfigType):
@@ -503,13 +499,13 @@ class IniConfig(FileConfigType):
                 f"Error while parsing ini config: {path}"
             ) from exc
 
-        ini_data: tp.Dict[tp.Any, tp.Any] = dict()
+        ini_data: tp.Dict[tp.Any, tp.Any] = {}
         for section in config.sections():
-            keys = section.split('.')
+            keys = section.split(".")
             current_level = ini_data
             for key in keys[:-1]:
                 if key not in current_level:
-                    current_level[key] = dict()
+                    current_level[key] = {}
                 current_level = current_level[key]
             current_level[keys[-1]] = dict(config.items(section))
         return ini_data
@@ -567,10 +563,9 @@ class IniConfig(FileConfigType):
             return attrs.IniAttribute(
                 value={k.lower(): cls._process_data(v) for k, v in data.items()}
             )
-        elif isinstance(data, str):
+        if isinstance(data, str):
             return attrs.IniAttribute(value=types.map_primitive(data))
-        else:
-            raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
+        raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
 
 
 class EnvConfig(ConfigType):
@@ -603,7 +598,7 @@ class EnvConfig(ConfigType):
     ) -> "EnvConfig":
         if prefix and remove_prefix:
             env_vars = {
-                k.lower().removeprefix(prefix.lower()).lstrip('_'): v
+                k.lower().removeprefix(prefix.lower()).lstrip("_"): v
                 for k, v in os.environ.items()
                 if k.lower().startswith(prefix.lower())
             }
