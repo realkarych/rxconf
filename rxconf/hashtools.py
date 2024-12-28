@@ -1,6 +1,7 @@
-from rxconf import AttributeType
-from hashlib import sha256
 import typing as tp
+from hashlib import sha256
+
+from rxconf import AttributeType
 
 
 def _hash_with_type(value: tp.Any) -> str:

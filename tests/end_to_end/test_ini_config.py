@@ -4,6 +4,7 @@ import pytest
 
 from rxconf import AsyncRxConf, RxConf, exceptions
 
+
 _RESOURCE_DIR = Path.cwd() / Path("tests/resources")
 
 
@@ -68,7 +69,7 @@ def test_numeric_casts() -> None:
     assert conf.primitives.integer - 1 < conf.primitives.integer < conf.primitives.integer + 1
     assert conf.primitives.integer - 0.1 < conf.primitives.integer <= int(conf.primitives.integer + 0.1)
     assert int(conf.primitives.integer) == conf.primitives.integer
-    assert int(conf.primitives.integer * 2 / 2) == conf.primitives.integer ** 1
+    assert int(conf.primitives.integer * 2 / 2) == conf.primitives.integer**1
     assert conf.primitives.big_integer > conf.primitives.integer
 
 
@@ -79,7 +80,7 @@ async def test_numeric_casts_async() -> None:
     assert conf.primitives.integer - 1 < conf.primitives.integer < conf.primitives.integer + 1
     assert conf.primitives.integer - 0.1 < conf.primitives.integer <= int(conf.primitives.integer + 0.1)
     assert int(conf.primitives.integer) == conf.primitives.integer
-    assert int(conf.primitives.integer * 2 / 2) == conf.primitives.integer ** 1
+    assert int(conf.primitives.integer * 2 / 2) == conf.primitives.integer**1
     assert conf.primitives.big_integer > conf.primitives.integer
 
 

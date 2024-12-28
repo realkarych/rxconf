@@ -24,10 +24,13 @@ class FileConfigResolver(ConfigResolver):
     ) -> tp.Type[config_types.FileConfigType]:
         _, extension = os.path.splitext(path)
         for config_type in self._config_types:
-            if extension in config_type(
-                root_attribute=attributes.MockAttribute(),
-                path=pathlib.Path(),
-            ).allowed_extensions:
+            if (
+                extension
+                in config_type(
+                    root_attribute=attributes.MockAttribute(),
+                    path=pathlib.Path(),
+                ).allowed_extensions
+            ):
                 return config_type
 
         # TODO: add here link how to patch the extensions.

@@ -1,4 +1,5 @@
 import unittest
+
 from rxconf.exceptions import InvalidAttributeError
 
 

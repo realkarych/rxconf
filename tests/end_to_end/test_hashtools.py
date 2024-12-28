@@ -1,6 +1,8 @@
-import pytest
 from pathlib import Path
-from rxconf import RxConf, AsyncRxConf
+
+import pytest
+
+from rxconf import AsyncRxConf, RxConf
 
 
 _RESOURCE_DIR = Path.cwd() / Path("tests/resources")
@@ -93,6 +95,7 @@ def test_real_conf():
     conf2 = RxConf.from_file(config_path=_CONF_HASH_DIR / "real_conf_file_2.yml")
 
     assert conf1 != conf2
+
 
 # --------------------------------------
 # ------------ AsyncRxConf -------------

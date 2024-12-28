@@ -7,11 +7,13 @@ import sys
 import typing as tp
 from abc import ABCMeta, abstractmethod
 from pathlib import PurePath
+
 import aiofiles
-import yaml
 import dotenv
-from rxconf import types
-from rxconf import hashtools
+import yaml
+
+from rxconf import hashtools, types
+
 
 if sys.version_info >= (3, 11):
     import tomllib as toml
@@ -149,9 +151,9 @@ class VaultConfig(VaultConfigType):
 class FileConfigType(ConfigType, metaclass=ABCMeta):  # pragma: no cover
 
     def __init__(
-            self: "FileConfigType",
-            root_attribute: rxconf.AttributeType,
-            path: PurePath,
+        self: "FileConfigType",
+        root_attribute: rxconf.AttributeType,
+        path: PurePath,
     ) -> None:
         pass
 
@@ -188,9 +190,9 @@ class YamlConfig(FileConfigType):
     _path: tp.Final[PurePath]
 
     def __init__(
-            self: "YamlConfig",
-            root_attribute: rxconf.YamlAttribute,
-            path: PurePath,
+        self: "YamlConfig",
+        root_attribute: rxconf.YamlAttribute,
+        path: PurePath,
     ) -> None:
         self._root = root_attribute
         self._path = path
@@ -205,9 +207,7 @@ class YamlConfig(FileConfigType):
         try:
             return yaml.safe_load(content)
         except yaml.YAMLError as exc:
-            raise exceptions.BrokenConfigSchemaError(
-                f"Error while parsing yaml config: {path}"
-            ) from exc
+            raise exceptions.BrokenConfigSchemaError(f"Error while parsing yaml config: {path}") from exc
 
     @classmethod
     @exceptions.handle_unknown_exception
@@ -222,8 +222,7 @@ class YamlConfig(FileConfigType):
             yaml_data = cls._load_yaml_data(file.read(), path)
 
         return cls(
-            root_attribute=cls._process_data(yaml_data),
-            path=path if isinstance(path, PurePath) else PurePath(path)
+            root_attribute=cls._process_data(yaml_data), path=path if isinstance(path, PurePath) else PurePath(path)
         )
 
     @classmethod
@@ -240,8 +239,7 @@ class YamlConfig(FileConfigType):
             yaml_data = cls._load_yaml_data(content, path)
 
         return cls(
-            root_attribute=cls._process_data(yaml_data),
-            path=path if isinstance(path, PurePath) else PurePath(path)
+            root_attribute=cls._process_data(yaml_data), path=path if isinstance(path, PurePath) else PurePath(path)
         )
 
     @exceptions.handle_unknown_exception
@@ -258,21 +256,20 @@ class YamlConfig(FileConfigType):
     @exceptions.handle_unknown_exception
     def _process_data(cls, data: tp.Any) -> attrs.YamlAttribute:
         if isinstance(data, dict):
-            return attrs.YamlAttribute(
-                value={k.lower(): cls._process_data(v) for k, v in data.items()}
-            )
+            return attrs.YamlAttribute(value={k.lower(): cls._process_data(v) for k, v in data.items()})
         if isinstance(data, list):
             return attrs.YamlAttribute(
                 value=[
-                    cls._process_data(item) if not isinstance(item, dict) else attrs.YamlAttribute(
-                        value={k.lower(): cls._process_data(v) for k, v in item.items()}
-                    ) for item in data
+                    (
+                        cls._process_data(item)
+                        if not isinstance(item, dict)
+                        else attrs.YamlAttribute(value={k.lower(): cls._process_data(v) for k, v in item.items()})
+                    )
+                    for item in data
                 ]
             )
         if isinstance(data, set):
-            return attrs.YamlAttribute(  # pragma: no cover
-                value={cls._process_data(item) for item in data}
-            )
+            return attrs.YamlAttribute(value={cls._process_data(item) for item in data})  # pragma: no cover
         if isinstance(data, (bool, int, str, float, type(None), datetime.date, datetime.datetime)):
             return attrs.YamlAttribute(value=data)
         raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
@@ -284,9 +281,9 @@ class JsonConfig(FileConfigType):
     _path: tp.Final[PurePath]
 
     def __init__(
-            self: "JsonConfig",
-            root_attribute: rxconf.JsonAttribute,
-            path: PurePath,
+        self: "JsonConfig",
+        root_attribute: rxconf.JsonAttribute,
+        path: PurePath,
     ) -> None:
         self._root = root_attribute
         self._path = path
@@ -301,9 +298,7 @@ class JsonConfig(FileConfigType):
         try:
             return json.loads(content)
         except json.JSONDecodeError as exc:
-            raise exceptions.BrokenConfigSchemaError(
-                f"Error while parsing json config: {path}"
-            ) from exc
+            raise exceptions.BrokenConfigSchemaError(f"Error while parsing json config: {path}") from exc
 
     @classmethod
     @exceptions.handle_unknown_exception
@@ -319,8 +314,7 @@ class JsonConfig(FileConfigType):
             json_data = cls._load_json_data(content, path)
 
         return cls(
-            root_attribute=cls._process_data(json_data),
-            path=path if isinstance(path, PurePath) else PurePath(path)
+            root_attribute=cls._process_data(json_data), path=path if isinstance(path, PurePath) else PurePath(path)
         )
 
     @classmethod
@@ -337,8 +331,7 @@ class JsonConfig(FileConfigType):
             json_data = cls._load_json_data(content, path)
 
         return cls(
-            root_attribute=cls._process_data(json_data),
-            path=path if isinstance(path, PurePath) else PurePath(path)
+            root_attribute=cls._process_data(json_data), path=path if isinstance(path, PurePath) else PurePath(path)
         )
 
     @exceptions.handle_unknown_exception
@@ -355,15 +348,16 @@ class JsonConfig(FileConfigType):
     @exceptions.handle_unknown_exception
     def _process_data(cls, data: tp.Any) -> attrs.JsonAttribute:
         if isinstance(data, dict):
-            return attrs.JsonAttribute(
-                value={k.lower(): cls._process_data(v) for k, v in data.items()}
-            )
+            return attrs.JsonAttribute(value={k.lower(): cls._process_data(v) for k, v in data.items()})
         if isinstance(data, list):
             return attrs.JsonAttribute(
                 value=[
-                    cls._process_data(item) if not isinstance(item, dict) else attrs.JsonAttribute(
-                        value={k.lower(): cls._process_data(v) for k, v in item.items()}
-                    ) for item in data
+                    (
+                        cls._process_data(item)
+                        if not isinstance(item, dict)
+                        else attrs.JsonAttribute(value={k.lower(): cls._process_data(v) for k, v in item.items()})
+                    )
+                    for item in data
                 ]
             )
         if isinstance(data, (bool, int, str, float, type(None))):
@@ -377,9 +371,9 @@ class TomlConfig(FileConfigType):
     _path: tp.Final[PurePath]
 
     def __init__(
-            self: "TomlConfig",
-            root_attribute: rxconf.TomlAttribute,
-            path: PurePath,
+        self: "TomlConfig",
+        root_attribute: rxconf.TomlAttribute,
+        path: PurePath,
     ) -> None:
         self._root = root_attribute
         self._path = path
@@ -401,9 +395,7 @@ class TomlConfig(FileConfigType):
                 return toml.loads(content)
             return toml.loads(content)
         except toml_decode_exc as exc:
-            raise exceptions.BrokenConfigSchemaError(
-                f"Error while parsing toml config: {path}"
-            ) from exc
+            raise exceptions.BrokenConfigSchemaError(f"Error while parsing toml config: {path}") from exc
 
     @classmethod
     @exceptions.handle_unknown_exception
@@ -419,8 +411,7 @@ class TomlConfig(FileConfigType):
             toml_data = cls._load_toml_data(content, path)
 
         return cls(
-            root_attribute=cls._process_data(toml_data),
-            path=path if isinstance(path, PurePath) else PurePath(path)
+            root_attribute=cls._process_data(toml_data), path=path if isinstance(path, PurePath) else PurePath(path)
         )
 
     @classmethod
@@ -437,8 +428,7 @@ class TomlConfig(FileConfigType):
             toml_data = cls._load_toml_data(content, path)
 
         return cls(
-            root_attribute=cls._process_data(toml_data),
-            path=path if isinstance(path, PurePath) else PurePath(path)
+            root_attribute=cls._process_data(toml_data), path=path if isinstance(path, PurePath) else PurePath(path)
         )
 
     @exceptions.handle_unknown_exception
@@ -455,15 +445,16 @@ class TomlConfig(FileConfigType):
     @exceptions.handle_unknown_exception
     def _process_data(cls, data: tp.Any) -> attrs.TomlAttribute:
         if isinstance(data, dict):
-            return attrs.TomlAttribute(
-                value={k.lower(): cls._process_data(v) for k, v in data.items()}
-            )
+            return attrs.TomlAttribute(value={k.lower(): cls._process_data(v) for k, v in data.items()})
         if isinstance(data, list):
             return attrs.TomlAttribute(
                 value=[
-                    cls._process_data(item) if not isinstance(item, dict) else attrs.TomlAttribute(
-                        value={k.lower(): cls._process_data(v) for k, v in item.items()}
-                    ) for item in data
+                    (
+                        cls._process_data(item)
+                        if not isinstance(item, dict)
+                        else attrs.TomlAttribute(value={k.lower(): cls._process_data(v) for k, v in item.items()})
+                    )
+                    for item in data
                 ]
             )
         if isinstance(data, (bool, int, str, float, datetime.date, datetime.datetime)):
@@ -477,9 +468,9 @@ class IniConfig(FileConfigType):
     _path: tp.Final[PurePath]
 
     def __init__(
-            self: "IniConfig",
-            root_attribute: rxconf.IniAttribute,
-            path: PurePath,
+        self: "IniConfig",
+        root_attribute: rxconf.IniAttribute,
+        path: PurePath,
     ) -> None:
         self._root = root_attribute
         self._path = path
@@ -495,9 +486,7 @@ class IniConfig(FileConfigType):
         try:
             config.read_string(content)
         except configparser.Error as exc:
-            raise exceptions.BrokenConfigSchemaError(
-                f"Error while parsing ini config: {path}"
-            ) from exc
+            raise exceptions.BrokenConfigSchemaError(f"Error while parsing ini config: {path}") from exc
 
         ini_data: tp.Dict[tp.Any, tp.Any] = {}
         for section in config.sections():
@@ -560,9 +549,7 @@ class IniConfig(FileConfigType):
     @exceptions.handle_unknown_exception
     def _process_data(cls, data: tp.Any) -> attrs.IniAttribute:
         if isinstance(data, dict):
-            return attrs.IniAttribute(
-                value={k.lower(): cls._process_data(v) for k, v in data.items()}
-            )
+            return attrs.IniAttribute(value={k.lower(): cls._process_data(v) for k, v in data.items()})
         if isinstance(data, str):
             return attrs.IniAttribute(value=types.map_primitive(data))
         raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
@@ -592,9 +579,9 @@ class EnvConfig(ConfigType):
     @classmethod
     @exceptions.handle_unknown_exception
     def load_from_environment(
-            cls,
-            prefix: tp.Optional[str] = None,
-            remove_prefix: tp.Optional[bool] = False,
+        cls,
+        prefix: tp.Optional[str] = None,
+        remove_prefix: tp.Optional[bool] = False,
     ) -> "EnvConfig":
         if prefix and remove_prefix:
             env_vars = {
@@ -603,11 +590,7 @@ class EnvConfig(ConfigType):
                 if k.lower().startswith(prefix.lower())
             }
         elif prefix:
-            env_vars = {
-                k.lower(): v
-                for k, v in os.environ.items()
-                if k.lower().startswith(prefix.lower())
-            }
+            env_vars = {k.lower(): v for k, v in os.environ.items() if k.lower().startswith(prefix.lower())}
         else:
             env_vars = {k.lower(): v for k, v in os.environ.items()}
         root_attribute = cls._process_data(env_vars)

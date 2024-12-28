@@ -2,6 +2,7 @@ import sys
 import typing as tp
 from datetime import date, datetime
 
+
 if sys.version_info >= (3, 10):
     from typing import TypeAlias
 else:
@@ -26,11 +27,19 @@ TOML_ATTRIBUTE_TYPE: TypeAlias = tp.Union[
 ]
 
 INI_ATTRIBUTE_TYPE: TypeAlias = tp.Union[
-    bool, int, str, float, None,
+    bool,
+    int,
+    str,
+    float,
+    None,
 ]
 
 ENV_ATTRIBUTE_TYPE: TypeAlias = tp.Union[
-    bool, int, str, float, None,
+    bool,
+    int,
+    str,
+    float,
+    None,
 ]
 
 VAULT_ATTRIBUTE_TYPE: TypeAlias = tp.Union[
