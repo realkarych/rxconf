@@ -19,30 +19,31 @@ HASHED_STRUCTURES: tp.Final[dict[str, int]] = {
 
 
 def compute_conf_hash(attribute: AttributeType, hash_sum: int = 0) -> int:
-    if isinstance(attribute._value, dict):
-        for key in attribute._value:
-            val_sum = compute_conf_hash(attribute._value[key], 0)
+    value = attribute.__getattribute__("_AttributeType__value")
+    if isinstance(value, dict):
+        for key in value:
+            val_sum = compute_conf_hash(value[key], 0)
             val_sum = _hash_to_int(_hash_with_type(val_sum))
             key_sum = _hash_to_int(_hash_with_type(key))
             total_sum = _hash_to_int(_hash_with_type(key_sum + val_sum))
             hash_sum += total_sum
 
-    elif isinstance(attribute._value, set):
+    elif isinstance(value, set):
         set_sum = 0
-        for elem in attribute._value:
-            set_sum += _hash_to_int(_hash_with_type(elem._value))
+        for elem in value:
+            set_sum += _hash_to_int(_hash_with_type(elem.__getattribute__("_AttributeType__value")))
         set_sum += HASHED_STRUCTURES["set"]
         hash_sum += _hash_to_int(_hash_with_type(set_sum))
 
-    elif isinstance(attribute._value, list):
+    elif isinstance(value, list):
         list_sum = 0
-        for elem in attribute._value:
+        for elem in value:
             list_sum += compute_conf_hash(elem, 0)
             list_sum = _hash_to_int(_hash_with_type(list_sum))
         list_sum += HASHED_STRUCTURES["list"]
         hash_sum += _hash_to_int(_hash_with_type(list_sum))
 
     else:
-        hash_sum += _hash_to_int(_hash_with_type(attribute._value))
+        hash_sum += _hash_to_int(_hash_with_type(value))
 
     return hash_sum

@@ -7,16 +7,15 @@ from rxconf import exceptions, types
 def _patch_other_value(func: tp.Callable[..., tp.Any]) -> tp.Callable[..., tp.Any]:
     def wrapper(self: "AttributeType", other: tp.Any) -> tp.Any:
         if isinstance(other, AttributeType):
-            other = other._value
+            other = object.__getattribute__(other, "_AttributeType__value")
         return func(self, other)
     return wrapper
 
 
 class AttributeType(metaclass=ABCMeta):
-    _value: tp.Any
 
     def __init__(self, value: tp.Any) -> None:  # pragma: no cover
-        self._value = value
+        self.__value = value
 
     @abstractmethod
     def __getattr__(self, item: str) -> tp.Any:  # pragma: no cover
@@ -24,126 +23,126 @@ class AttributeType(metaclass=ABCMeta):
 
     @exceptions.handle_unknown_exception
     def __int__(self) -> int:
-        return int(self._value)  # type: ignore
+        return int(self.__value)  # type: ignore
 
     @exceptions.handle_unknown_exception
     def __float__(self) -> float:
-        return float(self._value)  # type: ignore
+        return float(self.__value)  # type: ignore
 
     @exceptions.handle_unknown_exception
     def __str__(self) -> str:
-        return str(self._value)  # type: ignore
+        return str(self.__value)  # type: ignore
 
     @exceptions.handle_unknown_exception
     def __bool__(self) -> bool:
-        return bool(self._value)  # type: ignore
+        return bool(self.__value)  # type: ignore
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __add__(self, other: tp.Any) -> tp.Any:
-        return self._value + other  # type: ignore
+        return self.__value + other  # type: ignore
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __mul__(self, other: tp.Any) -> tp.Any:
-        return self._value * other  # type: ignore
+        return self.__value * other  # type: ignore
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __sub__(self, other: tp.Any) -> tp.Any:
-        return self._value - other  # type: ignore
+        return self.__value - other  # type: ignore
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __truediv__(self, other: tp.Any) -> tp.Any:
-        return self._value / other  # type: ignore
+        return self.__value / other  # type: ignore
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __floordiv__(self, other: tp.Any) -> tp.Any:
-        return self._value // other  # type: ignore
+        return self.__value // other  # type: ignore
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __mod__(self, other: tp.Any) -> tp.Any:
-        return self._value % other  # type: ignore
+        return self.__value % other  # type: ignore
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __pow__(self, other: tp.Any) -> tp.Any:
-        return self._value ** other  # type: ignore
+        return self.__value ** other  # type: ignore
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __lshift__(self, other: tp.Any) -> tp.Any:
-        return self._value << other  # type: ignore
+        return self.__value << other  # type: ignore
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __rshift__(self, other: tp.Any) -> tp.Any:
-        return self._value >> other  # type: ignore
+        return self.__value >> other  # type: ignore
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __and__(self, other: tp.Any) -> tp.Any:
-        return self._value & other  # type: ignore
+        return self.__value & other  # type: ignore
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __xor__(self, other: tp.Any) -> tp.Any:
-        return self._value ^ other  # type: ignore
+        return self.__value ^ other  # type: ignore
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __or__(self, other: tp.Any) -> tp.Any:
-        return self._value | other  # type: ignore
+        return self.__value | other  # type: ignore
 
     @exceptions.handle_unknown_exception
     def __neg__(self) -> tp.Any:
-        return -self._value  # type: ignore
+        return -self.__value  # type: ignore
 
     @exceptions.handle_unknown_exception
     def __pos__(self) -> tp.Any:
-        return +self._value  # type: ignore
+        return +self.__value  # type: ignore
 
     @exceptions.handle_unknown_exception
     def __abs__(self) -> tp.Any:
-        return abs(self._value)  # type: ignore
+        return abs(self.__value)  # type: ignore
 
     @exceptions.handle_unknown_exception
     def __invert__(self) -> tp.Any:
-        return ~self._value  # type: ignore
+        return ~self.__value  # type: ignore
 
     @exceptions.handle_unknown_exception
     def __round__(self, n: int = 0) -> tp.Any:
-        return round(self._value, n)  # type: ignore
+        return round(self.__value, n)  # type: ignore
 
     @exceptions.handle_unknown_exception
     def __hash__(self) -> int:
-        return hash(self._value)  # type: ignore
+        return hash(self.__value)  # type: ignore
 
     @exceptions.handle_unknown_exception
     def __len__(self) -> int:
-        return len(self._value)  # type: ignore
+        return len(self.__value)  # type: ignore
 
     @exceptions.handle_unknown_exception
     def __iter__(self) -> tp.Iterator[tp.Any]:
-        return iter(self._value)  # type: ignore
+        return iter(self.__value)  # type: ignore
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __contains__(self, item: tp.Any) -> bool:
-        return item in self._value  # type: ignore
+        return item in self.__value  # type: ignore
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __getitem__(self, item: tp.Any) -> tp.Any:
-        return self._value[item]  # type: ignore
+        return self.__value[item]  # type: ignore
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __eq__(self, other: tp.Any) -> bool:
-        return self._value == other  # type: ignore
+        return self.__value == other  # type: ignore
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
@@ -153,46 +152,38 @@ class AttributeType(metaclass=ABCMeta):
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __lt__(self, other: tp.Any) -> bool:
-        return self._value < other  # type: ignore
+        return self.__value < other  # type: ignore
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __le__(self, other: tp.Any) -> bool:
-        return self._value <= other  # type: ignore
+        return self.__value <= other  # type: ignore
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __gt__(self, other: tp.Any) -> bool:
-        return other < self._value  # type: ignore
+        return other < self.__value  # type: ignore
 
     @exceptions.handle_unknown_exception
     @_patch_other_value
     def __ge__(self, other: tp.Any) -> bool:
-        return other <= self._value  # type: ignore
+        return other <= self.__value  # type: ignore
 
     @exceptions.handle_unknown_exception
     def __repr__(self) -> str:
-        return f"AttributeType({self._value})"
+        return f"AttributeType({self.__value})"
 
 
 class MockAttribute(AttributeType):  # pragma: no cover
-    _value: tp.Any
 
     def __init__(self, value: tp.Any = None) -> None:
-        self._value = value
+        super().__init__(value)
 
     def __getattr__(self, item: str) -> None:
         pass
 
 
 class YamlAttribute(AttributeType):
-    _value: tp.Union[
-        types.YAML_ATTRIBUTE_TYPE,
-        "YamlAttribute",
-        tp.List["YamlAttribute"],
-        tp.Set["YamlAttribute"],
-        tp.Dict[str, "YamlAttribute"],
-    ]
 
     def __init__(
         self: "YamlAttribute",
@@ -204,7 +195,7 @@ class YamlAttribute(AttributeType):
             tp.Dict[str, "YamlAttribute"],
         ]
     ) -> None:
-        self._value = value
+        super().__init__(value)
 
     @exceptions.handle_unknown_exception
     def __getattr__(
@@ -217,9 +208,10 @@ class YamlAttribute(AttributeType):
         tp.Set["YamlAttribute"],
         tp.Dict[str, "YamlAttribute"],
     ]:
-        if isinstance(self._value, dict):
+        value = object.__getattribute__(self, "_AttributeType__value")
+        if isinstance(value, dict):
             try:
-                return self._value[item.lower()]
+                return value[item.lower()]
             except KeyError as exc:
                 raise KeyError(f"Key `{item}` doesn't exist...") from exc
 
@@ -227,12 +219,6 @@ class YamlAttribute(AttributeType):
 
 
 class JsonAttribute(AttributeType):
-    _value: tp.Union[
-        types.JSON_ATTRIBUTE_TYPE,
-        "JsonAttribute",
-        tp.List["JsonAttribute"],
-        tp.Dict[str, "JsonAttribute"],
-    ]
 
     def __init__(
         self: "JsonAttribute",
@@ -243,7 +229,7 @@ class JsonAttribute(AttributeType):
             tp.Dict[str, "JsonAttribute"],
         ]
     ) -> None:
-        self._value = value
+        super().__init__(value)
 
     @exceptions.handle_unknown_exception
     def __getattr__(
@@ -255,9 +241,10 @@ class JsonAttribute(AttributeType):
         tp.List["JsonAttribute"],
         tp.Dict[str, "JsonAttribute"],
     ]:
-        if isinstance(self._value, dict):
+        value = object.__getattribute__(self, "_AttributeType__value")
+        if isinstance(value, dict):
             try:
-                return self._value[item.lower()]
+                return value[item.lower()]
             except KeyError as exc:
                 raise KeyError(f"Key `{item}` doesn't exist...") from exc
 
@@ -265,12 +252,6 @@ class JsonAttribute(AttributeType):
 
 
 class TomlAttribute(AttributeType):
-    _value: tp.Union[
-        types.TOML_ATTRIBUTE_TYPE,
-        "TomlAttribute",
-        tp.List["TomlAttribute"],
-        tp.Dict[str, "TomlAttribute"],
-    ]
 
     def __init__(
         self: "TomlAttribute",
@@ -281,7 +262,7 @@ class TomlAttribute(AttributeType):
             tp.Dict[str, "TomlAttribute"],
         ]
     ) -> None:
-        self._value = value
+        super().__init__(value)
 
     @exceptions.handle_unknown_exception
     def __getattr__(
@@ -293,9 +274,10 @@ class TomlAttribute(AttributeType):
         tp.List["TomlAttribute"],
         tp.Dict[str, "TomlAttribute"],
     ]:
-        if isinstance(self._value, dict):
+        value = object.__getattribute__(self, "_AttributeType__value")
+        if isinstance(value, dict):
             try:
-                return self._value[item.lower()]
+                return value[item.lower()]
             except KeyError as exc:
                 raise KeyError(f"Key `{item}` doesn't exist...") from exc
 
@@ -303,11 +285,6 @@ class TomlAttribute(AttributeType):
 
 
 class EnvAttribute(AttributeType):
-    _value: tp.Union[
-        types.ENV_ATTRIBUTE_TYPE,
-        "EnvAttribute",
-        tp.Dict[str, "EnvAttribute"],
-    ]
 
     def __init__(
         self: "EnvAttribute",
@@ -317,7 +294,7 @@ class EnvAttribute(AttributeType):
             tp.Dict[str, "EnvAttribute"],
         ]
     ) -> None:
-        self._value = value
+        super().__init__(value)
 
     @exceptions.handle_unknown_exception
     def __getattr__(
@@ -328,9 +305,10 @@ class EnvAttribute(AttributeType):
         "EnvAttribute",
         tp.Dict[str, "EnvAttribute"],
     ]:
-        if isinstance(self._value, dict):
+        value = object.__getattribute__(self, "_AttributeType__value")
+        if isinstance(value, dict):
             try:
-                return self._value[item.lower()]
+                return value[item.lower()]
             except KeyError as exc:
                 raise KeyError(f"Key `{item}` doesn't exist...") from exc
 
@@ -338,16 +316,12 @@ class EnvAttribute(AttributeType):
 
 
 class IniAttribute(AttributeType):
-    _value: tp.Union[
-        types.INI_ATTRIBUTE_TYPE,
-        tp.Dict[str, "IniAttribute"],
-    ]
 
     def __init__(self: "IniAttribute", value: tp.Union[
         types.INI_ATTRIBUTE_TYPE,
         tp.Dict[str, "IniAttribute"]
     ]) -> None:
-        self._value = value
+        super().__init__(value)
 
     @exceptions.handle_unknown_exception
     def __getattr__(
@@ -358,9 +332,10 @@ class IniAttribute(AttributeType):
         tp.Dict[str, "IniAttribute"],
         "IniAttribute"
     ]:
-        if isinstance(self._value, dict):
+        value = object.__getattribute__(self, "_AttributeType__value")
+        if isinstance(value, dict):
             try:
-                return self._value[item.lower()]
+                return value[item.lower()]
             except KeyError as exc:
                 raise KeyError(f"Key `{item}` doesn't exist...") from exc
 
