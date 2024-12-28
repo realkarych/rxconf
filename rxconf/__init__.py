@@ -7,6 +7,7 @@ from .attributes import (
     TomlAttribute,
     IniAttribute,
     EnvAttribute,
+    VaultAttribute,
 )
 from .config_resolver import ConfigResolver
 from .config_types import (
@@ -16,6 +17,7 @@ from .config_types import (
     IniConfig,
     EnvConfig,
     DotenvConfig,
+    VaultConfig,
 )
 from .exceptions import (
     BrokenConfigSchemaError,
@@ -36,6 +38,7 @@ __all__ = [
     "TomlAttribute",
     "IniAttribute",
     "EnvAttribute",
+    "VaultAttribute",
     "ConfigResolver",
     "YamlConfig",
     "JsonConfig",
@@ -43,6 +46,7 @@ __all__ = [
     "IniConfig",
     "EnvConfig",
     "DotenvConfig",
+    "VaultConfig",
     "BrokenConfigSchemaError",
     "ConfigNotFoundError",
     "InvalidExtensionError",
