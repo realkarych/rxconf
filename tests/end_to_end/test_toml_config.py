@@ -8,6 +8,7 @@ import pytest
 
 from rxconf import AsyncRxConf, RxConf, exceptions
 
+
 _RESOURCE_DIR = Path.cwd() / Path("tests/resources")
 
 
@@ -15,11 +16,14 @@ def test_import_tomllib():
     if "rxconf.config_types" in sys.modules:
         del sys.modules["rxconf.config_types"]
     import rxconf.config_types
+
     importlib.reload(rxconf.config_types)
-    assert any((
-        "tomllib" in sys.modules and "toml" not in sys.modules,
-        "tomllib" not in sys.modules and "toml" in sys.modules,
-    )), f"Expected 'tomllib' or 'toml' in sys.modules, but got {sys.modules.keys()}"
+    assert any(
+        (
+            "tomllib" in sys.modules and "toml" not in sys.modules,
+            "tomllib" not in sys.modules and "toml" in sys.modules,
+        )
+    ), f"Expected 'tomllib' or 'toml' in sys.modules, but got {sys.modules.keys()}"
 
 
 def test_import_toml():
@@ -27,6 +31,7 @@ def test_import_toml():
         if "rxconf.config_types" in sys.modules:
             del sys.modules["rxconf.config_types"]
         import rxconf.config_types
+
         importlib.reload(rxconf.config_types)
         assert "toml" in sys.modules, f"Expected 'toml' in sys.modules, but got {sys.modules.keys()}"
 
@@ -91,7 +96,7 @@ def test_numeric_casts() -> None:
     assert conf.integer - 1 < conf.integer < conf.integer + 1
     assert conf.integer - 0.1 < conf.integer <= int(conf.integer + 0.1)
     assert int(conf.integer) == conf.integer
-    assert int(conf.integer * 2 / 2) == conf.integer ** 1
+    assert int(conf.integer * 2 / 2) == conf.integer**1
     assert conf.big_integer > conf.integer
 
 

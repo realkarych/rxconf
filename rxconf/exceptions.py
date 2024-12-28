@@ -36,4 +36,5 @@ def handle_unknown_exception(func: tp.Callable[..., tp.Any]) -> tp.Callable[...,
             raise
         except Exception as exc:
             raise RxConfError(f"An error occurred in {func.__name__}: {str(exc)}") from exc
+
     return wrapper

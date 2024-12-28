@@ -5,7 +5,10 @@ import pytest
 
 
 def test_import_all_modules():
-    package_names = ("tests", "rxconf", )
+    package_names = (
+        "tests",
+        "rxconf",
+    )
     for package_name in package_names:
         try:
             module = importlib.import_module(package_name)

@@ -31,6 +31,7 @@ class InjectableRxConf(MetaRxConfDI):
                 return function(*args, **kwargs, conf=self._conf.get_actual_config())
 
             return wrapper
+
         return decorator
 
 
@@ -39,19 +40,15 @@ class InjectableAsyncRxConf(MetaAsyncRxConfDI):
         self._conf = conf
 
     async def inject_conf(
-            self,
+        self,
     ) -> tp.Callable[
         [tp.Callable[..., tp.Awaitable[tp.Any]]],
         tp.Callable[..., tp.Awaitable[tp.Any]],
     ]:
-        def decorator(
-            function: tp.Callable[..., tp.Awaitable[tp.Any]]
-        ) -> tp.Callable[..., tp.Awaitable[tp.Any]]:
+        def decorator(function: tp.Callable[..., tp.Awaitable[tp.Any]]) -> tp.Callable[..., tp.Awaitable[tp.Any]]:
             @functools.wraps(function)
             async def wrapper(*args: tp.Any, **kwargs: tp.Any) -> tp.Any:
-                return await function(
-                    *args, **kwargs, conf=await self._conf.get_actual_config()
-                )
+                return await function(*args, **kwargs, conf=await self._conf.get_actual_config())
 
             return wrapper
 

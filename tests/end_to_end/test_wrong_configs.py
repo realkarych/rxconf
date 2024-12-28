@@ -4,6 +4,7 @@ import pytest
 
 from rxconf import AsyncRxConf, RxConf, exceptions
 
+
 _RESOURCE_DIR = Path.cwd() / Path("tests/resources")
 
 
