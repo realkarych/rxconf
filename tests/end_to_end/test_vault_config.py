@@ -1,8 +1,5 @@
-import os
-
 import hvac
 import pytest
-
 from rxconf import RxConf, exceptions
 
 
