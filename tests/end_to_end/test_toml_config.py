@@ -39,14 +39,26 @@ def test_import_toml():
 def test_empty() -> None:
     conf = RxConf.from_file(config_path=_RESOURCE_DIR / "empty.toml")
 
-    assert conf
+    assert conf._config._root == {}
 
 
 @pytest.mark.asyncio
 async def test_empty_async() -> None:
     conf = await AsyncRxConf.from_file(config_path=_RESOURCE_DIR / "empty.toml")
 
-    assert conf
+    assert conf._config._root == {}
+
+
+def test_wrong_equality() -> None:
+    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "empty.toml")._config
+    with pytest.raises(exceptions.RxConfError):
+        assert conf == 1
+
+
+def test_correct_equality() -> None:
+    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.toml")
+    another_conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.toml")
+    assert conf == another_conf
 
 
 def test_primitive_types() -> None:

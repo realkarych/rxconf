@@ -6,7 +6,7 @@ from rxconf import config_resolver, config_types
 from rxconf.config_builder import FileConfigBuilder
 
 
-class MetaTree(metaclass=abc.ABCMeta):
+class MetaTree(metaclass=abc.ABCMeta):  # pragma: no cover
 
     def __init__(
         self: "MetaTree",
@@ -27,7 +27,7 @@ class MetaTree(metaclass=abc.ABCMeta):
         pass
 
 
-class MetaRxConf(MetaTree, metaclass=abc.ABCMeta):
+class MetaRxConf(MetaTree, metaclass=abc.ABCMeta):  # pragma: no cover
 
     @classmethod
     @abc.abstractmethod
@@ -49,7 +49,7 @@ class MetaRxConf(MetaTree, metaclass=abc.ABCMeta):
         pass
 
 
-class AsyncMetaRxConf(MetaTree, metaclass=abc.ABCMeta):
+class AsyncMetaRxConf(MetaTree, metaclass=abc.ABCMeta):  # pragma: no cover
 
     @classmethod
     @abc.abstractmethod
@@ -111,8 +111,6 @@ class RxConf(MetaRxConf):
         return self._config == other._config
 
     def __ne__(self, other: object) -> bool:
-        if not isinstance(other, RxConf):
-            raise TypeError("RxConf is comparable only to RxConf")
         return not self.__eq__(other)
 
     def __getattr__(self, item: str) -> tp.Any:
@@ -162,8 +160,6 @@ class AsyncRxConf(AsyncMetaRxConf):
         return self._config == other._config
 
     def __ne__(self, other: object) -> bool:
-        if not isinstance(other, AsyncRxConf):
-            raise TypeError("AsyncRxConf is comparable only to AsyncRxConf")
         return not self.__eq__(other)
 
     def __getattr__(self, item: str) -> tp.Any:
