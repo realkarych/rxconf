@@ -1,4 +1,4 @@
-name: Lint source code
+name: Lint source code and docs' markdown files
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  run_lint:
+  lint_code:
     runs-on: ubuntu-latest
 
     strategy:
@@ -68,3 +68,30 @@ jobs:
           else
             echo "No .py or .pyi files found in tests directory. Skipping Mypy."
           fi
+
+  lint_docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4.1.0
+        with:
+          node-version: latest
+
+      - name: Remove existing npm installation
+        run: npm uninstall -g npm
+
+      - name: Initialize npm
+        run: npm init -y
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install markdownlint
+        run: npm install -g markdownlint-cli
+
+      - name: Lint Markdown files
+        run: markdownlint .
