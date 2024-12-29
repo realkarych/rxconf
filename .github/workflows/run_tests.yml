@@ -77,7 +77,8 @@ jobs:
       - name: Install and setup Vault for Windows
         run: |
           choco install vault -y
-          Start-Process "vault" -ArgumentList "server", "-dev", "-dev-root-token-id=root", "-address=http://127.0.0.1:8200" -NoNewWindow -WindowStyle Hidden
+          cmd /c start "" " vault server -dev -dev-root-token-id='root' -address='http://127.0.0.1:8200'"
+        shell: cmd
         if: ${{ matrix.os == 'windows-latest' }}
 
       - name: Install Poetry
