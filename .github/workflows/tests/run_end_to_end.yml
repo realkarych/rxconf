@@ -32,5 +32,5 @@ jobs:
       - name: Install dependencies
         run: poetry install --with dev
 
-      - name: Run tests
-        run: poetry run pytest
+      - name: Run end-to-end tests
+        run: poetry run pytest tests/end_to_end
