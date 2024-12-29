@@ -89,6 +89,24 @@ def test_empty_from_env() -> None:
     assert conf._config._root == {}
 
 
+def test_wrong_equality() -> None:
+    conf = RxConf.from_env()._config
+    file_conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.env")._config
+    with pytest.raises(exceptions.RxConfError):
+        assert conf == 1
+    with pytest.raises(exceptions.RxConfError):
+        assert file_conf == 1
+
+
+def test_correct_equality() -> None:
+    conf = RxConf.from_env()
+    another_conf = RxConf.from_env()
+    file_conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
+    another_file_conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
+    assert conf == another_conf
+    assert file_conf == another_file_conf
+
+
 def test_primitive_types_from_env() -> None:
     conf = RxConf.from_env()
 
