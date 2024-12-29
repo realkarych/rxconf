@@ -43,7 +43,7 @@ async def test_primitive_types_async() -> None:
     assert not conf.none
 
 
-def test_pritive_collections() -> None:
+def test_primitive_collections() -> None:
     conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.yml")
     expected_list = [1, 2, 3]
     expected_set = {"a", "b", "c"}

@@ -68,7 +68,7 @@ async def test_primitive_types_async() -> None:
     assert conf.boolean == True  # noqa: E712
 
 
-def test_pritive_collections() -> None:
+def test_primitive_collections() -> None:
     conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.toml")
     expected_list = [1, 2, 3]
 
