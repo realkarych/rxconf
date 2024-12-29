@@ -75,7 +75,7 @@ jobs:
           [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; ^
           iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))"
           choco install vault -y
-          start /B cmd /C vault server -dev -dev-root-token-id="root" -address="http://127.0.0.1:8200"
+          cmd /c "START /b vault server -dev -dev-root-token-id='root' -address='http://127.0.0.1:8200'"
           timeout /t 10
         shell: cmd
         if: ${{ matrix.os == 'windows-latest' }}
