@@ -12,7 +12,7 @@ _RESOURCE_DIR = Path.cwd() / Path("tests/resources")
 def test_empty() -> None:
     conf = RxConf.from_file(config_path=_RESOURCE_DIR / "empty.env")
 
-    assert conf
+    assert conf._config._root == {}
 
 
 def test_primitive_types() -> None:
@@ -84,9 +84,27 @@ def set_env_vars(monkeypatch):
 
 
 def test_empty_from_env() -> None:
-    conf = RxConf.from_env()
+    conf = RxConf.from_env(prefix="NOT_EXISTING_PREFIX")
 
-    assert conf
+    assert conf._config._root == {}
+
+
+def test_wrong_equality() -> None:
+    conf = RxConf.from_env()._config
+    file_conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.env")._config
+    with pytest.raises(exceptions.RxConfError):
+        assert conf == 1
+    with pytest.raises(exceptions.RxConfError):
+        assert file_conf == 1
+
+
+def test_correct_equality() -> None:
+    conf = RxConf.from_env()
+    another_conf = RxConf.from_env()
+    file_conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
+    another_file_conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
+    assert conf == another_conf
+    assert file_conf == another_file_conf
 
 
 def test_primitive_types_from_env() -> None:
@@ -157,7 +175,14 @@ def test_repr():
 async def test_empty_async() -> None:
     conf = await AsyncRxConf.from_file(config_path=_RESOURCE_DIR / "empty.env")
 
-    assert conf
+    assert conf._config._root == {}
+
+
+@pytest.mark.asyncio
+async def test_from_env_async() -> None:
+    conf2 = await AsyncRxConf.from_env(prefix="some_prefix", remove_prefix=True)
+    assert conf2.value1 == 1
+    assert conf2.value2 == 2
 
 
 @pytest.mark.asyncio

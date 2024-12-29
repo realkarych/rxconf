@@ -37,6 +37,11 @@ class ConfigType(metaclass=ABCMeta):  # pragma: no cover
     def __getattr__(self, item: str) -> tp.Any:
         raise NotImplementedError()
 
+    @property
+    @abstractmethod
+    def hash(self) -> int:
+        pass
+
 
 class VaultConfigType(ConfigType):
 
@@ -146,11 +151,7 @@ class VaultConfig(VaultConfigType):
 
 class FileConfigType(ConfigType, metaclass=ABCMeta):  # pragma: no cover
 
-    def __init__(
-        self: "FileConfigType",
-        root_attribute: rxconf.AttributeType,
-        path: PurePath,
-    ) -> None:
+    def __init__(self, root_attribute: attrs.AttributeType, path: PurePath, *args, **kwargs) -> None:
         pass
 
     @property
@@ -198,6 +199,10 @@ class YamlConfig(FileConfigType):
     def allowed_extensions(self) -> tp.FrozenSet[str]:
         return self._allowed_extensions
 
+    @property
+    def hash(self) -> int:
+        return self._hash
+
     @classmethod
     def _load_yaml_data(cls, content: str, path: tp.Union[str, PurePath]) -> tp.Dict:
         try:
@@ -218,7 +223,8 @@ class YamlConfig(FileConfigType):
             yaml_data = cls._load_yaml_data(file.read(), path)
 
         return cls(
-            root_attribute=cls._process_data(yaml_data), path=path if isinstance(path, PurePath) else PurePath(path)
+            root_attribute=cls._process_data(yaml_data) if yaml_data is not None else attrs.YamlAttribute(value={}),
+            path=path if isinstance(path, PurePath) else PurePath(path),
         )
 
     @classmethod
@@ -235,14 +241,15 @@ class YamlConfig(FileConfigType):
             yaml_data = cls._load_yaml_data(content, path)
 
         return cls(
-            root_attribute=cls._process_data(yaml_data), path=path if isinstance(path, PurePath) else PurePath(path)
+            root_attribute=cls._process_data(yaml_data) if yaml_data is not None else attrs.YamlAttribute(value={}),
+            path=path if isinstance(path, PurePath) else PurePath(path),
         )
 
     @exceptions.handle_unknown_exception
     def __eq__(self, other: ConfigType) -> int:
         if not isinstance(other, ConfigType):
             raise TypeError("ConfigType is comparable only to ConfigType")
-        return self._hash == other._hash
+        return self._hash == other.hash
 
     @exceptions.handle_unknown_exception
     def __getattr__(self, item: str) -> tp.Any:
@@ -289,6 +296,10 @@ class JsonConfig(FileConfigType):
     def allowed_extensions(self) -> tp.FrozenSet[str]:
         return self._allowed_extensions
 
+    @property
+    def hash(self) -> int:
+        return self._hash
+
     @classmethod
     def _load_json_data(cls, content: str, path: tp.Union[str, PurePath]) -> tp.Dict:
         try:
@@ -327,14 +338,15 @@ class JsonConfig(FileConfigType):
             json_data = cls._load_json_data(content, path)
 
         return cls(
-            root_attribute=cls._process_data(json_data), path=path if isinstance(path, PurePath) else PurePath(path)
+            root_attribute=cls._process_data(json_data) if json_data is not None else attrs.JsonAttribute(value={}),
+            path=path if isinstance(path, PurePath) else PurePath(path)
         )
 
     @exceptions.handle_unknown_exception
     def __eq__(self, other: ConfigType) -> bool:
         if not isinstance(other, ConfigType):
             raise TypeError("ConfigType is comparable only to ConfigType")
-        return self._hash == other._hash
+        return self._hash == other.hash
 
     @exceptions.handle_unknown_exception
     def __getattr__(self, item: str) -> tp.Any:
@@ -379,6 +391,10 @@ class TomlConfig(FileConfigType):
     def allowed_extensions(self) -> tp.FrozenSet[str]:
         return self._allowed_extensions
 
+    @property
+    def hash(self) -> int:
+        return self._hash
+
     @classmethod
     def _load_toml_data(cls, content: str, path: tp.Union[str, PurePath]) -> tp.Dict:
         toml_decode_exc = (
@@ -389,7 +405,7 @@ class TomlConfig(FileConfigType):
         try:
             if sys.version_info >= (3, 11):
                 return toml.loads(content)
-            return toml.loads(content)
+            return toml.loads(content)  # pragma: no cover
         except toml_decode_exc as exc:
             raise exceptions.BrokenConfigSchemaError(f"Error while parsing toml config: {path}") from exc
 
@@ -431,7 +447,7 @@ class TomlConfig(FileConfigType):
     def __eq__(self, other: ConfigType) -> bool:
         if not isinstance(other, ConfigType):
             raise TypeError("ConfigType is comparable only to ConfigType")
-        return self._hash == other._hash
+        return self._hash == other.hash
 
     @exceptions.handle_unknown_exception
     def __getattr__(self, item: str) -> tp.Any:
@@ -448,7 +464,9 @@ class TomlConfig(FileConfigType):
                     (
                         cls._process_data(item)
                         if not isinstance(item, dict)
-                        else attrs.TomlAttribute(value={k.lower(): cls._process_data(v) for k, v in item.items()})
+                        else attrs.TomlAttribute(value={
+                            k.lower(): cls._process_data(v) for k, v in item.items()
+                        })
                     )
                     for item in data
                 ]
@@ -475,6 +493,10 @@ class IniConfig(FileConfigType):
     @property
     def allowed_extensions(self) -> tp.FrozenSet[str]:
         return self._allowed_extensions
+
+    @property
+    def hash(self) -> int:
+        return self._hash
 
     @classmethod
     def _load_ini_data(cls, content: str, path: tp.Union[str, PurePath]) -> tp.Dict:
@@ -535,7 +557,7 @@ class IniConfig(FileConfigType):
     def __eq__(self, other: ConfigType) -> bool:
         if not isinstance(other, ConfigType):
             raise TypeError("ConfigType is comparable only to ConfigType")
-        return self._hash == other._hash
+        return self._hash == other.hash
 
     @exceptions.handle_unknown_exception
     def __getattr__(self, item: str) -> tp.Any:
@@ -566,7 +588,7 @@ class EnvConfig(ConfigType):
     def __eq__(self, other: ConfigType) -> bool:
         if not isinstance(other, ConfigType):
             raise TypeError("ConfigType is comparable only to ConfigType")
-        return self._hash == other._hash
+        return self._hash == other.hash
 
     @exceptions.handle_unknown_exception
     def __getattr__(self, item: str) -> tp.Any:
@@ -591,6 +613,10 @@ class EnvConfig(ConfigType):
             env_vars = {k.lower(): v for k, v in os.environ.items()}
         root_attribute = cls._process_data(env_vars)
         return cls(root_attribute=root_attribute)
+
+    @property
+    def hash(self) -> int:
+        return self._hash
 
     @classmethod
     @exceptions.handle_unknown_exception
@@ -617,11 +643,15 @@ class DotenvConfig(FileConfigType, EnvConfig):
     def __eq__(self, other: ConfigType) -> bool:
         if not isinstance(other, ConfigType):
             raise TypeError("ConfigType is comparable only to ConfigType")
-        return self._hash == other._hash
+        return self._hash == other.hash
 
     @property
     def allowed_extensions(self) -> tp.FrozenSet[str]:
         return self._allowed_extensions
+
+    @property
+    def hash(self) -> int:
+        return self._hash
 
     @classmethod
     @exceptions.handle_unknown_exception
@@ -630,10 +660,15 @@ class DotenvConfig(FileConfigType, EnvConfig):
         path: tp.Union[str, PurePath] = ".env",
         encoding: str = "utf-8",
     ) -> FileConfigType:
-        dotenv.load_dotenv(dotenv_path=path, encoding=encoding)
-        env_config = EnvConfig.load_from_environment()
+        dotenv_values = dotenv.dotenv_values(dotenv_path=path, encoding=encoding)
+        processed_values = {
+            key.lower(): value
+            for key, value in dotenv_values.items()
+            if value is not None
+        }
+        root_attribute = cls._process_data(processed_values)
         return cls(
-            root_attribute=env_config._root,
+            root_attribute=root_attribute,
             path=path if isinstance(path, PurePath) else PurePath(path),
         )
 

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "rxconf"
-version = "0.0.2"
+version = "0.0.3"
 description = "Powerful and flexible library for realtime configuration management in Python"
 authors = ["Andrey Karchevsky <karych@karych.ru>"]
 readme = "README.md"
@@ -12,6 +12,10 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Utilities"
 ]
 keywords = ["configuration", "settings", "yaml", "json", "toml", "ini", "env"]
 
