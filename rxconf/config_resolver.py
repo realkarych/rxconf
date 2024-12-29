@@ -6,7 +6,7 @@ from abc import ABCMeta, abstractmethod
 from rxconf import attributes, config_types, exceptions
 
 
-class ConfigResolver(metaclass=ABCMeta):
+class ConfigResolver(metaclass=ABCMeta):  # pragma: no cover
 
     @abstractmethod
     def resolve(self, *args, **kwargs) -> tp.Type[config_types.ConfigType]:
@@ -23,6 +23,7 @@ class FileConfigResolver(ConfigResolver):
         path: tp.Union[str, pathlib.PurePath],
     ) -> tp.Type[config_types.FileConfigType]:
         _, extension = os.path.splitext(path)
+        extension = extension.lower()
         for config_type in self._config_types:
             if (
                 extension

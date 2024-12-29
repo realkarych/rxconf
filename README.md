@@ -34,14 +34,6 @@ Currently in develop...
 The first stable version will be 1.0.0
 </h3>
 
-- [x] Implement RxConf DAO
-  - [x] Implement base DAO
-  - [x] Implement env-vars & dotenv-files DAO
-  - [x] Implement `yaml` DAO
-  - [x] Implement `toml` DAO
-  - [x] Implement `ini` DAO
-  - [x] Implement `json` DAO
-- [x] Implement concurrent IO mode for DAOs
 - [ ] Implement observers
-  - [ ] Add base observer
-  - [ ] Add decorator that provides DI mechanism to inject actual config state
+- [ ] Implement triggers
+- [ ] Docs: public docs & docstrings
