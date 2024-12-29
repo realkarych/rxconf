@@ -110,7 +110,8 @@ class YamlConfig(FileConfigType):
             yaml_data = cls._load_yaml_data(file.read(), path)
 
         return cls(
-            root_attribute=cls._process_data(yaml_data), path=path if isinstance(path, PurePath) else PurePath(path)
+            root_attribute=cls._process_data(yaml_data) if yaml_data is not None else attrs.YamlAttribute(value={}),
+            path=path if isinstance(path, PurePath) else PurePath(path),
         )
 
     @classmethod
@@ -127,7 +128,8 @@ class YamlConfig(FileConfigType):
             yaml_data = cls._load_yaml_data(content, path)
 
         return cls(
-            root_attribute=cls._process_data(yaml_data), path=path if isinstance(path, PurePath) else PurePath(path)
+            root_attribute=cls._process_data(yaml_data) if yaml_data is not None else attrs.YamlAttribute(value={}),
+            path=path if isinstance(path, PurePath) else PurePath(path),
         )
 
     @exceptions.handle_unknown_exception
@@ -219,7 +221,8 @@ class JsonConfig(FileConfigType):
             json_data = cls._load_json_data(content, path)
 
         return cls(
-            root_attribute=cls._process_data(json_data), path=path if isinstance(path, PurePath) else PurePath(path)
+            root_attribute=cls._process_data(json_data) if json_data is not None else attrs.JsonAttribute(value={}),
+            path=path if isinstance(path, PurePath) else PurePath(path)
         )
 
     @exceptions.handle_unknown_exception
@@ -340,7 +343,9 @@ class TomlConfig(FileConfigType):
                     (
                         cls._process_data(item)
                         if not isinstance(item, dict)
-                        else attrs.TomlAttribute(value={k.lower(): cls._process_data(v) for k, v in item.items()})
+                        else attrs.TomlAttribute(value={
+                            k.lower(): cls._process_data(v) for k, v in item.items()
+                        })
                     )
                     for item in data
                 ]
@@ -522,10 +527,15 @@ class DotenvConfig(FileConfigType, EnvConfig):
         path: tp.Union[str, PurePath] = ".env",
         encoding: str = "utf-8",
     ) -> FileConfigType:
-        dotenv.load_dotenv(dotenv_path=path, encoding=encoding)
-        env_config = EnvConfig.load_from_environment()
+        dotenv_values = dotenv.dotenv_values(dotenv_path=path, encoding=encoding)
+        processed_values = {
+            key.lower(): value
+            for key, value in dotenv_values.items()
+            if value is not None
+        }
+        root_attribute = cls._process_data(processed_values)
         return cls(
-            root_attribute=env_config._root,
+            root_attribute=root_attribute,
             path=path if isinstance(path, PurePath) else PurePath(path),
         )
 

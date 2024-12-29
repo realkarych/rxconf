@@ -12,7 +12,7 @@ _RESOURCE_DIR = Path.cwd() / Path("tests/resources")
 def test_empty() -> None:
     conf = RxConf.from_file(config_path=_RESOURCE_DIR / "empty.env")
 
-    assert conf
+    assert conf._config._root == {}
 
 
 def test_primitive_types() -> None:
@@ -84,9 +84,9 @@ def set_env_vars(monkeypatch):
 
 
 def test_empty_from_env() -> None:
-    conf = RxConf.from_env()
+    conf = RxConf.from_env(prefix="NOT_EXISTING_PREFIX")
 
-    assert conf
+    assert conf._config._root == {}
 
 
 def test_primitive_types_from_env() -> None:
@@ -157,7 +157,7 @@ def test_repr():
 async def test_empty_async() -> None:
     conf = await AsyncRxConf.from_file(config_path=_RESOURCE_DIR / "empty.env")
 
-    assert conf
+    assert conf._config._root == {}
 
 
 @pytest.mark.asyncio

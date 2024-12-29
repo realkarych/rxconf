@@ -11,14 +11,14 @@ _RESOURCE_DIR = Path.cwd() / Path("tests/resources")
 def test_empty() -> None:
     conf = RxConf.from_file(config_path=_RESOURCE_DIR / "empty.json")
 
-    assert conf
+    assert conf._config._root == {}
 
 
 @pytest.mark.asyncio
 async def test_empty_async() -> None:
     conf = await AsyncRxConf.from_file(config_path=_RESOURCE_DIR / "empty.json")
 
-    assert conf
+    assert conf._config._root == {}
 
 
 def test_primitive_types() -> None:
