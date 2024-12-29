@@ -129,9 +129,7 @@ class VaultConfig(VaultConfigType):
                     for item in data
                 ]
             )
-        if isinstance(data, set):
-            return attrs.VaultAttribute(value={cls._process_data(item) for item in data})  # pragma: no cover
-        if isinstance(data, (bool, int, str, float, type(None), datetime.date, datetime.datetime)):
+        if isinstance(data, (bool, int, str, float, type(None))):
             return attrs.VaultAttribute(value=data)
         raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
 
