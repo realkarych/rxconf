@@ -68,16 +68,15 @@ jobs:
           vault server -dev -dev-root-token-id="root" -address="http://127.0.0.1:8200" & disown  # run server in bg
         if: ${{ matrix.os == 'macos-latest' }}
 
-      - name: Install and setup Vault on Windows
+      - name: Setup choco for Windows
+        uses: crazy-max/ghaction-chocolatey@v3
+        with:
+          args: -h
+        if: ${{ matrix.os == 'windows-latest' }}
+
+      - name: Install and setup Vault for Windows
         run: |
-          powershell -Command ^
-          "Set-ExecutionPolicy Bypass -Scope Process -Force; ^
-          [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; ^
-          iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))"
-          choco install vault -y
-          cmd /c "START /b vault server -dev -dev-root-token-id='root' -address='http://127.0.0.1:8200'"
-          timeout /t 10
-        shell: cmd
+          Start-Process "vault" -ArgumentList "server", "-dev", "-dev-root-token-id=root", "-address=http://127.0.0.1:8200" -NoNewWindow -WindowStyle Hidden
         if: ${{ matrix.os == 'windows-latest' }}
 
       - name: Install Poetry
