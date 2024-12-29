@@ -90,6 +90,10 @@ class VaultConfig(VaultConfigType):
         self._path = path
         self._hash = hashtools.compute_conf_hash(root_attribute)
 
+    @property
+    def hash(self) -> int:
+        return self._hash
+
     @classmethod
     @exceptions.handle_unknown_exception
     def load_from_vault(
@@ -143,7 +147,7 @@ class VaultConfig(VaultConfigType):
     def __eq__(self, other: ConfigType) -> int:
         if not isinstance(other, ConfigType):
             raise TypeError("ConfigType is comparable only to ConfigType")
-        return self._hash == other._hash
+        return self._hash == other.hash
 
     @exceptions.handle_unknown_exception
     def __getattr__(self, item: str) -> tp.Any:
