@@ -179,6 +179,13 @@ async def test_empty_async() -> None:
 
 
 @pytest.mark.asyncio
+async def test_from_env_async() -> None:
+    conf2 = await AsyncRxConf.from_env(prefix="some_prefix", remove_prefix=True)
+    assert conf2.value1 == 1
+    assert conf2.value2 == 2
+
+
+@pytest.mark.asyncio
 async def test_primitive_types_async() -> None:
     conf = await AsyncRxConf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
 
