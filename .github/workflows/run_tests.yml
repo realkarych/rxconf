@@ -65,7 +65,9 @@ jobs:
             brew install hashicorp/tap/vault
 
           else
-            choco install vault
+            Set-ExecutionPolicy Bypass -Scope Process -Force;
+            iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+            choco install vault -y
           fi
 
       - name: Setup Vault
