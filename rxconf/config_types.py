@@ -13,6 +13,7 @@ import yaml
 from hvac.exceptions import VaultError  # type: ignore
 
 from rxconf import hashtools, types
+from rxconf.exceptions import RxConfError
 
 
 if sys.version_info >= (3, 11):
@@ -101,7 +102,7 @@ class VaultConfig(VaultConfigType):
             client = hvac.Client(url=ip, token=token)
             response = client.secrets.kv.v2.read_secret_version(path=path, raise_on_deleted_version=True)
         except VaultError as exc:
-            raise ValueError(f"Unable to retrieve Vault data from path={path}") from exc
+            raise RxConfError(f"Unable to retrieve Vault data from path={path}") from exc
 
         return cls(
             root_attribute=cls._process_data(response["data"]["data"]),

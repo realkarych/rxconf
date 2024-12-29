@@ -58,14 +58,14 @@ jobs:
           wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
           echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
           sudo apt update && sudo apt install vault
-          vault server -dev -dev-root-token-id="root" -address="http://127.0.0.1:8200" & disown  # run the server in bg
+          vault server -dev -dev-root-token-id="root" -address="http://127.0.0.1:8200" & disown  # run server in bg
         if: ${{ matrix.os == 'ubuntu-latest' }}
 
       - name: Install and setup Vault on MacOS
         run: |
           brew tap hashicorp/tap
           brew install hashicorp/tap/vault
-          vault server -dev -dev-root-token-id="root" -address="http://127.0.0.1:8200" & disown  # run the server in bg
+          vault server -dev -dev-root-token-id="root" -address="http://127.0.0.1:8200" & disown  # run server in bg
         if: ${{ matrix.os == 'macos-latest' }}
 
       - name: Install and setup Vault on Windows
@@ -75,7 +75,7 @@ jobs:
           [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; ^
           iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))"
           choco install vault -y
-          start /B vault server -dev -dev-root-token-id="root" -address="http://127.0.0.1:8200"
+          start cmd /C vault server -dev -dev-root-token-id="root" -address="http://127.0.0.1:8200"
           timeout /t 10
         shell: cmd
         if: ${{ matrix.os == 'windows-latest' }}
