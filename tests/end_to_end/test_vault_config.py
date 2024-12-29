@@ -6,8 +6,8 @@ import pytest
 from rxconf import RxConf, exceptions
 
 
-VAULT_ADDR = os.getenv("VAULT_ADDR")
-VAULT_TOKEN = os.getenv("VAULT_TOKEN")
+VAULT_ADDR = "http://127.0.0.1:8200"
+VAULT_TOKEN = "root"
 
 
 def set_vault_data() -> None:
