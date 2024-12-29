@@ -53,30 +53,29 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install Vault on Linux
+      - name: Install and setup Vault on Linux
         run: |
           wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
           echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
           sudo apt update && sudo apt install vault
+          vault server -dev -dev-root-token-id="root" -address="http://127.0.0.1:8200" & disown  # run the server in bg
         if: ${{ matrix.os == 'ubuntu-latest' }}
 
-      - name: Install Vault on MacOS
+      - name: Install and setup Vault on MacOS
         run: |
           brew tap hashicorp/tap
           brew install hashicorp/tap/vault
+          vault server -dev -dev-root-token-id="root" -address="http://127.0.0.1:8200" & disown  # run the server in bg
         if: ${{ matrix.os == 'macos-latest' }}
 
-      - name: Install Vault on Windows
+      - name: Install and setup Vault on Windows
         run: |
           Set-ExecutionPolicy Bypass -Scope Process -Force;
           [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072;
           iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+          Start-Process "vault.exe" -ArgumentList "server -dev -dev-root-token-id=root -address=http://127.0.0.1:8200" -NoNewWindow -Detach
         shell: pwsh
         if: ${{ matrix.os == 'windows-latest' }}
-
-      - name: Setup Vault
-        run: |
-          vault server -dev -dev-root-token-id="root" -address="http://127.0.0.1:8200" & disown
 
       - name: Install Poetry
         uses: abatilo/actions-poetry@v3.0.1
