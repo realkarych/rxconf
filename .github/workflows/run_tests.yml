@@ -58,20 +58,23 @@ jobs:
         with:
           args: -h
 
-      - name: Install Vault
+      - name: Install Vault on Linux
         run: |
-          if [ $RUNNER_OS == "Linux" ]; then
-            wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
-            echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
-            sudo apt update && sudo apt install vault
+          wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+          sudo apt update && sudo apt install vault
+        if: ${{ matrix.os == 'ubuntu-latest' }}
 
-          elif [ $RUNNER_OS == "macOS" ]; then
-            brew tap hashicorp/tap
-            brew install hashicorp/tap/vault
+      - name: Install Vault on MacOS
+        run: |
+          brew tap hashicorp/tap
+          brew install hashicorp/tap/vault
+        if: ${{ matrix.os == 'macos-latest' }}
 
-          else
-            echo "choco install vault -y"
-          fi
+      - name: Install Vault on Windows
+        run: |
+          choco install vault -y
+        if: ${{ matrix.os == 'windows-latest' }}
 
       - name: Setup Vault
         run: |
