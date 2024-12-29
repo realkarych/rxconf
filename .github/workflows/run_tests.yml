@@ -53,6 +53,24 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Install Vault
+        run: |
+          if [ $RUNNER_OS == "Linux" ]; then
+            curl -fsSL https://releases.hashicorp.com/vault/latest/linux_amd64/vault.zip -o vault.zip
+            unzip vault.zip
+            sudo mv vault /usr/local/bin/
+          elif [ $RUNNER_OS == "macOS" ]; then
+            curl -fsSL https://releases.hashicorp.com/vault/latest/darwin_amd64/vault.zip -o vault.zip
+            unzip vault.zip
+            sudo mv vault /usr/local/bin/
+          fi
+
+      - name: Setup Vault
+        run: |
+          vault server -dev -dev-root-token-id="root" -address="http://127.0.0.1:8200"
+          export VAULT_TOKEN="root"
+          export VAULT_ADDR="http://127.0.0.1:8200"
+
       - name: Install Poetry
         uses: abatilo/actions-poetry@v3.0.1
         with:
