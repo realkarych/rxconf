@@ -63,11 +63,16 @@ jobs:
           elif [ $RUNNER_OS == "macOS" ]; then
             brew tap hashicorp/tap
             brew install hashicorp/tap/vault
+
+          else
+            Invoke-WebRequest -Uri https://releases.hashicorp.com/vault/latest/windows_amd64/vault_1.16.0_windows_amd64.zip -OutFile vault.zip
+            Expand-Archive -Path .\vault.zip -DestinationPath C:\Vault
+            [System.Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Vault", [System.EnvironmentVariableTarget]::Machine)
           fi
 
       - name: Setup Vault
         run: |
-          vault server -dev -dev-root-token-id="root" -address="http://127.0.0.1:8200"
+          nohup vault server -dev -dev-root-token-id="root" -address="http://127.0.0.1:8200"
           export VAULT_TOKEN="root"
           export VAULT_ADDR="http://127.0.0.1:8200"
 
