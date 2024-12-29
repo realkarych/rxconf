@@ -65,12 +65,12 @@ jobs:
             brew install hashicorp/tap/vault
 
           else
-            echo "%@ck windows"
+            choco install vault
           fi
 
       - name: Setup Vault
         run: |
-          nohup vault server -dev -dev-root-token-id="root" -address="http://127.0.0.1:8200"
+          vault server -dev -dev-root-token-id="root" -address="http://127.0.0.1:8200" & disown
 
       - name: Install Poetry
         uses: abatilo/actions-poetry@v3.0.1
