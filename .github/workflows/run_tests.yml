@@ -76,6 +76,7 @@ jobs:
           iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))"
           choco install vault -y
           start /B vault server -dev -dev-root-token-id="root" -address="http://127.0.0.1:8200"
+          timeout /t 10
         shell: cmd
         if: ${{ matrix.os == 'windows-latest' }}
 
