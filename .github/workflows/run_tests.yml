@@ -73,7 +73,7 @@ jobs:
           Set-ExecutionPolicy Bypass -Scope Process -Force;
           [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072;
           iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-          Start-Process "vault.exe" -ArgumentList "server -dev -dev-root-token-id=root -address=http://127.0.0.1:8200"
+          vault server -dev -dev-root-token-id="root" -address="http://127.0.0.1:8200"
         shell: pwsh
         if: ${{ matrix.os == 'windows-latest' }}
 
