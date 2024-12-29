@@ -65,8 +65,8 @@ jobs:
             brew install hashicorp/tap/vault
 
           else
-            $env:PATH = "C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\ProgramData\chocolatey\bin"
-            [Environment]::SetEnvironmentVariable("Path", $env:PATH, "Machine")
+            Set-ExecutionPolicy Bypass -Scope Process -Force;
+            iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
             choco install vault -y
           fi
 
