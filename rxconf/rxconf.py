@@ -48,6 +48,16 @@ class MetaRxConf(MetaTree, metaclass=abc.ABCMeta):  # pragma: no cover
     ) -> "MetaRxConf":
         pass
 
+    @classmethod
+    @abc.abstractmethod
+    def from_vault(
+        cls: tp.Type["MetaRxConf"],
+        token: str,
+        ip: str,
+        path: tp.Union[str, pathlib.PurePath],
+    ) -> "MetaRxConf":
+        pass
+
 
 class AsyncMetaRxConf(MetaTree, metaclass=abc.ABCMeta):  # pragma: no cover
 
@@ -67,6 +77,16 @@ class AsyncMetaRxConf(MetaTree, metaclass=abc.ABCMeta):  # pragma: no cover
         cls: tp.Type["AsyncMetaRxConf"],
         prefix: tp.Optional[str] = None,
         remove_prefix: tp.Optional[bool] = False,
+    ) -> "AsyncMetaRxConf":
+        pass
+
+    @classmethod
+    @abc.abstractmethod
+    async def from_vault(
+        cls: tp.Type["AsyncMetaRxConf"],
+        token: str,
+        ip: str,
+        path: tp.Union[str, pathlib.PurePath],
     ) -> "AsyncMetaRxConf":
         pass
 
@@ -104,6 +124,15 @@ class RxConf(MetaRxConf):
                 remove_prefix=remove_prefix,
             ),
         )
+
+    @classmethod
+    def from_vault(
+        cls: tp.Type["RxConf"],
+        token: str,
+        ip: str,
+        path: tp.Union[str, pathlib.PurePath],
+    ) -> "RxConf":
+        return cls(config=config_types.VaultConfig.load_from_vault(token=token, ip=ip, path=path))
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, RxConf):
@@ -153,6 +182,15 @@ class AsyncRxConf(AsyncMetaRxConf):
                 remove_prefix=remove_prefix,
             ),
         )
+
+    @classmethod
+    async def from_vault(
+        cls: tp.Type["AsyncRxConf"],
+        token: str,
+        ip: str,
+        path: tp.Union[str, pathlib.PurePath],
+    ) -> "AsyncRxConf":
+        raise NotImplementedError()
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, AsyncRxConf):

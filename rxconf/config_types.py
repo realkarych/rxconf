@@ -8,9 +8,12 @@ from pathlib import PurePath
 
 import aiofiles
 import dotenv
+import hvac  # type: ignore
 import yaml
+from hvac.exceptions import VaultError  # type: ignore
 
 from rxconf import hashtools, types
+from rxconf.exceptions import RxConfError
 
 
 if sys.version_info >= (3, 11):
@@ -39,6 +42,116 @@ class ConfigType(metaclass=ABCMeta):  # pragma: no cover
     @abstractmethod
     def hash(self) -> int:
         pass
+
+
+class VaultConfigType(ConfigType):
+
+    def __init__(
+        self,
+        root_attribute: rxconf.AttributeType,
+        path: PurePath,
+    ) -> None:
+        pass
+
+    @classmethod
+    @abstractmethod
+    def load_from_vault(
+        cls,
+        token: str,
+        ip: str,
+        path: PurePath,
+    ) -> "VaultConfigType":
+        pass
+
+    @classmethod
+    @abstractmethod
+    async def load_from_vault_async(
+        cls,
+        token: str,
+        ip: str,
+        path: PurePath,
+    ) -> "VaultConfigType":
+        raise NotImplementedError()
+
+    def __repr__(self) -> str:
+        return repr(self._root)
+
+
+class VaultConfig(VaultConfigType):
+    _root: tp.Final[rxconf.VaultAttribute]
+    _path: tp.Final[PurePath]
+
+    def __init__(
+        self,
+        root_attribute: rxconf.VaultAttribute,
+        path: PurePath,
+    ) -> None:
+        self._root = root_attribute
+        self._path = path
+        self._hash = hashtools.compute_conf_hash(root_attribute)
+
+    @property
+    def hash(self) -> int:
+        return self._hash
+
+    @classmethod
+    @exceptions.handle_unknown_exception
+    def load_from_vault(
+        cls,
+        token: str,
+        ip: str,
+        path: PurePath,
+    ) -> "VaultConfig":
+        try:
+            client = hvac.Client(url=ip, token=token)
+            response = client.secrets.kv.v2.read_secret_version(path=path, raise_on_deleted_version=True)
+        except VaultError as exc:
+            raise RxConfError(f"Unable to retrieve Vault data from path={path}") from exc
+
+        return cls(
+            root_attribute=cls._process_data(response["data"]["data"]),
+            path=path if isinstance(path, PurePath) else PurePath(path),
+        )
+
+    @classmethod
+    @exceptions.handle_unknown_exception
+    def load_from_vault_async(
+        cls,
+        token: str,
+        ip: str,
+        path: PurePath,
+    ) -> "VaultConfig":
+        raise NotImplementedError()
+
+    @classmethod
+    @exceptions.handle_unknown_exception
+    def _process_data(cls, data: tp.Any) -> attrs.VaultAttribute:
+        if isinstance(data, dict):
+            return attrs.VaultAttribute(value={k.lower(): cls._process_data(v) for k, v in data.items()})
+        if isinstance(data, list):
+            return attrs.VaultAttribute(
+                value=[
+                    (
+                        cls._process_data(item)
+                        if not isinstance(item, dict)
+                        else attrs.VaultAttribute(value={k.lower(): cls._process_data(v) for k, v in item.items()})
+                    )
+                    for item in data
+                ]
+            )
+        if isinstance(data, (bool, int, str, float, type(None))):
+            return attrs.VaultAttribute(value=data)
+        raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
+
+    @exceptions.handle_unknown_exception
+    def __eq__(self, other: ConfigType) -> int:
+        if not isinstance(other, ConfigType):
+            raise TypeError("ConfigType is comparable only to ConfigType")
+        return self._hash == other.hash
+
+    @exceptions.handle_unknown_exception
+    def __getattr__(self, item: str) -> tp.Any:
+        return getattr(self._root, item.lower())
 
 
 class FileConfigType(ConfigType, metaclass=ABCMeta):  # pragma: no cover

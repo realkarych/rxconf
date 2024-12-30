@@ -1,7 +1,15 @@
 import unittest
 
 from rxconf import exceptions
-from rxconf.attributes import EnvAttribute, IniAttribute, JsonAttribute, MockAttribute, TomlAttribute, YamlAttribute
+from rxconf.attributes import (
+    EnvAttribute,
+    IniAttribute,
+    JsonAttribute,
+    MockAttribute,
+    TomlAttribute,
+    VaultAttribute,
+    YamlAttribute,
+)
 
 
 class TestAttributeType(unittest.TestCase):
@@ -141,6 +149,18 @@ class TestAttributeType(unittest.TestCase):
     def test_repr(self):
         attr = MockAttribute(8)
         self.assertEqual(repr(attr), "AttributeType(8)")
+
+
+class TestVaultAttribute(unittest.TestCase):
+
+    def test_getattr(self):
+        attr = VaultAttribute({"key": "value"})  # type: ignore
+        self.assertEqual(attr.key, "value")
+
+    def test_getattr_key_error(self):
+        attr = VaultAttribute({"key": "value"})  # type: ignore
+        with self.assertRaises(exceptions.RxConfError):
+            _ = attr.nonexistent_key
 
 
 class TestYamlAttribute(unittest.TestCase):

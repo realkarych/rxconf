@@ -36,7 +36,7 @@ class FileConfigResolver(ConfigResolver):
 
         # TODO: add here link how to patch the extensions.
         raise exceptions.InvalidExtensionError(
-            f"Config file `{path}` has invalid extension: {extension}. "
+            f"Config file `{path}` has invalid extension: '{extension}'. "
             f"If you want to support this extension, "
             f"follow the tiny guideline: ..."
         )

@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  run_tests:
+  run_unit_tests:
     strategy:
       fail-fast: false
       matrix:
@@ -33,4 +33,66 @@ jobs:
         run: poetry install --with dev
 
       - name: Run tests
-        run: poetry run pytest
+        run: poetry run pytest tests/unit tests/test_imports.py
+
+  run_end_to_end_tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+        python-version: [ '3.9', '3.10', '3.11', '3.12', '3.13', 'pypy-3.9' ]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4.2.2
+
+      - name: Set up Python
+        uses: actions/setup-python@v5.3.0
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install and setup Vault on Linux
+        run: |
+          wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+          sudo apt update && sudo apt install vault
+          vault server -dev -dev-root-token-id="root" -address="http://127.0.0.1:8200" & disown  # run server in bg
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+
+      - name: Install and setup Vault on MacOS
+        run: |
+          brew tap hashicorp/tap
+          brew install hashicorp/tap/vault
+          vault server -dev -dev-root-token-id="root" -address="http://127.0.0.1:8200" & disown  # run server in bg
+        if: ${{ matrix.os == 'macos-latest' }}
+
+      - name: Setup choco for Windows
+        uses: crazy-max/ghaction-chocolatey@v3
+        with:
+          args: -h
+        if: ${{ matrix.os == 'windows-latest' }}
+
+      - name: Install Vault for Windows
+        run: |
+          choco install vault -y
+        shell: cmd
+        if: ${{ matrix.os == 'windows-latest' }}
+
+      - name: Setup Vault for Windows
+        run: |
+          Start-Process -FilePath "vault" -ArgumentList "server", "-dev", "-dev-root-token-id=root", "-address=http://127.0.0.1:8200"
+        shell: powershell
+        if: ${{ matrix.os == 'windows-latest' }}
+
+      - name: Install Poetry
+        uses: abatilo/actions-poetry@v3.0.1
+        with:
+          poetry-version: 1.8.3
+
+      - name: Install dependencies
+        run: poetry install --with dev
+
+      - name: Run tests
+        run: poetry run pytest tests/end_to_end
