@@ -14,7 +14,15 @@ update: ## Update the poetry environment
 	@poetry update
 
 test: ## Run tests
+ifeq ($(OS),Windows_NT)
+	@Start-Process -FilePath "vault" -ArgumentList "server", "-dev", "-dev-root-token-id=root", "-address=http://127.0.0.1:8200" -NoNewWindow -PassThru
 	@poetry run pytest
+	@taskkill /IM "vault.exe" /F
+else
+	@vault server -dev -dev-root-token-id="root" -address="http://127.0.0.1:8200" > /dev/null 2>&1 & echo $$! > vault_pid
+	@poetry run pytest
+	@kill -9 `cat vault_pid` && rm -f vault_pid
+endif
 
 format: ## Format sources
 	@poetry run black .
