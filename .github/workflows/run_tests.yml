@@ -77,7 +77,7 @@ jobs:
       - name: Install and setup Vault for Windows
         run: |
           choco install vault -y
-          start /NODE 1 vault server -dev -dev-root-token-id="root" -address="http://127.0.0.1:8200"
+          start /b "" cmd /b vault server -dev -dev-root-token-id="root" -address="http://127.0.0.1:8200"
         shell: cmd
         if: ${{ matrix.os == 'windows-latest' }}
 
