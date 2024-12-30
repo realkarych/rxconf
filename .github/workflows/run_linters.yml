@@ -1,4 +1,4 @@
-name: Lint source code and docs' markdown files
+name: Run linters
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  lint_code:
+  codebase:
     runs-on: ubuntu-latest
 
     strategy:
@@ -69,7 +69,7 @@ jobs:
             echo "No .py or .pyi files found in tests directory. Skipping Mypy."
           fi
 
-  lint_docs:
+  docs:
     runs-on: ubuntu-latest
 
     steps:
