@@ -1,7 +1,7 @@
 import typing as tp
 from abc import ABCMeta, abstractmethod
 
-from rxconf import exceptions, types
+from rxconf import _types, exceptions
 
 
 def _patch_other_value(func: tp.Callable[..., tp.Any]) -> tp.Callable[..., tp.Any]:
@@ -189,7 +189,7 @@ class VaultAttribute(AttributeType):
     def __init__(
         self: "VaultAttribute",
         value: tp.Union[
-            types.VAULT_ATTRIBUTE_TYPE,
+            _types.VAULT_ATTRIBUTE_TYPE,
             "VaultAttribute",
             tp.List["VaultAttribute"],
             tp.Set["VaultAttribute"],
@@ -203,7 +203,7 @@ class VaultAttribute(AttributeType):
         self: "VaultAttribute",
         item: str,
     ) -> tp.Union[
-        types.YAML_ATTRIBUTE_TYPE,
+        _types.YAML_ATTRIBUTE_TYPE,
         "VaultAttribute",
         tp.List["VaultAttribute"],
         tp.Set["VaultAttribute"],
@@ -224,7 +224,7 @@ class YamlAttribute(AttributeType):
     def __init__(
         self: "YamlAttribute",
         value: tp.Union[
-            types.YAML_ATTRIBUTE_TYPE,
+            _types.YAML_ATTRIBUTE_TYPE,
             "YamlAttribute",
             tp.List["YamlAttribute"],
             tp.Set["YamlAttribute"],
@@ -238,7 +238,7 @@ class YamlAttribute(AttributeType):
         self: "YamlAttribute",
         item: str,
     ) -> tp.Union[
-        types.YAML_ATTRIBUTE_TYPE,
+        _types.YAML_ATTRIBUTE_TYPE,
         "YamlAttribute",
         tp.List["YamlAttribute"],
         tp.Set["YamlAttribute"],
@@ -259,7 +259,7 @@ class JsonAttribute(AttributeType):
     def __init__(
         self: "JsonAttribute",
         value: tp.Union[
-            types.JSON_ATTRIBUTE_TYPE,
+            _types.JSON_ATTRIBUTE_TYPE,
             "JsonAttribute",
             tp.List["JsonAttribute"],
             tp.Dict[str, "JsonAttribute"],
@@ -272,7 +272,7 @@ class JsonAttribute(AttributeType):
         self: "JsonAttribute",
         item: str,
     ) -> tp.Union[
-        types.JSON_ATTRIBUTE_TYPE,
+        _types.JSON_ATTRIBUTE_TYPE,
         "JsonAttribute",
         tp.List["JsonAttribute"],
         tp.Dict[str, "JsonAttribute"],
@@ -292,7 +292,7 @@ class TomlAttribute(AttributeType):
     def __init__(
         self: "TomlAttribute",
         value: tp.Union[
-            types.TOML_ATTRIBUTE_TYPE,
+            _types.TOML_ATTRIBUTE_TYPE,
             "TomlAttribute",
             tp.List["TomlAttribute"],
             tp.Dict[str, "TomlAttribute"],
@@ -305,7 +305,7 @@ class TomlAttribute(AttributeType):
         self: "TomlAttribute",
         item: str,
     ) -> tp.Union[
-        types.TOML_ATTRIBUTE_TYPE,
+        _types.TOML_ATTRIBUTE_TYPE,
         "TomlAttribute",
         tp.List["TomlAttribute"],
         tp.Dict[str, "TomlAttribute"],
@@ -325,7 +325,7 @@ class EnvAttribute(AttributeType):
     def __init__(
         self: "EnvAttribute",
         value: tp.Union[
-            types.ENV_ATTRIBUTE_TYPE,
+            _types.ENV_ATTRIBUTE_TYPE,
             "EnvAttribute",
             tp.Dict[str, "EnvAttribute"],
         ],
@@ -337,7 +337,7 @@ class EnvAttribute(AttributeType):
         self: "EnvAttribute",
         item: str,
     ) -> tp.Union[
-        types.ENV_ATTRIBUTE_TYPE,
+        _types.ENV_ATTRIBUTE_TYPE,
         "EnvAttribute",
         tp.Dict[str, "EnvAttribute"],
     ]:
@@ -353,14 +353,16 @@ class EnvAttribute(AttributeType):
 
 class IniAttribute(AttributeType):
 
-    def __init__(self: "IniAttribute", value: tp.Union[types.INI_ATTRIBUTE_TYPE, tp.Dict[str, "IniAttribute"]]) -> None:
+    def __init__(
+        self: "IniAttribute", value: tp.Union[_types.INI_ATTRIBUTE_TYPE, tp.Dict[str, "IniAttribute"]]
+    ) -> None:
         super().__init__(value)
 
     @exceptions.handle_unknown_exception
     def __getattr__(
         self: "IniAttribute",
         item: str,
-    ) -> tp.Union[types.INI_ATTRIBUTE_TYPE, tp.Dict[str, "IniAttribute"], "IniAttribute"]:
+    ) -> tp.Union[_types.INI_ATTRIBUTE_TYPE, tp.Dict[str, "IniAttribute"], "IniAttribute"]:
         value = object.__getattribute__(self, "_AttributeType__value")
         if isinstance(value, dict):
             try:

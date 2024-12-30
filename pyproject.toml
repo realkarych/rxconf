@@ -80,6 +80,7 @@ reportGeneralTypeIssues = true
 
 [tool.ruff]
 line-length = 120
+preview = true
 
 [tool.ruff.lint]
 exclude = []

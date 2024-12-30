@@ -12,7 +12,7 @@ import hvac  # type: ignore
 import yaml
 from hvac.exceptions import VaultError  # type: ignore
 
-from rxconf import hashtools, types
+from rxconf import _types, hashtools
 from rxconf.exceptions import RxConfError
 
 
@@ -344,7 +344,7 @@ class JsonConfig(FileConfigType):
 
         return cls(
             root_attribute=cls._process_data(json_data) if json_data is not None else attrs.JsonAttribute(value={}),
-            path=path if isinstance(path, PurePath) else PurePath(path)
+            path=path if isinstance(path, PurePath) else PurePath(path),
         )
 
     @exceptions.handle_unknown_exception
@@ -469,9 +469,7 @@ class TomlConfig(FileConfigType):
                     (
                         cls._process_data(item)
                         if not isinstance(item, dict)
-                        else attrs.TomlAttribute(value={
-                            k.lower(): cls._process_data(v) for k, v in item.items()
-                        })
+                        else attrs.TomlAttribute(value={k.lower(): cls._process_data(v) for k, v in item.items()})
                     )
                     for item in data
                 ]
@@ -574,7 +572,7 @@ class IniConfig(FileConfigType):
         if isinstance(data, dict):
             return attrs.IniAttribute(value={k.lower(): cls._process_data(v) for k, v in data.items()})
         if isinstance(data, str):
-            return attrs.IniAttribute(value=types.map_primitive(data))
+            return attrs.IniAttribute(value=_types.map_primitive(data))
         raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
 
 
@@ -626,7 +624,7 @@ class EnvConfig(ConfigType):
     @classmethod
     @exceptions.handle_unknown_exception
     def _process_data(cls, data: tp.Dict[str, str]) -> attrs.EnvAttribute:
-        processed_data = {k.lower(): attrs.EnvAttribute(value=types.map_primitive(v)) for k, v in data.items()}
+        processed_data = {k.lower(): attrs.EnvAttribute(value=_types.map_primitive(v)) for k, v in data.items()}
         return attrs.EnvAttribute(value=processed_data)
 
 
@@ -666,11 +664,7 @@ class DotenvConfig(FileConfigType, EnvConfig):
         encoding: str = "utf-8",
     ) -> FileConfigType:
         dotenv_values = dotenv.dotenv_values(dotenv_path=path, encoding=encoding)
-        processed_values = {
-            key.lower(): value
-            for key, value in dotenv_values.items()
-            if value is not None
-        }
+        processed_values = {key.lower(): value for key, value in dotenv_values.items() if value is not None}
         root_attribute = cls._process_data(processed_values)
         return cls(
             root_attribute=root_attribute,

@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  run_unit_tests:
+  unit_tests:
     strategy:
       fail-fast: false
       matrix:
@@ -35,7 +35,7 @@ jobs:
       - name: Run tests
         run: poetry run pytest tests/unit tests/test_imports.py
 
-  run_end_to_end_tests:
+  end_to_end_tests:
     strategy:
       fail-fast: false
       matrix:
@@ -69,7 +69,7 @@ jobs:
         if: ${{ matrix.os == 'macos-latest' }}
 
       - name: Setup choco for Windows
-        uses: crazy-max/ghaction-chocolatey@v3
+        uses: crazy-max/ghaction-chocolatey@v3.2.0
         with:
           args: -h
         if: ${{ matrix.os == 'windows-latest' }}
