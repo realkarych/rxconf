@@ -10,24 +10,24 @@ class TestTypeAliasImport(unittest.TestCase):
         with patch.dict("sys.modules", {"typing_extensions": MagicMock()}):
             if "rxconf.types" in sys.modules:
                 del sys.modules["rxconf.types"]
-            import rxconf.types
+            import rxconf._types
 
-            self.assertTrue(hasattr(rxconf.types, "TypeAlias"))
+            self.assertTrue(hasattr(rxconf._types, "TypeAlias"))
 
     @patch("sys.version_info", new=(3, 10))
     def test_import_typealias_from_typing(self):
         with patch.dict("sys.modules", {"typing": MagicMock()}):
             if "rxconf.types" in sys.modules:
                 del sys.modules["rxconf.types"]
-            import rxconf.types
+            import rxconf._types
 
-            self.assertTrue(hasattr(rxconf.types, "TypeAlias"))
+            self.assertTrue(hasattr(rxconf._types, "TypeAlias"))
 
     @patch("sys.version_info", new=(3, 10, 1))
     def test_import_typealias_from_typing_above_310(self):
         with patch.dict("sys.modules", {"typing": MagicMock()}):
             if "rxconf.types" in sys.modules:
                 del sys.modules["rxconf.types"]
-            import rxconf.types
+            import rxconf._types
 
-            self.assertTrue(hasattr(rxconf.types, "TypeAlias"))
+            self.assertTrue(hasattr(rxconf._types, "TypeAlias"))

@@ -1,4 +1,3 @@
-from rxconf import types
 from .attributes import (
     AttributeType,
     EnvAttribute,
@@ -35,9 +34,4 @@ __all__ = [
     "BrokenConfigSchemaError",
     "ConfigNotFoundError",
     "InvalidExtensionError",
-    "types",
-    "attributes",
-    "config_resolver",
-    "config_types",
-    "exceptions",
 ]

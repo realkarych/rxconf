@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock
 
-from rxconf import RxConf, AsyncRxConf
+from rxconf import AsyncRxConf, RxConf
 
 
 class TestRxConf(unittest.TestCase):

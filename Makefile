@@ -21,7 +21,10 @@ ifeq ($(OS),Windows_NT)
 else
 	@vault server -dev -dev-root-token-id="root" -address="http://127.0.0.1:8200" > /dev/null 2>&1 & echo $$! > vault_pid
 	@poetry run pytest
-	@kill -9 `cat vault_pid` && rm -f vault_pid
+	@if [ -f vault_pid ] && kill -0 `cat vault_pid` 2>/dev/null; then \
+		kill -9 `cat vault_pid`; \
+	fi
+	@rm -f vault_pid
 endif
 
 coverage: ## Run tests with coverage
@@ -32,7 +35,10 @@ ifeq ($(OS),Windows_NT)
 else
 	@vault server -dev -dev-root-token-id="root" -address="http://127.0.0.1:8200" > /dev/null 2>&1 & echo $$! > vault_pid
 	@poetry run pytest --cov=rxconf --cov-report=xml --cov-report=term
-	@kill -9 `cat vault_pid` && rm -f vault_pid
+	@if [ -f vault_pid ] && kill -0 `cat vault_pid` 2>/dev/null; then \
+		kill -9 `cat vault_pid`; \
+	fi
+	@rm -f vault_pid
 endif
 
 format: ## Format sources
@@ -40,12 +46,14 @@ format: ## Format sources
 	@poetry run isort .
 	@poetry run ruff check . --fix
 
-lint: ## Run linters (pyright, ruff, mypy)
+lint: ## Run linters
 	@poetry run pyright .
 	@poetry run ruff check .
 	@poetry run mypy .
+	@poetry run black --check .
+	@poetry run isort --check .
 
-check: lint coverage  ## Run linters & tests
+check: lint coverage ## Run linters & tests
 
 docs: ## Build and serve documentation with mkdocs
 	@poetry run mkdocs serve

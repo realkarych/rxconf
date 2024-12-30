@@ -1,5 +1,6 @@
 import hvac  # type: ignore
 import pytest
+
 from rxconf import RxConf, exceptions
 
 
