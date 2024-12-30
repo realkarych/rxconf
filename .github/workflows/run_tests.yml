@@ -74,11 +74,16 @@ jobs:
           args: -h
         if: ${{ matrix.os == 'windows-latest' }}
 
-      - name: Install and setup Vault for Windows
+      - name: Install Vault for Windows
         run: |
           choco install vault -y
-          start /b "" vault server -dev -dev-root-token-id="root" -address="http://127.0.0.1:8200" &
         shell: cmd
+        if: ${{ matrix.os == 'windows-latest' }}
+
+      - name: Setup Vault for Windows
+        run: |
+          Start-Process -FilePath "vault" -ArgumentList "server", "-dev", "-dev-root-token-id=root", "-address=http://127.0.0.1:8200"
+        shell: powershell
         if: ${{ matrix.os == 'windows-latest' }}
 
       - name: Install Poetry
