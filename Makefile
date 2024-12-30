@@ -1,4 +1,4 @@
-.PHONY: help install update test lint format check docs
+.PHONY: help install update test coverage lint format check docs
 
 # Default target
 help: ## Show this help message
@@ -24,6 +24,17 @@ else
 	@kill -9 `cat vault_pid` && rm -f vault_pid
 endif
 
+coverage: ## Run tests with coverage
+ifeq ($(OS),Windows_NT)
+	@Start-Process -FilePath "vault" -ArgumentList "server", "-dev", "-dev-root-token-id=root", "-address=http://127.0.0.1:8200" -NoNewWindow -PassThru
+	@poetry run pytest --cov=rxconf --cov-report=xml --cov-report=term
+	@taskkill /IM "vault.exe" /F
+else
+	@vault server -dev -dev-root-token-id="root" -address="http://127.0.0.1:8200" > /dev/null 2>&1 & echo $$! > vault_pid
+	@poetry run pytest --cov=rxconf --cov-report=xml --cov-report=term
+	@kill -9 `cat vault_pid` && rm -f vault_pid
+endif
+
 format: ## Format sources
 	@poetry run black .
 	@poetry run isort .
@@ -34,7 +45,7 @@ lint: ## Run linters (pyright, ruff, mypy)
 	@poetry run ruff check .
 	@poetry run mypy .
 
-check: test lint ## Run tests and linters
+check: lint coverage  ## Run linters & tests
 
 docs: ## Build and serve documentation with mkdocs
 	@poetry run mkdocs serve
