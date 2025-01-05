@@ -10,12 +10,12 @@ from .attributes import (
 from .config_resolver import ConfigResolver
 from .config_types import DotenvConfig, EnvConfig, IniConfig, JsonConfig, TomlConfig, VaultConfig, YamlConfig
 from .exceptions import BrokenConfigSchemaError, ConfigNotFoundError, InvalidExtensionError
-from .rxconf import AsyncRxConf, RxConf
+from .rxconf import AsyncConf, Conf
 
 
 __all__ = [
-    "RxConf",
-    "AsyncRxConf",
+    "Conf",
+    "AsyncConf",
     "AttributeType",
     "YamlAttribute",
     "JsonAttribute",

@@ -55,11 +55,11 @@ Create `main.py` in the same directory and open it in your favorite code editor 
 ### Firstly, we want to load our configs
 
 ```python
-from rxconf import RxConf
+from rxconf import Conf
 
-yaml_conf = RxConf.from_file(config_path="test.yaml")
-toml_conf = RxConf.from_file(config_path="test.toml")
-env_conf = RxConf.from_env()
+yaml_conf = Conf.from_file(config_path="test.yaml")
+toml_conf = Conf.from_file(config_path="test.toml")
+env_conf = Conf.from_env()
 ```
 
 !!! note
@@ -137,20 +137,20 @@ There are some of them:
 
 All existing exceptions your can check in [exceptions.py](https://github.com/realkarych/rxconf/blob/main/rxconf/exceptions.py).
 
-## Async RxConf
+## Async configs
 
-RxConf is compatible with Asyncio. To use, import extension for base `RxConf`:
+RxConf is compatible with Asyncio. To use, import extension for base `Conf`:
 
 ```python
-from rxconf import AsyncRxConf
+from rxconf import AsyncConf
 ```
 
 Then load config:
 
 ```python
 async def main():
-    conf = await AsyncRxConf.from_file(path="...")
-    # Then use conf as same as RxConf
+    conf = await AsyncConf.from_file(path="...")
+    # Then use conf as same as Conf
 ```
 
 To test, you can run this function with asyncio:

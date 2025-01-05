@@ -27,82 +27,82 @@ class MetaTree(metaclass=abc.ABCMeta):  # pragma: no cover
         pass
 
 
-class MetaRxConf(MetaTree, metaclass=abc.ABCMeta):  # pragma: no cover
+class MetaConf(MetaTree, metaclass=abc.ABCMeta):  # pragma: no cover
 
     @classmethod
     @abc.abstractmethod
     def from_file(
-        cls: tp.Type["MetaRxConf"],
+        cls: tp.Type["MetaConf"],
         config_path: tp.Union[str, pathlib.PurePath],
         encoding: str,
         file_config_resolver: config_resolver.FileConfigResolver,
-    ) -> "MetaRxConf":
+    ) -> "MetaConf":
         pass
 
     @classmethod
     @abc.abstractmethod
     def from_env(
-        cls: tp.Type["MetaRxConf"],
+        cls: tp.Type["MetaConf"],
         prefix: tp.Optional[str] = None,
         remove_prefix: tp.Optional[bool] = False,
-    ) -> "MetaRxConf":
+    ) -> "MetaConf":
         pass
 
     @classmethod
     @abc.abstractmethod
     def from_vault(
-        cls: tp.Type["MetaRxConf"],
+        cls: tp.Type["MetaConf"],
         token: str,
         ip: str,
         path: tp.Union[str, pathlib.PurePath],
-    ) -> "MetaRxConf":
+    ) -> "MetaConf":
         pass
 
 
-class AsyncMetaRxConf(MetaTree, metaclass=abc.ABCMeta):  # pragma: no cover
+class MetaAsyncConf(MetaTree, metaclass=abc.ABCMeta):  # pragma: no cover
 
     @classmethod
     @abc.abstractmethod
     async def from_file(
-        cls: tp.Type["AsyncMetaRxConf"],
+        cls: tp.Type["MetaAsyncConf"],
         config_path: tp.Union[str, pathlib.PurePath],
         encoding: str,
         file_config_resolver: config_resolver.FileConfigResolver,
-    ) -> "AsyncMetaRxConf":
+    ) -> "MetaAsyncConf":
         pass
 
     @classmethod
     @abc.abstractmethod
     async def from_env(
-        cls: tp.Type["AsyncMetaRxConf"],
+        cls: tp.Type["MetaAsyncConf"],
         prefix: tp.Optional[str] = None,
         remove_prefix: tp.Optional[bool] = False,
-    ) -> "AsyncMetaRxConf":
+    ) -> "MetaAsyncConf":
         pass
 
     @classmethod
     @abc.abstractmethod
     async def from_vault(
-        cls: tp.Type["AsyncMetaRxConf"],
+        cls: tp.Type["MetaAsyncConf"],
         token: str,
         ip: str,
         path: tp.Union[str, pathlib.PurePath],
-    ) -> "AsyncMetaRxConf":
+    ) -> "MetaAsyncConf":
         pass
 
 
-class RxConf(MetaRxConf):
+class Conf(MetaConf):
 
     def __init__(self, config: config_types.ConfigType) -> None:
         super().__init__(config)
 
     @classmethod
     def from_file(
-        cls: tp.Type["RxConf"],
+        cls: tp.Type["Conf"],
         config_path: tp.Union[str, pathlib.PurePath],
         encoding: str = "utf-8",
         file_config_resolver: config_resolver.FileConfigResolver = config_resolver.DefaultFileConfigResolver,
-    ) -> "RxConf":
+    ) -> "Conf":
         return cls(
             config=FileConfigBuilder(
                 config_resolver=file_config_resolver,
@@ -114,10 +114,10 @@ class RxConf(MetaRxConf):
 
     @classmethod
     def from_env(
-        cls: tp.Type["RxConf"],
+        cls: tp.Type["Conf"],
         prefix: tp.Optional[str] = None,
         remove_prefix: tp.Optional[bool] = False,
-    ) -> "RxConf":
+    ) -> "Conf":
         return cls(
             config=config_types.EnvConfig.load_from_environment(
                 prefix=prefix,
@@ -127,16 +127,16 @@ class RxConf(MetaRxConf):
 
     @classmethod
     def from_vault(
-        cls: tp.Type["RxConf"],
+        cls: tp.Type["Conf"],
         token: str,
         ip: str,
         path: tp.Union[str, pathlib.PurePath],
-    ) -> "RxConf":
+    ) -> "Conf":
         return cls(config=config_types.VaultConfig.load_from_vault(token=token, ip=ip, path=path))
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, RxConf):
-            raise TypeError("RxConf is comparable only to RxConf")
+        if not isinstance(other, Conf):
+            raise TypeError("Conf is comparable only to Conf")
         return self._config == other._config
 
     def __ne__(self, other: object) -> bool:
@@ -149,18 +149,18 @@ class RxConf(MetaRxConf):
         return repr(self._config)
 
 
-class AsyncRxConf(AsyncMetaRxConf):
+class AsyncConf(MetaAsyncConf):
 
     def __init__(self, config: config_types.ConfigType) -> None:
         super().__init__(config)
 
     @classmethod
     async def from_file(
-        cls: tp.Type["AsyncRxConf"],
+        cls: tp.Type["AsyncConf"],
         config_path: tp.Union[str, pathlib.PurePath],
         encoding: str = "utf-8",
         file_config_resolver: config_resolver.FileConfigResolver = config_resolver.DefaultFileConfigResolver,
-    ) -> "AsyncRxConf":
+    ) -> "AsyncConf":
         return cls(
             config=await FileConfigBuilder(
                 config_resolver=file_config_resolver,
@@ -172,10 +172,10 @@ class AsyncRxConf(AsyncMetaRxConf):
 
     @classmethod
     async def from_env(
-        cls: tp.Type["AsyncRxConf"],
+        cls: tp.Type["AsyncConf"],
         prefix: tp.Optional[str] = None,
         remove_prefix: tp.Optional[bool] = False,
-    ) -> "AsyncRxConf":
+    ) -> "AsyncConf":
         return cls(
             config=config_types.EnvConfig.load_from_environment(
                 prefix=prefix,
@@ -185,16 +185,16 @@ class AsyncRxConf(AsyncMetaRxConf):
 
     @classmethod
     async def from_vault(
-        cls: tp.Type["AsyncRxConf"],
+        cls: tp.Type["AsyncConf"],
         token: str,
         ip: str,
         path: tp.Union[str, pathlib.PurePath],
-    ) -> "AsyncRxConf":
+    ) -> "AsyncConf":
         raise NotImplementedError()  # pragma: no cover
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, AsyncRxConf):
-            raise TypeError("AsyncRxConf is comparable only to AsyncRxConf")
+        if not isinstance(other, AsyncConf):
+            raise TypeError("AsyncConf is comparable only to AsyncConf")
         return self._config == other._config
 
     def __ne__(self, other: object) -> bool:

@@ -2,39 +2,39 @@ from pathlib import Path
 
 import pytest
 
-from rxconf import AsyncRxConf, RxConf, exceptions
+from rxconf import AsyncConf, Conf, exceptions
 
 
 _RESOURCE_DIR = Path.cwd() / Path("tests/resources")
 
 
 def test_empty() -> None:
-    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "empty.json")
+    conf = Conf.from_file(config_path=_RESOURCE_DIR / "empty.json")
 
     assert conf._config._root == {}
 
 
 @pytest.mark.asyncio
 async def test_empty_async() -> None:
-    conf = await AsyncRxConf.from_file(config_path=_RESOURCE_DIR / "empty.json")
+    conf = await AsyncConf.from_file(config_path=_RESOURCE_DIR / "empty.json")
 
     assert conf._config._root == {}
 
 
 def test_wrong_equality() -> None:
-    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "empty.json")._config
+    conf = Conf.from_file(config_path=_RESOURCE_DIR / "empty.json")._config
     with pytest.raises(exceptions.RxConfError):
         assert conf == 1
 
 
 def test_correct_equality() -> None:
-    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.json")
-    another_conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.json")
+    conf = Conf.from_file(config_path=_RESOURCE_DIR / "primitives.json")
+    another_conf = Conf.from_file(config_path=_RESOURCE_DIR / "primitives.json")
     assert conf == another_conf
 
 
 def test_primitive_types() -> None:
-    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.json")
+    conf = Conf.from_file(config_path=_RESOURCE_DIR / "primitives.json")
 
     assert conf.integer == 42
     assert conf.float == 36.6
@@ -45,7 +45,7 @@ def test_primitive_types() -> None:
 
 @pytest.mark.asyncio
 async def test_primitive_types_async() -> None:
-    conf = await AsyncRxConf.from_file(config_path=_RESOURCE_DIR / "primitives.json")
+    conf = await AsyncConf.from_file(config_path=_RESOURCE_DIR / "primitives.json")
 
     assert conf.integer == 42
     assert conf.float == 36.6
@@ -55,7 +55,7 @@ async def test_primitive_types_async() -> None:
 
 
 def test_primitive_collections() -> None:
-    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.json")
+    conf = Conf.from_file(config_path=_RESOURCE_DIR / "primitives.json")
     expected_list = [1, 2, 3]
     expected_set = {"a", "b", "c"}
 
@@ -72,7 +72,7 @@ def test_primitive_collections() -> None:
 
 @pytest.mark.asyncio
 async def test_pritive_collections_async() -> None:
-    conf = await AsyncRxConf.from_file(config_path=_RESOURCE_DIR / "primitives.json")
+    conf = await AsyncConf.from_file(config_path=_RESOURCE_DIR / "primitives.json")
     expected_list = [1, 2, 3]
     expected_set = {"a", "b", "c"}
 
@@ -88,7 +88,7 @@ async def test_pritive_collections_async() -> None:
 
 
 def test_key_cases() -> None:
-    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.json")
+    conf = Conf.from_file(config_path=_RESOURCE_DIR / "primitives.json")
 
     assert conf.camelcase
     assert conf.CamelCase
@@ -100,7 +100,7 @@ def test_key_cases() -> None:
 
 @pytest.mark.asyncio
 async def test_key_cases_async() -> None:
-    conf = await AsyncRxConf.from_file(config_path=_RESOURCE_DIR / "primitives.json")
+    conf = await AsyncConf.from_file(config_path=_RESOURCE_DIR / "primitives.json")
 
     assert conf.camelcase
     assert conf.CamelCase
@@ -111,7 +111,7 @@ async def test_key_cases_async() -> None:
 
 
 def test_numeric_casts() -> None:
-    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.json")
+    conf = Conf.from_file(config_path=_RESOURCE_DIR / "primitives.json")
 
     assert conf.integer - 1 < conf.integer < conf.integer + 1
     assert conf.integer - 0.1 < conf.integer <= int(conf.integer + 0.1)
@@ -122,7 +122,7 @@ def test_numeric_casts() -> None:
 
 @pytest.mark.asyncio
 async def test_numeric_casts_async() -> None:
-    conf = await AsyncRxConf.from_file(config_path=_RESOURCE_DIR / "primitives.json")
+    conf = await AsyncConf.from_file(config_path=_RESOURCE_DIR / "primitives.json")
 
     assert conf.integer - 1 < conf.integer < conf.integer + 1
     assert conf.integer - 0.1 < conf.integer <= int(conf.integer + 0.1)
@@ -132,7 +132,7 @@ async def test_numeric_casts_async() -> None:
 
 
 def test_string_casts() -> None:
-    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.json")
+    conf = Conf.from_file(config_path=_RESOURCE_DIR / "primitives.json")
 
     assert conf.string[0] == "H"
     assert conf.string[1:-1] == "ello world ="
@@ -143,7 +143,7 @@ def test_string_casts() -> None:
 
 
 def test_inner_structures() -> None:
-    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "inner_structures.json")
+    conf = Conf.from_file(config_path=_RESOURCE_DIR / "inner_structures.json")
 
     assert conf.config.name == "John Doe"
     assert conf.config.age == 42
