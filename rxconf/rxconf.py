@@ -190,7 +190,7 @@ class AsyncRxConf(AsyncMetaRxConf):
         ip: str,
         path: tp.Union[str, pathlib.PurePath],
     ) -> "AsyncRxConf":
-        raise NotImplementedError()
+        raise NotImplementedError()  # pragma: no cover
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, AsyncRxConf):
