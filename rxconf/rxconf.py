@@ -2,8 +2,7 @@ import abc
 import pathlib
 import typing as tp
 
-from rxconf import config_resolver, config_types
-from rxconf.config_builder import FileConfigBuilder
+from rxconf import config_builder, config_resolver, config_types
 
 
 class MetaTree(metaclass=abc.ABCMeta):  # pragma: no cover
@@ -104,7 +103,7 @@ class Conf(MetaConf):
         file_config_resolver: config_resolver.FileConfigResolver = config_resolver.DefaultFileConfigResolver,
     ) -> "Conf":
         return cls(
-            config=FileConfigBuilder(
+            config=config_builder.FileConfigBuilder(
                 config_resolver=file_config_resolver,
             ).build(
                 path=config_path,
@@ -162,7 +161,7 @@ class AsyncConf(MetaAsyncConf):
         file_config_resolver: config_resolver.FileConfigResolver = config_resolver.DefaultFileConfigResolver,
     ) -> "AsyncConf":
         return cls(
-            config=await FileConfigBuilder(
+            config=await config_builder.FileConfigBuilder(
                 config_resolver=file_config_resolver,
             ).build_async(
                 path=config_path,
