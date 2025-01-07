@@ -12,7 +12,7 @@ _RESOURCE_DIR = Path.cwd() / Path("tests/resources")
 def test_empty() -> None:
     conf = Conf.from_file(config_path=_RESOURCE_DIR / "empty.env")
 
-    assert conf._config._root == {}
+    assert conf._MetaTree__config._root == {}
 
 
 def test_primitive_types() -> None:
@@ -86,12 +86,12 @@ def set_env_vars(monkeypatch):
 def test_empty_from_env() -> None:
     conf = Conf.from_env(prefix="NOT_EXISTING_PREFIX")
 
-    assert conf._config._root == {}
+    assert conf._MetaTree__config._root == {}
 
 
 def test_wrong_equality() -> None:
-    conf = Conf.from_env()._config
-    file_conf = Conf.from_file(config_path=_RESOURCE_DIR / "primitives.env")._config
+    conf = Conf.from_env()._MetaTree__config
+    file_conf = Conf.from_file(config_path=_RESOURCE_DIR / "primitives.env")._MetaTree__config
     with pytest.raises(exceptions.RxConfError):
         assert conf == 1
     with pytest.raises(exceptions.RxConfError):
@@ -175,7 +175,7 @@ def test_repr():
 async def test_empty_async() -> None:
     conf = await AsyncConf.from_file(config_path=_RESOURCE_DIR / "empty.env")
 
-    assert conf._config._root == {}
+    assert conf._MetaTree__config._root == {}
 
 
 @pytest.mark.asyncio

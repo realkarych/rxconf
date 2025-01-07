@@ -11,15 +11,15 @@ class MetaTree(metaclass=abc.ABCMeta):  # pragma: no cover
         self: "MetaTree",
         config: config_types.ConfigType,
     ) -> None:
-        self._config = config
+        self.__config = config
 
-    @abc.abstractmethod
     def __eq__(self, other: object) -> bool:
-        raise NotImplementedError()
+        if not isinstance(other, self.__class__):
+            return False
+        return vars(self.__config) == vars(other._MetaTree__config)
 
-    @abc.abstractmethod
     def __ne__(self, other: object) -> bool:
-        raise NotImplementedError()
+        return not self.__eq__(other)
 
     @abc.abstractmethod
     def __getattr__(self, item: str) -> tp.Any:
@@ -136,16 +136,16 @@ class Conf(MetaConf):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Conf):
             raise TypeError("Conf is comparable only to Conf")
-        return self._config == other._config
+        return self._MetaTree__config == other._MetaTree__config
 
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
 
     def __getattr__(self, item: str) -> tp.Any:
-        return getattr(self._config, item.lower())
+        return getattr(self._MetaTree__config, item.lower())
 
     def __repr__(self) -> str:
-        return repr(self._config)
+        return repr(self._MetaTree__config)
 
 
 class AsyncConf(MetaAsyncConf):
@@ -195,13 +195,13 @@ class AsyncConf(MetaAsyncConf):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, AsyncConf):
             raise TypeError("AsyncConf is comparable only to AsyncConf")
-        return self._config == other._config
+        return self._MetaTree__config == other._MetaTree__config
 
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
 
     def __getattr__(self, item: str) -> tp.Any:
-        return getattr(self._config, item.lower())
+        return getattr(self._MetaTree__config, item.lower())
 
     def __repr__(self) -> str:
-        return repr(self._config)
+        return repr(self._MetaTree__config)
