@@ -189,7 +189,8 @@ class AsyncConf(MetaAsyncConf):
         ip: str,
         path: tp.Union[str, pathlib.PurePath],
     ) -> "AsyncConf":
-        raise NotImplementedError()  # pragma: no cover
+        # TODO: add support for VaultConfig
+        raise NotImplementedError("AsyncConf does not support VaultConfig yet. Use Conf instead.")  # pragma: no cover
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, AsyncConf):
