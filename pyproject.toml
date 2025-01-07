@@ -27,7 +27,7 @@ python-dotenv = "^1.0.1"
 toml = {version = "^0.10.2", markers = "python_version < '3.11'"}
 hvac = "^2.3.0"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 types-aiofiles = "24.1.0.20241221"
 pytest = "^8.3.4"
 pytest-asyncio = "^0.25.1"
