@@ -121,7 +121,7 @@ class VaultConfig(VaultConfigType):
         ip: str,
         path: PurePath,
     ) -> "VaultConfig":
-        raise NotImplementedError()
+        raise NotImplementedError("Async vault loading is not supported yet. Use sync method instead.")
 
     @classmethod
     @exceptions.handle_unknown_exception
