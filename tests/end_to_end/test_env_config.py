@@ -23,6 +23,7 @@ def test_primitive_types() -> None:
     assert conf.string == "Hello world =)"
     assert conf.boolean == True  # noqa: E712
     assert conf.another_bool == False  # noqa: E712
+    assert conf.hash == 1
 
 
 def test_key_cases() -> None:

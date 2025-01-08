@@ -2,7 +2,7 @@ import abc
 import pathlib
 import typing as tp
 
-from rxconf import config_builder, config_resolver, config_types
+from rxconf import config_builder, config_resolver, config_types, hashtools
 
 
 class MetaTree(metaclass=abc.ABCMeta):  # pragma: no cover
@@ -142,7 +142,7 @@ class Conf(MetaConf):
         return not self.__eq__(other)
 
     def __getattr__(self, item: str) -> tp.Any:
-        return getattr(self._MetaTree__config, item.lower())
+        return getattr(self._MetaTree__config, f"{hashtools.ATTR_SAULT}{item.lower()}")
 
     def __repr__(self) -> str:
         return repr(self._MetaTree__config)
@@ -201,7 +201,7 @@ class AsyncConf(MetaAsyncConf):
         return not self.__eq__(other)
 
     def __getattr__(self, item: str) -> tp.Any:
-        return getattr(self._MetaTree__config, item.lower())
+        return getattr(self._MetaTree__config, f"{hashtools.ATTR_SAULT}{item.lower()}")
 
     def __repr__(self) -> str:
         return repr(self._MetaTree__config)

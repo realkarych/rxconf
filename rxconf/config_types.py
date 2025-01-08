@@ -34,14 +34,14 @@ class ConfigType(metaclass=ABCMeta):  # pragma: no cover
     def __eq__(self, other: object) -> bool:
         raise NotImplementedError()
 
-    @abstractmethod
-    def __getattr__(self, item: str) -> tp.Any:
-        raise NotImplementedError()
-
     @property
     @abstractmethod
     def hash(self) -> int:
         pass
+
+    @exceptions.handle_unknown_exception
+    def __getattr__(self, item: str) -> tp.Any:
+        return getattr(self._root, item.lower().removeprefix(hashtools.ATTR_SAULT))
 
 
 class VaultConfigType(ConfigType):
@@ -149,10 +149,6 @@ class VaultConfig(VaultConfigType):
             raise TypeError("ConfigType is comparable only to ConfigType")
         return self._hash == other.hash
 
-    @exceptions.handle_unknown_exception
-    def __getattr__(self, item: str) -> tp.Any:
-        return getattr(self._root, item.lower())
-
 
 class FileConfigType(ConfigType, metaclass=ABCMeta):  # pragma: no cover
 
@@ -256,10 +252,6 @@ class YamlConfig(FileConfigType):
             raise TypeError("ConfigType is comparable only to ConfigType")
         return self._hash == other.hash
 
-    @exceptions.handle_unknown_exception
-    def __getattr__(self, item: str) -> tp.Any:
-        return getattr(self._root, item.lower())
-
     @classmethod
     @exceptions.handle_unknown_exception
     def _process_data(cls, data: tp.Any) -> attrs.YamlAttribute:
@@ -352,10 +344,6 @@ class JsonConfig(FileConfigType):
         if not isinstance(other, ConfigType):
             raise TypeError("ConfigType is comparable only to ConfigType")
         return self._hash == other.hash
-
-    @exceptions.handle_unknown_exception
-    def __getattr__(self, item: str) -> tp.Any:
-        return getattr(self._root, item.lower())
 
     @classmethod
     @exceptions.handle_unknown_exception
@@ -453,10 +441,6 @@ class TomlConfig(FileConfigType):
         if not isinstance(other, ConfigType):
             raise TypeError("ConfigType is comparable only to ConfigType")
         return self._hash == other.hash
-
-    @exceptions.handle_unknown_exception
-    def __getattr__(self, item: str) -> tp.Any:
-        return getattr(self._root, item.lower())
 
     @classmethod
     @exceptions.handle_unknown_exception
@@ -562,10 +546,6 @@ class IniConfig(FileConfigType):
             raise TypeError("ConfigType is comparable only to ConfigType")
         return self._hash == other.hash
 
-    @exceptions.handle_unknown_exception
-    def __getattr__(self, item: str) -> tp.Any:
-        return getattr(self._root, item.lower())
-
     @classmethod
     @exceptions.handle_unknown_exception
     def _process_data(cls, data: tp.Any) -> attrs.IniAttribute:
@@ -592,10 +572,6 @@ class EnvConfig(ConfigType):
         if not isinstance(other, ConfigType):
             raise TypeError("ConfigType is comparable only to ConfigType")
         return self._hash == other.hash
-
-    @exceptions.handle_unknown_exception
-    def __getattr__(self, item: str) -> tp.Any:
-        return getattr(self._root, item.lower())
 
     @classmethod
     @exceptions.handle_unknown_exception

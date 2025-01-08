@@ -48,3 +48,6 @@ def compute_conf_hash(attribute: AttributeType, hash_sum: int = 0) -> int:
         hash_sum += _hash_to_int(_hash_with_type(value))
 
     return hash_sum
+
+
+ATTR_SAULT: tp.Final[str] = "b35f36857ba6b56d"
