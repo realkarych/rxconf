@@ -2,7 +2,7 @@ import abc
 import pathlib
 import typing as tp
 
-from rxconf import config_builder, config_resolver, config_types, hashtools
+from . import config_builder, config_resolver, config_types, hashtools
 
 
 class MetaTree(metaclass=abc.ABCMeta):  # pragma: no cover

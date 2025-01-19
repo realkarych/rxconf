@@ -2,39 +2,39 @@ from pathlib import Path
 
 import pytest
 
-from rxconf import AsyncConf, Conf, exceptions
+import rxconf
 
 
 _RESOURCE_DIR = Path.cwd() / Path("tests/resources")
 
 
 def test_empty() -> None:
-    conf = Conf.from_file(config_path=_RESOURCE_DIR / "empty.ini")
+    conf = rxconf.Conf.from_file(config_path=_RESOURCE_DIR / "empty.ini")
 
     assert conf._MetaTree__config._root == {}
 
 
 @pytest.mark.asyncio
 async def test_empty_async() -> None:
-    conf = await AsyncConf.from_file(config_path=_RESOURCE_DIR / "empty.ini")
+    conf = await rxconf.AsyncConf.from_file(config_path=_RESOURCE_DIR / "empty.ini")
 
     assert conf._MetaTree__config._root == {}
 
 
 def test_wrong_equality() -> None:
-    conf = Conf.from_file(config_path=_RESOURCE_DIR / "empty.ini")._MetaTree__config
-    with pytest.raises(exceptions.RxConfError):
+    conf = rxconf.Conf.from_file(config_path=_RESOURCE_DIR / "empty.ini")._MetaTree__config
+    with pytest.raises(rxconf.RxConfError):
         assert conf == 1
 
 
 def test_correct_equality() -> None:
-    conf = Conf.from_file(config_path=_RESOURCE_DIR / "primitives.ini")
-    another_conf = Conf.from_file(config_path=_RESOURCE_DIR / "primitives.ini")
+    conf = rxconf.Conf.from_file(config_path=_RESOURCE_DIR / "primitives.ini")
+    another_conf = rxconf.Conf.from_file(config_path=_RESOURCE_DIR / "primitives.ini")
     assert conf == another_conf
 
 
 def test_primitive_types() -> None:
-    conf = Conf.from_file(config_path=_RESOURCE_DIR / "primitives.ini")
+    conf = rxconf.Conf.from_file(config_path=_RESOURCE_DIR / "primitives.ini")
 
     assert conf.primitives.integer == 42
     assert conf.primitives.float == 36.6
@@ -44,7 +44,7 @@ def test_primitive_types() -> None:
 
 @pytest.mark.asyncio
 async def test_primitive_types_async() -> None:
-    conf = await AsyncConf.from_file(config_path=_RESOURCE_DIR / "primitives.ini")
+    conf = await rxconf.AsyncConf.from_file(config_path=_RESOURCE_DIR / "primitives.ini")
 
     assert conf.primitives.integer == 42
     assert conf.primitives.float == 36.6
@@ -53,7 +53,7 @@ async def test_primitive_types_async() -> None:
 
 
 def test_key_cases() -> None:
-    conf = Conf.from_file(config_path=_RESOURCE_DIR / "primitives.ini")
+    conf = rxconf.Conf.from_file(config_path=_RESOURCE_DIR / "primitives.ini")
 
     assert conf.primitives.camelcase
     assert conf.primitives.CamelCase
@@ -65,7 +65,7 @@ def test_key_cases() -> None:
 
 @pytest.mark.asyncio
 async def test_key_cases_async() -> None:
-    conf = await AsyncConf.from_file(config_path=_RESOURCE_DIR / "primitives.ini")
+    conf = await rxconf.AsyncConf.from_file(config_path=_RESOURCE_DIR / "primitives.ini")
 
     assert conf.primitives.camelcase
     assert conf.primitives.CamelCase
@@ -76,7 +76,7 @@ async def test_key_cases_async() -> None:
 
 
 def test_numeric_casts() -> None:
-    conf = Conf.from_file(config_path=_RESOURCE_DIR / "primitives.ini")
+    conf = rxconf.Conf.from_file(config_path=_RESOURCE_DIR / "primitives.ini")
 
     assert conf.primitives.integer - 1 < conf.primitives.integer < conf.primitives.integer + 1
     assert conf.primitives.integer - 0.1 < conf.primitives.integer <= int(conf.primitives.integer + 0.1)
@@ -87,7 +87,7 @@ def test_numeric_casts() -> None:
 
 @pytest.mark.asyncio
 async def test_numeric_casts_async() -> None:
-    conf = await AsyncConf.from_file(config_path=_RESOURCE_DIR / "primitives.ini")
+    conf = await rxconf.AsyncConf.from_file(config_path=_RESOURCE_DIR / "primitives.ini")
 
     assert conf.primitives.integer - 1 < conf.primitives.integer < conf.primitives.integer + 1
     assert conf.primitives.integer - 0.1 < conf.primitives.integer <= int(conf.primitives.integer + 0.1)
@@ -97,30 +97,30 @@ async def test_numeric_casts_async() -> None:
 
 
 def test_string_casts() -> None:
-    conf = Conf.from_file(config_path=_RESOURCE_DIR / "primitives.ini")
+    conf = rxconf.Conf.from_file(config_path=_RESOURCE_DIR / "primitives.ini")
 
     assert conf.primitives.string[0] == "H"
     assert conf.primitives.string[1:-1] == "ello world ="
     assert str(conf.primitives.string).upper() == "HELLO WORLD =)"
     assert conf.primitives.string + "!" == "Hello world =)!"
-    with pytest.raises(exceptions.RxConfError):
+    with pytest.raises(rxconf.RxConfError):
         assert conf.primitives.string.unknown
 
 
 @pytest.mark.asyncio
 async def test_string_casts_async() -> None:
-    conf = await AsyncConf.from_file(config_path=_RESOURCE_DIR / "primitives.ini")
+    conf = await rxconf.AsyncConf.from_file(config_path=_RESOURCE_DIR / "primitives.ini")
 
     assert conf.primitives.string[0] == "H"
     assert conf.primitives.string[1:-1] == "ello world ="
     assert str(conf.primitives.string).upper() == "HELLO WORLD =)"
     assert conf.primitives.string + "!" == "Hello world =)!"
-    with pytest.raises(exceptions.RxConfError):
+    with pytest.raises(rxconf.RxConfError):
         assert conf.primitives.string.unknown
 
 
 def test_inner_structures() -> None:
-    conf = Conf.from_file(config_path=_RESOURCE_DIR / "inner_structures.ini")
+    conf = rxconf.Conf.from_file(config_path=_RESOURCE_DIR / "inner_structures.ini")
 
     assert conf.config.name == "John Doe"
     assert conf.config.age == 42
@@ -131,7 +131,7 @@ def test_inner_structures() -> None:
 
 @pytest.mark.asyncio
 async def test_inner_structures_async() -> None:
-    conf = await AsyncConf.from_file(config_path=_RESOURCE_DIR / "inner_structures.ini")
+    conf = await rxconf.AsyncConf.from_file(config_path=_RESOURCE_DIR / "inner_structures.ini")
 
     assert conf.config.name == "John Doe"
     assert conf.config.age == 42
@@ -141,7 +141,7 @@ async def test_inner_structures_async() -> None:
 
 
 def test_structures() -> None:
-    config = Conf.from_file(config_path=_RESOURCE_DIR / "types_and_nesting.ini")
+    config = rxconf.Conf.from_file(config_path=_RESOURCE_DIR / "types_and_nesting.ini")
 
     assert config.general.app_name == "MyApp"
     assert config.general.version == "1.2.3"
@@ -184,7 +184,7 @@ def test_structures() -> None:
 
 
 def test_creates_nested_dict():
-    config = Conf.from_file(config_path=_RESOURCE_DIR / "deep_nesting_schema.ini")
+    config = rxconf.Conf.from_file(config_path=_RESOURCE_DIR / "deep_nesting_schema.ini")
 
     assert config.database.main.settings.username == "example_user"
     assert config.database.main.settings.password == "secret"

@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock
 
-from rxconf import AsyncConf, Conf
+import rxconf
 
 
 class TestConf(unittest.TestCase):
@@ -10,7 +10,7 @@ class TestConf(unittest.TestCase):
         mock_config = MagicMock()
         mock_config.__repr__ = MagicMock(return_value="MockConfigRepresentation")
 
-        conf_instance = Conf(config=mock_config)
+        conf_instance = rxconf.Conf(config=mock_config)
 
         self.assertEqual(repr(conf_instance), "MockConfigRepresentation")
 
@@ -21,6 +21,6 @@ class TestAsyncConf(unittest.TestCase):
         mock_config = MagicMock()
         mock_config.__repr__ = MagicMock(return_value="MockConfigRepresentation")
 
-        conf_instance = AsyncConf(config=mock_config)
+        conf_instance = rxconf.AsyncConf(config=mock_config)
 
         self.assertEqual(repr(conf_instance), "MockConfigRepresentation")

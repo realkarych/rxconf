@@ -1,7 +1,7 @@
 import typing as tp
 from hashlib import sha256
 
-from rxconf import AttributeType
+from . import attributes
 
 
 def _hash_with_type(value: tp.Any) -> str:
@@ -19,7 +19,7 @@ HASHED_STRUCTURES: tp.Final[dict[str, int]] = {
 }
 
 
-def compute_conf_hash(attribute: AttributeType, hash_sum: int = 0) -> int:
+def compute_conf_hash(attribute: attributes.AttributeType, hash_sum: int = 0) -> int:
     value = attribute.__getattribute__("_AttributeType__value")
     if isinstance(value, dict):
         for key in value:
