@@ -1,7 +1,7 @@
 import hvac  # type: ignore
 import pytest
 
-from rxconf import RxConf, exceptions
+import rxconf
 
 
 VAULT_ADDR = "http://127.0.0.1:8200"
@@ -53,7 +53,7 @@ set_vault_data()
 
 
 def test_primitive_types() -> None:
-    conf = RxConf.from_vault(token=VAULT_TOKEN, ip=VAULT_ADDR, path="test_vault/vault_primitive_data")
+    conf = rxconf.Conf.from_vault(token=VAULT_TOKEN, ip=VAULT_ADDR, path="test_vault/vault_primitive_data")
 
     assert conf.integer == 42
     assert conf.float == 36.6
@@ -63,7 +63,7 @@ def test_primitive_types() -> None:
 
 
 def test_primitive_collections() -> None:
-    conf = RxConf.from_vault(token=VAULT_TOKEN, ip=VAULT_ADDR, path="test_vault/vault_primitive_data")
+    conf = rxconf.Conf.from_vault(token=VAULT_TOKEN, ip=VAULT_ADDR, path="test_vault/vault_primitive_data")
 
     expected_list = [1, 2, 3]
     expected_set = {"a", "b", "c"}
@@ -80,7 +80,7 @@ def test_primitive_collections() -> None:
 
 
 def test_key_cases() -> None:
-    conf = RxConf.from_vault(token=VAULT_TOKEN, ip=VAULT_ADDR, path="test_vault/vault_primitive_data")
+    conf = rxconf.Conf.from_vault(token=VAULT_TOKEN, ip=VAULT_ADDR, path="test_vault/vault_primitive_data")
 
     assert conf.camelcase
     assert conf.CamelCase
@@ -91,7 +91,7 @@ def test_key_cases() -> None:
 
 
 def test_numeric_cast() -> None:
-    conf = RxConf.from_vault(token=VAULT_TOKEN, ip=VAULT_ADDR, path="test_vault/vault_primitive_data")
+    conf = rxconf.Conf.from_vault(token=VAULT_TOKEN, ip=VAULT_ADDR, path="test_vault/vault_primitive_data")
 
     assert conf.integer - 1 < conf.integer < conf.integer + 1
     assert conf.integer - 0.1 < conf.integer <= int(conf.integer + 0.1)
@@ -101,18 +101,18 @@ def test_numeric_cast() -> None:
 
 
 def test_string_cast() -> None:
-    conf = RxConf.from_vault(token=VAULT_TOKEN, ip=VAULT_ADDR, path="test_vault/vault_primitive_data")
+    conf = rxconf.Conf.from_vault(token=VAULT_TOKEN, ip=VAULT_ADDR, path="test_vault/vault_primitive_data")
 
     assert conf.string[0] == "H"
     assert conf.string[1:-1] == "ello world ="
     assert str(conf.string).upper() == "HELLO WORLD =)"
     assert conf.string + "!" == "Hello world =)!"
-    with pytest.raises(exceptions.RxConfError):
+    with pytest.raises(rxconf.RxConfError):
         assert conf.string.unknown
 
 
 def test_inner() -> None:
-    conf = RxConf.from_vault(token=VAULT_TOKEN, ip=VAULT_ADDR, path="test_vault/vault_inner_data")
+    conf = rxconf.Conf.from_vault(token=VAULT_TOKEN, ip=VAULT_ADDR, path="test_vault/vault_inner_data")
 
     assert conf.config.name == "John Doe"
     assert conf.config.age == 42

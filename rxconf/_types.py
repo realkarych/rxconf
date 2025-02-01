@@ -1,6 +1,6 @@
+import datetime as dt
 import sys
 import typing as tp
-from datetime import date, datetime
 
 
 if sys.version_info >= (3, 10):
@@ -12,7 +12,7 @@ YAML_ATTRIBUTE_TYPE: TypeAlias = tp.Union[
     tp.Union[bool, int, str, float, None],
     tp.List[tp.Union[bool, int, str, float, None]],
     tp.Set[tp.Union[bool, int, str, float, None]],
-    tp.Union[date, datetime],
+    tp.Union[dt.date, dt.datetime],
 ]
 
 JSON_ATTRIBUTE_TYPE: TypeAlias = tp.Union[
@@ -23,7 +23,7 @@ JSON_ATTRIBUTE_TYPE: TypeAlias = tp.Union[
 TOML_ATTRIBUTE_TYPE: TypeAlias = tp.Union[
     tp.Union[bool, int, str, float],
     tp.List[tp.Union[bool, int, str, float]],
-    tp.Union[date, datetime],
+    tp.Union[dt.date, dt.datetime],
 ]
 
 INI_ATTRIBUTE_TYPE: TypeAlias = tp.Union[
@@ -46,7 +46,7 @@ VAULT_ATTRIBUTE_TYPE: TypeAlias = tp.Union[
     tp.Union[bool, int, str, float, None],
     tp.List[tp.Union[bool, int, str, float, None]],
     tp.Set[tp.Union[bool, int, str, float, None]],
-    tp.Union[date, datetime],
+    tp.Union[dt.date, dt.datetime],
 ]
 
 
