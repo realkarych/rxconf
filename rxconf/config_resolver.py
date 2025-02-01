@@ -1,14 +1,14 @@
+import abc
 import os
 import pathlib
 import typing as tp
-from abc import ABCMeta, abstractmethod
 
-from rxconf import attributes, config_types, exceptions
+from . import attributes, config_types, exceptions
 
 
-class ConfigResolver(metaclass=ABCMeta):  # pragma: no cover
+class ConfigResolver(metaclass=abc.ABCMeta):  # pragma: no cover
 
-    @abstractmethod
+    @abc.abstractmethod
     def resolve(self, *args, **kwargs) -> tp.Type[config_types.ConfigType]:
         raise NotImplementedError()
 

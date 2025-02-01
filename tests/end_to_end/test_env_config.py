@@ -2,31 +2,31 @@ from pathlib import Path
 
 import pytest
 
-from rxconf import AsyncRxConf, RxConf, exceptions
-from rxconf.config_types import EnvConfig
+import rxconf
 
 
 _RESOURCE_DIR = Path.cwd() / Path("tests/resources")
 
 
 def test_empty() -> None:
-    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "empty.env")
+    conf = rxconf.Conf.from_file(config_path=_RESOURCE_DIR / "empty.env")
 
-    assert conf._config._root == {}
+    assert conf._MetaTree__config._root == {}
 
 
 def test_primitive_types() -> None:
-    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
+    conf = rxconf.Conf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
 
     assert conf.integer == 42
     assert conf.float == 36.6
     assert conf.string == "Hello world =)"
     assert conf.boolean == True  # noqa: E712
     assert conf.another_bool == False  # noqa: E712
+    assert conf.hash == 1
 
 
 def test_key_cases() -> None:
-    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
+    conf = rxconf.Conf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
 
     assert conf.STRANGECASE
     assert conf.STRanGeCasE
@@ -34,7 +34,7 @@ def test_key_cases() -> None:
 
 
 def test_numeric_casts() -> None:
-    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
+    conf = rxconf.Conf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
 
     assert conf.integer - 1 < conf.integer < conf.integer + 1
     assert conf.integer - 0.1 < conf.integer <= int(conf.integer + 0.1)
@@ -44,20 +44,20 @@ def test_numeric_casts() -> None:
 
 
 def test_string_casts() -> None:
-    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
+    conf = rxconf.Conf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
 
     assert conf.STRING[0] == "H"
     assert conf.string[1:-1] == "ello world ="
     assert str(conf.string).upper() == "HELLO WORLD =)"
     assert conf.string + "!" == "Hello world =)!"
-    with pytest.raises(exceptions.RxConfError):
+    with pytest.raises(rxconf.exceptions.RxConfError):
         assert conf.string.unknown
 
 
 def test_not_existing_attribute() -> None:
-    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
+    conf = rxconf.Conf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
 
-    with pytest.raises(exceptions.RxConfError):
+    with pytest.raises(rxconf.exceptions.RxConfError):
         assert conf.string.unknown
 
 
@@ -84,31 +84,31 @@ def set_env_vars(monkeypatch):
 
 
 def test_empty_from_env() -> None:
-    conf = RxConf.from_env(prefix="NOT_EXISTING_PREFIX")
+    conf = rxconf.Conf.from_env(prefix="NOT_EXISTING_PREFIX")
 
-    assert conf._config._root == {}
+    assert conf._MetaTree__config._root == {}
 
 
 def test_wrong_equality() -> None:
-    conf = RxConf.from_env()._config
-    file_conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.env")._config
-    with pytest.raises(exceptions.RxConfError):
+    conf = rxconf.Conf.from_env()._MetaTree__config
+    file_conf = rxconf.Conf.from_file(config_path=_RESOURCE_DIR / "primitives.env")._MetaTree__config
+    with pytest.raises(rxconf.exceptions.RxConfError):
         assert conf == 1
-    with pytest.raises(exceptions.RxConfError):
+    with pytest.raises(rxconf.exceptions.RxConfError):
         assert file_conf == 1
 
 
 def test_correct_equality() -> None:
-    conf = RxConf.from_env()
-    another_conf = RxConf.from_env()
-    file_conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
-    another_file_conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
+    conf = rxconf.Conf.from_env()
+    another_conf = rxconf.Conf.from_env()
+    file_conf = rxconf.Conf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
+    another_file_conf = rxconf.Conf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
     assert conf == another_conf
     assert file_conf == another_file_conf
 
 
 def test_primitive_types_from_env() -> None:
-    conf = RxConf.from_env()
+    conf = rxconf.Conf.from_env()
 
     assert conf.integer == 42
     assert conf.float == 36.6
@@ -118,14 +118,14 @@ def test_primitive_types_from_env() -> None:
 
 
 def test_key_cases_from_env() -> None:
-    conf = RxConf.from_env()
+    conf = rxconf.Conf.from_env()
 
     assert conf.STRANGECASE
     assert conf.STRanGeCasE
 
 
 def test_numeric_casts_from_env() -> None:
-    conf = RxConf.from_env()
+    conf = rxconf.Conf.from_env()
 
     assert conf.integer - 1 < conf.integer < conf.integer + 1
     assert conf.integer - 0.1 < conf.integer <= int(conf.integer + 0.1)
@@ -135,59 +135,59 @@ def test_numeric_casts_from_env() -> None:
 
 
 def test_string_casts_from_env() -> None:
-    conf = RxConf.from_env()
+    conf = rxconf.Conf.from_env()
 
     assert conf.STRING[0] == "H"
     assert conf.string[1:-1] == "ello world ="
     assert str(conf.string).upper() == "HELLO WORLD =)"
     assert conf.string + "!" == "Hello world =)!"
-    with pytest.raises(exceptions.RxConfError):
+    with pytest.raises(rxconf.exceptions.RxConfError):
         assert conf.string.unknown
 
 
 def test_not_existing_attribute_from_env() -> None:
-    conf = RxConf.from_env()
+    conf = rxconf.Conf.from_env()
 
-    with pytest.raises(exceptions.RxConfError):
+    with pytest.raises(rxconf.RxConfError):
         assert conf.string.unknown
 
 
 def test_env_prefix() -> None:
-    conf1 = RxConf.from_env(prefix="some_prefix_")
+    conf1 = rxconf.Conf.from_env(prefix="some_prefix_")
     assert conf1.some_prefix_value1 == 1
     assert conf1.some_PREFIX_value2 == 2
 
-    conf2 = RxConf.from_env(prefix="some_prefix", remove_prefix=True)
+    conf2 = rxconf.Conf.from_env(prefix="some_prefix", remove_prefix=True)
     assert conf2.value1 == 1
     assert conf2.value2 == 2
 
-    conf3 = RxConf.from_env(prefix="somePrefix", remove_prefix=True)
+    conf3 = rxconf.Conf.from_env(prefix="somePrefix", remove_prefix=True)
     assert conf3.value3 == 3
 
 
 def test_repr():
-    config = EnvConfig.load_from_environment(prefix="TEST_")
+    config = rxconf.config_types.EnvConfig.load_from_environment(prefix="TEST_")
     expected_repr = repr(config._root)
     assert repr(config) == expected_repr
 
 
 @pytest.mark.asyncio
 async def test_empty_async() -> None:
-    conf = await AsyncRxConf.from_file(config_path=_RESOURCE_DIR / "empty.env")
+    conf = await rxconf.AsyncConf.from_file(config_path=_RESOURCE_DIR / "empty.env")
 
-    assert conf._config._root == {}
+    assert conf._MetaTree__config._root == {}
 
 
 @pytest.mark.asyncio
 async def test_from_env_async() -> None:
-    conf2 = await AsyncRxConf.from_env(prefix="some_prefix", remove_prefix=True)
+    conf2 = await rxconf.AsyncConf.from_env(prefix="some_prefix", remove_prefix=True)
     assert conf2.value1 == 1
     assert conf2.value2 == 2
 
 
 @pytest.mark.asyncio
 async def test_primitive_types_async() -> None:
-    conf = await AsyncRxConf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
+    conf = await rxconf.AsyncConf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
 
     assert conf.integer == 42
     assert conf.float == 36.6
@@ -198,7 +198,7 @@ async def test_primitive_types_async() -> None:
 
 @pytest.mark.asyncio
 async def test_key_cases_async() -> None:
-    conf = await AsyncRxConf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
+    conf = await rxconf.AsyncConf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
 
     assert conf.STRANGECASE
     assert conf.STRanGeCasE
@@ -206,7 +206,7 @@ async def test_key_cases_async() -> None:
 
 @pytest.mark.asyncio
 async def test_numeric_casts_async() -> None:
-    conf = await AsyncRxConf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
+    conf = await rxconf.AsyncConf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
 
     assert conf.integer - 1 < conf.integer < conf.integer + 1
     assert conf.integer - 0.1 < conf.integer <= int(conf.integer + 0.1)
@@ -217,19 +217,19 @@ async def test_numeric_casts_async() -> None:
 
 @pytest.mark.asyncio
 async def test_string_casts_async() -> None:
-    conf = await AsyncRxConf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
+    conf = await rxconf.AsyncConf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
 
     assert conf.STRING[0] == "H"
     assert conf.string[1:-1] == "ello world ="
     assert str(conf.string).upper() == "HELLO WORLD =)"
     assert conf.string + "!" == "Hello world =)!"
-    with pytest.raises(exceptions.RxConfError):
+    with pytest.raises(rxconf.exceptions.RxConfError):
         assert conf.string.unknown
 
 
 @pytest.mark.asyncio
 async def test_not_existing_attribute_async() -> None:
-    conf = await AsyncRxConf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
+    conf = await rxconf.AsyncConf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
 
-    with pytest.raises(exceptions.RxConfError):
+    with pytest.raises(rxconf.exceptions.RxConfError):
         assert conf.string.unknown

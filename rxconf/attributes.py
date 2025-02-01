@@ -1,7 +1,7 @@
+import abc
 import typing as tp
-from abc import ABCMeta, abstractmethod
 
-from rxconf import _types, exceptions
+from . import _types, exceptions
 
 
 def _patch_other_value(func: tp.Callable[..., tp.Any]) -> tp.Callable[..., tp.Any]:
@@ -13,12 +13,12 @@ def _patch_other_value(func: tp.Callable[..., tp.Any]) -> tp.Callable[..., tp.An
     return wrapper
 
 
-class AttributeType(metaclass=ABCMeta):
+class AttributeType(metaclass=abc.ABCMeta):
 
     def __init__(self, value: tp.Any) -> None:  # pragma: no cover
         self.__value = value
 
-    @abstractmethod
+    @abc.abstractmethod
     def __getattr__(self, item: str) -> tp.Any:  # pragma: no cover
         raise NotImplementedError()
 

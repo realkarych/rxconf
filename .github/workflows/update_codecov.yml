@@ -26,12 +26,12 @@ jobs:
           vault server -dev -dev-root-token-id="root" -address="http://127.0.0.1:8200" & disown  # run server in bg
 
       - name: Set up Python
-        uses: actions/setup-python@v5.3.0
+        uses: actions/setup-python@v5.4.0
         with:
           python-version: ${{ matrix.python-version }}
 
       - name: Install Poetry
-        uses: abatilo/actions-poetry@v3.0.1
+        uses: abatilo/actions-poetry@v3.0.2
         with:
           poetry-version: 1.8.3
 

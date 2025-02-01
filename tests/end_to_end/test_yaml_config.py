@@ -3,39 +3,39 @@ from pathlib import Path
 
 import pytest
 
-from rxconf import AsyncRxConf, RxConf, exceptions
+import rxconf
 
 
 _RESOURCE_DIR = Path.cwd() / Path("tests/resources")
 
 
 def test_empty() -> None:
-    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "empty.yaml")
+    conf = rxconf.Conf.from_file(config_path=_RESOURCE_DIR / "empty.yaml")
 
-    assert conf._config._root == {}
+    assert conf._MetaTree__config._root == {}
 
 
 @pytest.mark.asyncio
 async def test_empty_async() -> None:
-    conf = await AsyncRxConf.from_file(config_path=_RESOURCE_DIR / "empty.yaml")
+    conf = await rxconf.AsyncConf.from_file(config_path=_RESOURCE_DIR / "empty.yaml")
 
-    assert conf._config._root == {}
+    assert conf._MetaTree__config._root == {}
 
 
 def test_wrong_equality() -> None:
-    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "empty.yaml")._config
-    with pytest.raises(exceptions.RxConfError):
+    conf = rxconf.Conf.from_file(config_path=_RESOURCE_DIR / "empty.yaml")._MetaTree__config
+    with pytest.raises(rxconf.RxConfError):
         assert conf == 1
 
 
 def test_correct_equality() -> None:
-    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.yml")
-    another_conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.yml")
+    conf = rxconf.Conf.from_file(config_path=_RESOURCE_DIR / "primitives.yml")
+    another_conf = rxconf.Conf.from_file(config_path=_RESOURCE_DIR / "primitives.yml")
     assert conf == another_conf
 
 
 def test_primitive_types() -> None:
-    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.yml")
+    conf = rxconf.Conf.from_file(config_path=_RESOURCE_DIR / "primitives.yml")
 
     assert conf.integer == 42
     assert conf.float == 36.6
@@ -46,7 +46,7 @@ def test_primitive_types() -> None:
 
 @pytest.mark.asyncio
 async def test_primitive_types_async() -> None:
-    conf = await AsyncRxConf.from_file(config_path=_RESOURCE_DIR / "primitives.yml")
+    conf = await rxconf.AsyncConf.from_file(config_path=_RESOURCE_DIR / "primitives.yml")
 
     assert conf.integer == 42
     assert conf.float == 36.6
@@ -56,7 +56,7 @@ async def test_primitive_types_async() -> None:
 
 
 def test_primitive_collections() -> None:
-    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.yml")
+    conf = rxconf.Conf.from_file(config_path=_RESOURCE_DIR / "primitives.yml")
     expected_list = [1, 2, 3]
     expected_set = {"a", "b", "c"}
 
@@ -72,7 +72,7 @@ def test_primitive_collections() -> None:
 
 
 def test_key_cases() -> None:
-    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.yml")
+    conf = rxconf.Conf.from_file(config_path=_RESOURCE_DIR / "primitives.yml")
 
     assert conf.camelcase
     assert conf.CamelCase
@@ -83,7 +83,7 @@ def test_key_cases() -> None:
 
 
 def test_numeric_casts() -> None:
-    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.yml")
+    conf = rxconf.Conf.from_file(config_path=_RESOURCE_DIR / "primitives.yml")
 
     assert conf.integer - 1 < conf.integer < conf.integer + 1
     assert conf.integer - 0.1 < conf.integer <= int(conf.integer + 0.1)
@@ -93,32 +93,32 @@ def test_numeric_casts() -> None:
 
 
 def test_string_casts() -> None:
-    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.yml")
+    conf = rxconf.Conf.from_file(config_path=_RESOURCE_DIR / "primitives.yml")
 
     assert conf.string[0] == "H"
     assert conf.string[1:-1] == "ello world ="
     assert str(conf.string).upper() == "HELLO WORLD =)"
     assert conf.string + "!" == "Hello world =)!"
-    with pytest.raises(exceptions.RxConfError):
+    with pytest.raises(rxconf.RxConfError):
         assert conf.string.unknown
 
 
 def test_dates() -> None:
-    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.yml")
+    conf = rxconf.Conf.from_file(config_path=_RESOURCE_DIR / "primitives.yml")
 
     assert conf.date == datetime.date(2024, 8, 17)
     assert conf.datetime == datetime.datetime(2024, 8, 17)
 
 
 def test_not_existing_attribute() -> None:
-    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "primitives.yml")
+    conf = rxconf.Conf.from_file(config_path=_RESOURCE_DIR / "primitives.yml")
 
-    with pytest.raises(exceptions.RxConfError):
+    with pytest.raises(rxconf.RxConfError):
         assert conf.string.unknown
 
 
 def test_inner_structures() -> None:
-    conf = RxConf.from_file(config_path=_RESOURCE_DIR / "inner_structures.yml")
+    conf = rxconf.Conf.from_file(config_path=_RESOURCE_DIR / "inner_structures.yml")
 
     assert conf.config.name == "John Doe"
     assert conf.config.age == 42

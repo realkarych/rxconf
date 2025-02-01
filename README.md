@@ -4,7 +4,7 @@
 </p>
 
 <p align="center">
-    <em>RxConf library, easy to use, powerful and flexible for [realtime] configuration management in Python</em>
+    <em>RxConf library, easy to use, powerful and flexible for realtime configuration management in Python</em>
 </p>
 
 <p align="center">
@@ -31,7 +31,7 @@ Currently in develop...
 </h1>
 
 <h3 align="center">
-The first stable version will be 1.0.0
+The first stable version will be 0.1.0
 </h3>
 
 - [ ] Implement observers

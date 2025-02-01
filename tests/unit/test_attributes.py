@@ -1,6 +1,6 @@
 import unittest
 
-from rxconf import exceptions
+import rxconf
 from rxconf.attributes import (
     EnvAttribute,
     IniAttribute,
@@ -159,7 +159,7 @@ class TestVaultAttribute(unittest.TestCase):
 
     def test_getattr_key_error(self):
         attr = VaultAttribute({"key": "value"})  # type: ignore
-        with self.assertRaises(exceptions.RxConfError):
+        with self.assertRaises(rxconf.RxConfError):
             _ = attr.nonexistent_key
 
 
@@ -171,7 +171,7 @@ class TestYamlAttribute(unittest.TestCase):
 
     def test_getattr_key_error(self):
         attr = YamlAttribute({"key": "value"})  # type: ignore
-        with self.assertRaises(exceptions.RxConfError):
+        with self.assertRaises(rxconf.RxConfError):
             _ = attr.nonexistent_key
 
 
@@ -183,7 +183,7 @@ class TestJsonAttribute(unittest.TestCase):
 
     def test_getattr_key_error(self):
         attr = JsonAttribute({"key": "value"})  # type: ignore
-        with self.assertRaises(exceptions.RxConfError):
+        with self.assertRaises(rxconf.RxConfError):
             _ = attr.nonexistent_key
 
 
@@ -195,7 +195,7 @@ class TestTomlAttribute(unittest.TestCase):
 
     def test_getattr_key_error(self):
         attr = TomlAttribute({"key": "value"})  # type: ignore
-        with self.assertRaises(exceptions.RxConfError):
+        with self.assertRaises(rxconf.RxConfError):
             _ = attr.nonexistent_key
 
 
@@ -206,7 +206,7 @@ class TestIniAttribute(unittest.TestCase):
 
     def test_getattr_key_error(self):
         attr = IniAttribute({"key": "value"})  # type: ignore
-        with self.assertRaises(exceptions.RxConfError):
+        with self.assertRaises(rxconf.RxConfError):
             _ = attr.nonexistent_key
 
 
@@ -218,5 +218,5 @@ class TestEnvAttribute(unittest.TestCase):
 
     def test_getattr_key_error(self):
         attr = EnvAttribute({"key": "value"})  # type: ignore
-        with self.assertRaises(exceptions.RxConfError):
+        with self.assertRaises(rxconf.RxConfError):
             _ = attr.nonexistent_key

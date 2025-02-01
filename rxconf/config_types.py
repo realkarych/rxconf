@@ -1,10 +1,10 @@
+import abc
 import datetime
 import json
 import os
+import pathlib
 import sys
 import typing as tp
-from abc import ABCMeta, abstractmethod
-from pathlib import PurePath
 
 import aiofiles
 import dotenv
@@ -12,8 +12,7 @@ import hvac  # type: ignore
 import yaml
 from hvac.exceptions import VaultError  # type: ignore
 
-from rxconf import _types, hashtools
-from rxconf.exceptions import RxConfError
+from . import _types, attributes, exceptions, hashtools
 
 
 if sys.version_info >= (3, 11):
@@ -23,53 +22,49 @@ else:
 
 import configparser
 
-import rxconf
-from rxconf import attributes as attrs
-from rxconf import exceptions
 
+class ConfigType(metaclass=abc.ABCMeta):  # pragma: no cover
 
-class ConfigType(metaclass=ABCMeta):  # pragma: no cover
-
-    @abstractmethod
+    @abc.abstractmethod
     def __eq__(self, other: object) -> bool:
         raise NotImplementedError()
 
-    @abstractmethod
-    def __getattr__(self, item: str) -> tp.Any:
-        raise NotImplementedError()
-
     @property
-    @abstractmethod
+    @abc.abstractmethod
     def hash(self) -> int:
         pass
+
+    @exceptions.handle_unknown_exception
+    def __getattr__(self, item: str) -> tp.Any:
+        return getattr(self._root, item.lower().removeprefix(hashtools.ATTR_SAULT))
 
 
 class VaultConfigType(ConfigType):
 
     def __init__(
         self,
-        root_attribute: rxconf.AttributeType,
-        path: PurePath,
+        root_attribute: attributes.AttributeType,
+        path: pathlib.PurePath,
     ) -> None:
         pass
 
     @classmethod
-    @abstractmethod
+    @abc.abstractmethod
     def load_from_vault(
         cls,
         token: str,
         ip: str,
-        path: PurePath,
+        path: pathlib.PurePath,
     ) -> "VaultConfigType":
         pass
 
     @classmethod
-    @abstractmethod
+    @abc.abstractmethod
     async def load_from_vault_async(
         cls,
         token: str,
         ip: str,
-        path: PurePath,
+        path: pathlib.PurePath,
     ) -> "VaultConfigType":
         raise NotImplementedError()
 
@@ -78,13 +73,13 @@ class VaultConfigType(ConfigType):
 
 
 class VaultConfig(VaultConfigType):
-    _root: tp.Final[rxconf.VaultAttribute]
-    _path: tp.Final[PurePath]
+    _root: tp.Final[attributes.VaultAttribute]
+    _path: tp.Final[pathlib.PurePath]
 
     def __init__(
         self,
-        root_attribute: rxconf.VaultAttribute,
-        path: PurePath,
+        root_attribute: attributes.VaultAttribute,
+        path: pathlib.PurePath,
     ) -> None:
         self._root = root_attribute
         self._path = path
@@ -100,17 +95,17 @@ class VaultConfig(VaultConfigType):
         cls,
         token: str,
         ip: str,
-        path: PurePath,
+        path: pathlib.PurePath,
     ) -> "VaultConfig":
         try:
             client = hvac.Client(url=ip, token=token)
             response = client.secrets.kv.v2.read_secret_version(path=path, raise_on_deleted_version=True)
         except VaultError as exc:
-            raise RxConfError(f"Unable to retrieve Vault data from path={path}") from exc
+            raise exceptions.RxConfError(f"Unable to retrieve Vault data from path={path}") from exc
 
         return cls(
             root_attribute=cls._process_data(response["data"]["data"]),
-            path=path if isinstance(path, PurePath) else PurePath(path),
+            path=path if isinstance(path, pathlib.PurePath) else pathlib.PurePath(path),
         )
 
     @classmethod
@@ -119,28 +114,28 @@ class VaultConfig(VaultConfigType):
         cls,
         token: str,
         ip: str,
-        path: PurePath,
+        path: pathlib.PurePath,
     ) -> "VaultConfig":
-        raise NotImplementedError()
+        raise NotImplementedError("Async vault loading is not supported yet. Use sync method instead.")
 
     @classmethod
     @exceptions.handle_unknown_exception
-    def _process_data(cls, data: tp.Any) -> attrs.VaultAttribute:
+    def _process_data(cls, data: tp.Any) -> attributes.VaultAttribute:
         if isinstance(data, dict):
-            return attrs.VaultAttribute(value={k.lower(): cls._process_data(v) for k, v in data.items()})
+            return attributes.VaultAttribute(value={k.lower(): cls._process_data(v) for k, v in data.items()})
         if isinstance(data, list):
-            return attrs.VaultAttribute(
+            return attributes.VaultAttribute(
                 value=[
                     (
                         cls._process_data(item)
                         if not isinstance(item, dict)
-                        else attrs.VaultAttribute(value={k.lower(): cls._process_data(v) for k, v in item.items()})
+                        else attributes.VaultAttribute(value={k.lower(): cls._process_data(v) for k, v in item.items()})
                     )
                     for item in data
                 ]
             )
         if isinstance(data, (bool, int, str, float, type(None))):
-            return attrs.VaultAttribute(value=data)
+            return attributes.VaultAttribute(value=data)
         raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
 
     @exceptions.handle_unknown_exception
@@ -149,35 +144,31 @@ class VaultConfig(VaultConfigType):
             raise TypeError("ConfigType is comparable only to ConfigType")
         return self._hash == other.hash
 
-    @exceptions.handle_unknown_exception
-    def __getattr__(self, item: str) -> tp.Any:
-        return getattr(self._root, item.lower())
 
+class FileConfigType(ConfigType, metaclass=abc.ABCMeta):  # pragma: no cover
 
-class FileConfigType(ConfigType, metaclass=ABCMeta):  # pragma: no cover
-
-    def __init__(self, root_attribute: attrs.AttributeType, path: PurePath, *args, **kwargs) -> None:
+    def __init__(self, root_attribute: attributes.AttributeType, path: pathlib.PurePath, *args, **kwargs) -> None:
         pass
 
     @property
-    @abstractmethod
+    @abc.abstractmethod
     def allowed_extensions(self) -> tp.FrozenSet[str]:
         pass
 
     @classmethod
-    @abstractmethod
+    @abc.abstractmethod
     def load_from_path(
         cls,
-        path: tp.Union[str, PurePath],
+        path: tp.Union[str, pathlib.PurePath],
         encoding: str,
     ) -> "FileConfigType":
         pass
 
     @classmethod
-    @abstractmethod
+    @abc.abstractmethod
     async def load_from_path_async(
         cls,
-        path: tp.Union[str, PurePath],
+        path: tp.Union[str, pathlib.PurePath],
         encoding: str,
     ) -> "FileConfigType":
         pass
@@ -188,13 +179,13 @@ class FileConfigType(ConfigType, metaclass=ABCMeta):  # pragma: no cover
 
 class YamlConfig(FileConfigType):
     _allowed_extensions: tp.Final[frozenset] = frozenset({".yaml", ".yml"})
-    _root: tp.Final[rxconf.YamlAttribute]
-    _path: tp.Final[PurePath]
+    _root: tp.Final[attributes.YamlAttribute]
+    _path: tp.Final[pathlib.PurePath]
 
     def __init__(
         self: "YamlConfig",
-        root_attribute: rxconf.YamlAttribute,
-        path: PurePath,
+        root_attribute: attributes.YamlAttribute,
+        path: pathlib.PurePath,
     ) -> None:
         self._root = root_attribute
         self._path = path
@@ -209,7 +200,7 @@ class YamlConfig(FileConfigType):
         return self._hash
 
     @classmethod
-    def _load_yaml_data(cls, content: str, path: tp.Union[str, PurePath]) -> tp.Dict:
+    def _load_yaml_data(cls, content: str, path: tp.Union[str, pathlib.PurePath]) -> tp.Dict:
         try:
             return yaml.safe_load(content)
         except yaml.YAMLError as exc:
@@ -219,7 +210,7 @@ class YamlConfig(FileConfigType):
     @exceptions.handle_unknown_exception
     def load_from_path(
         cls,
-        path: tp.Union[str, PurePath],
+        path: tp.Union[str, pathlib.PurePath],
         encoding: str,
     ) -> "YamlConfig":
         if not os.path.isfile(str(path)):
@@ -228,15 +219,17 @@ class YamlConfig(FileConfigType):
             yaml_data = cls._load_yaml_data(file.read(), path)
 
         return cls(
-            root_attribute=cls._process_data(yaml_data) if yaml_data is not None else attrs.YamlAttribute(value={}),
-            path=path if isinstance(path, PurePath) else PurePath(path),
+            root_attribute=(
+                cls._process_data(yaml_data) if yaml_data is not None else attributes.YamlAttribute(value={})
+            ),
+            path=path if isinstance(path, pathlib.PurePath) else pathlib.PurePath(path),
         )
 
     @classmethod
     @exceptions.handle_unknown_exception
     async def load_from_path_async(
         cls,
-        path: tp.Union[str, PurePath],
+        path: tp.Union[str, pathlib.PurePath],
         encoding: str,
     ) -> "YamlConfig":
         if not os.path.isfile(str(path)):
@@ -246,8 +239,10 @@ class YamlConfig(FileConfigType):
             yaml_data = cls._load_yaml_data(content, path)
 
         return cls(
-            root_attribute=cls._process_data(yaml_data) if yaml_data is not None else attrs.YamlAttribute(value={}),
-            path=path if isinstance(path, PurePath) else PurePath(path),
+            root_attribute=(
+                cls._process_data(yaml_data) if yaml_data is not None else attributes.YamlAttribute(value={})
+            ),
+            path=path if isinstance(path, pathlib.PurePath) else pathlib.PurePath(path),
         )
 
     @exceptions.handle_unknown_exception
@@ -256,42 +251,38 @@ class YamlConfig(FileConfigType):
             raise TypeError("ConfigType is comparable only to ConfigType")
         return self._hash == other.hash
 
-    @exceptions.handle_unknown_exception
-    def __getattr__(self, item: str) -> tp.Any:
-        return getattr(self._root, item.lower())
-
     @classmethod
     @exceptions.handle_unknown_exception
-    def _process_data(cls, data: tp.Any) -> attrs.YamlAttribute:
+    def _process_data(cls, data: tp.Any) -> attributes.YamlAttribute:
         if isinstance(data, dict):
-            return attrs.YamlAttribute(value={k.lower(): cls._process_data(v) for k, v in data.items()})
+            return attributes.YamlAttribute(value={k.lower(): cls._process_data(v) for k, v in data.items()})
         if isinstance(data, list):
-            return attrs.YamlAttribute(
+            return attributes.YamlAttribute(
                 value=[
                     (
                         cls._process_data(item)
                         if not isinstance(item, dict)
-                        else attrs.YamlAttribute(value={k.lower(): cls._process_data(v) for k, v in item.items()})
+                        else attributes.YamlAttribute(value={k.lower(): cls._process_data(v) for k, v in item.items()})
                     )
                     for item in data
                 ]
             )
         if isinstance(data, set):
-            return attrs.YamlAttribute(value={cls._process_data(item) for item in data})  # pragma: no cover
+            return attributes.YamlAttribute(value={cls._process_data(item) for item in data})  # pragma: no cover
         if isinstance(data, (bool, int, str, float, type(None), datetime.date, datetime.datetime)):
-            return attrs.YamlAttribute(value=data)
+            return attributes.YamlAttribute(value=data)
         raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
 
 
 class JsonConfig(FileConfigType):
     _allowed_extensions: tp.Final[frozenset] = frozenset({".json"})
-    _root: tp.Final[rxconf.JsonAttribute]
-    _path: tp.Final[PurePath]
+    _root: tp.Final[attributes.JsonAttribute]
+    _path: tp.Final[pathlib.PurePath]
 
     def __init__(
         self: "JsonConfig",
-        root_attribute: rxconf.JsonAttribute,
-        path: PurePath,
+        root_attribute: attributes.JsonAttribute,
+        path: pathlib.PurePath,
     ) -> None:
         self._root = root_attribute
         self._path = path
@@ -306,7 +297,7 @@ class JsonConfig(FileConfigType):
         return self._hash
 
     @classmethod
-    def _load_json_data(cls, content: str, path: tp.Union[str, PurePath]) -> tp.Dict:
+    def _load_json_data(cls, content: str, path: tp.Union[str, pathlib.PurePath]) -> tp.Dict:
         try:
             return json.loads(content)
         except json.JSONDecodeError as exc:
@@ -316,7 +307,7 @@ class JsonConfig(FileConfigType):
     @exceptions.handle_unknown_exception
     def load_from_path(
         cls,
-        path: tp.Union[str, PurePath],
+        path: tp.Union[str, pathlib.PurePath],
         encoding: str,
     ) -> "JsonConfig":
         if not os.path.isfile(str(path)):
@@ -326,14 +317,15 @@ class JsonConfig(FileConfigType):
             json_data = cls._load_json_data(content, path)
 
         return cls(
-            root_attribute=cls._process_data(json_data), path=path if isinstance(path, PurePath) else PurePath(path)
+            root_attribute=cls._process_data(json_data),
+            path=path if isinstance(path, pathlib.PurePath) else pathlib.PurePath(path),
         )
 
     @classmethod
     @exceptions.handle_unknown_exception
     async def load_from_path_async(
         cls,
-        path: tp.Union[str, PurePath],
+        path: tp.Union[str, pathlib.PurePath],
         encoding: str,
     ) -> "JsonConfig":
         if not os.path.isfile(str(path)):
@@ -343,8 +335,10 @@ class JsonConfig(FileConfigType):
             json_data = cls._load_json_data(content, path)
 
         return cls(
-            root_attribute=cls._process_data(json_data) if json_data is not None else attrs.JsonAttribute(value={}),
-            path=path if isinstance(path, PurePath) else PurePath(path),
+            root_attribute=(
+                cls._process_data(json_data) if json_data is not None else attributes.JsonAttribute(value={})
+            ),
+            path=path if isinstance(path, pathlib.PurePath) else pathlib.PurePath(path),
         )
 
     @exceptions.handle_unknown_exception
@@ -353,40 +347,36 @@ class JsonConfig(FileConfigType):
             raise TypeError("ConfigType is comparable only to ConfigType")
         return self._hash == other.hash
 
-    @exceptions.handle_unknown_exception
-    def __getattr__(self, item: str) -> tp.Any:
-        return getattr(self._root, item.lower())
-
     @classmethod
     @exceptions.handle_unknown_exception
-    def _process_data(cls, data: tp.Any) -> attrs.JsonAttribute:
+    def _process_data(cls, data: tp.Any) -> attributes.JsonAttribute:
         if isinstance(data, dict):
-            return attrs.JsonAttribute(value={k.lower(): cls._process_data(v) for k, v in data.items()})
+            return attributes.JsonAttribute(value={k.lower(): cls._process_data(v) for k, v in data.items()})
         if isinstance(data, list):
-            return attrs.JsonAttribute(
+            return attributes.JsonAttribute(
                 value=[
                     (
                         cls._process_data(item)
                         if not isinstance(item, dict)
-                        else attrs.JsonAttribute(value={k.lower(): cls._process_data(v) for k, v in item.items()})
+                        else attributes.JsonAttribute(value={k.lower(): cls._process_data(v) for k, v in item.items()})
                     )
                     for item in data
                 ]
             )
         if isinstance(data, (bool, int, str, float, type(None))):
-            return attrs.JsonAttribute(value=data)
+            return attributes.JsonAttribute(value=data)
         raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
 
 
 class TomlConfig(FileConfigType):
     _allowed_extensions: tp.Final[frozenset] = frozenset({".toml"})
-    _root: tp.Final[rxconf.TomlAttribute]
-    _path: tp.Final[PurePath]
+    _root: tp.Final[attributes.TomlAttribute]
+    _path: tp.Final[pathlib.PurePath]
 
     def __init__(
         self: "TomlConfig",
-        root_attribute: rxconf.TomlAttribute,
-        path: PurePath,
+        root_attribute: attributes.TomlAttribute,
+        path: pathlib.PurePath,
     ) -> None:
         self._root = root_attribute
         self._path = path
@@ -401,7 +391,7 @@ class TomlConfig(FileConfigType):
         return self._hash
 
     @classmethod
-    def _load_toml_data(cls, content: str, path: tp.Union[str, PurePath]) -> tp.Dict:
+    def _load_toml_data(cls, content: str, path: tp.Union[str, pathlib.PurePath]) -> tp.Dict:
         toml_decode_exc = (
             toml.TOMLDecodeError  # type: ignore[attr-defined]
             if sys.version_info >= (3, 11)
@@ -418,7 +408,7 @@ class TomlConfig(FileConfigType):
     @exceptions.handle_unknown_exception
     def load_from_path(
         cls,
-        path: tp.Union[str, PurePath],
+        path: tp.Union[str, pathlib.PurePath],
         encoding: str,
     ) -> "TomlConfig":
         if not os.path.isfile(str(path)):
@@ -428,14 +418,15 @@ class TomlConfig(FileConfigType):
             toml_data = cls._load_toml_data(content, path)
 
         return cls(
-            root_attribute=cls._process_data(toml_data), path=path if isinstance(path, PurePath) else PurePath(path)
+            root_attribute=cls._process_data(toml_data),
+            path=path if isinstance(path, pathlib.PurePath) else pathlib.PurePath(path),
         )
 
     @classmethod
     @exceptions.handle_unknown_exception
     async def load_from_path_async(
         cls,
-        path: tp.Union[str, PurePath],
+        path: tp.Union[str, pathlib.PurePath],
         encoding: str,
     ) -> "TomlConfig":
         if not os.path.isfile(str(path)):
@@ -445,7 +436,8 @@ class TomlConfig(FileConfigType):
             toml_data = cls._load_toml_data(content, path)
 
         return cls(
-            root_attribute=cls._process_data(toml_data), path=path if isinstance(path, PurePath) else PurePath(path)
+            root_attribute=cls._process_data(toml_data),
+            path=path if isinstance(path, pathlib.PurePath) else pathlib.PurePath(path),
         )
 
     @exceptions.handle_unknown_exception
@@ -454,40 +446,36 @@ class TomlConfig(FileConfigType):
             raise TypeError("ConfigType is comparable only to ConfigType")
         return self._hash == other.hash
 
-    @exceptions.handle_unknown_exception
-    def __getattr__(self, item: str) -> tp.Any:
-        return getattr(self._root, item.lower())
-
     @classmethod
     @exceptions.handle_unknown_exception
-    def _process_data(cls, data: tp.Any) -> attrs.TomlAttribute:
+    def _process_data(cls, data: tp.Any) -> attributes.TomlAttribute:
         if isinstance(data, dict):
-            return attrs.TomlAttribute(value={k.lower(): cls._process_data(v) for k, v in data.items()})
+            return attributes.TomlAttribute(value={k.lower(): cls._process_data(v) for k, v in data.items()})
         if isinstance(data, list):
-            return attrs.TomlAttribute(
+            return attributes.TomlAttribute(
                 value=[
                     (
                         cls._process_data(item)
                         if not isinstance(item, dict)
-                        else attrs.TomlAttribute(value={k.lower(): cls._process_data(v) for k, v in item.items()})
+                        else attributes.TomlAttribute(value={k.lower(): cls._process_data(v) for k, v in item.items()})
                     )
                     for item in data
                 ]
             )
         if isinstance(data, (bool, int, str, float, datetime.date, datetime.datetime)):
-            return attrs.TomlAttribute(value=data)
+            return attributes.TomlAttribute(value=data)
         raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
 
 
 class IniConfig(FileConfigType):
     _allowed_extensions: tp.Final[frozenset] = frozenset({".ini"})
-    _root: tp.Final[rxconf.IniAttribute]
-    _path: tp.Final[PurePath]
+    _root: tp.Final[attributes.IniAttribute]
+    _path: tp.Final[pathlib.PurePath]
 
     def __init__(
         self: "IniConfig",
-        root_attribute: rxconf.IniAttribute,
-        path: PurePath,
+        root_attribute: attributes.IniAttribute,
+        path: pathlib.PurePath,
     ) -> None:
         self._root = root_attribute
         self._path = path
@@ -502,7 +490,7 @@ class IniConfig(FileConfigType):
         return self._hash
 
     @classmethod
-    def _load_ini_data(cls, content: str, path: tp.Union[str, PurePath]) -> tp.Dict:
+    def _load_ini_data(cls, content: str, path: tp.Union[str, pathlib.PurePath]) -> tp.Dict:
         config = configparser.ConfigParser()
         try:
             config.read_string(content)
@@ -524,7 +512,7 @@ class IniConfig(FileConfigType):
     @exceptions.handle_unknown_exception
     def load_from_path(
         cls,
-        path: tp.Union[str, PurePath],
+        path: tp.Union[str, pathlib.PurePath],
         encoding: str,
     ) -> "IniConfig":
         if not os.path.isfile(str(path)):
@@ -535,14 +523,14 @@ class IniConfig(FileConfigType):
 
         return cls(
             root_attribute=cls._process_data(ini_data),
-            path=path if isinstance(path, PurePath) else PurePath(path),
+            path=path if isinstance(path, pathlib.PurePath) else pathlib.PurePath(path),
         )
 
     @classmethod
     @exceptions.handle_unknown_exception
     async def load_from_path_async(
         cls,
-        path: tp.Union[str, PurePath],
+        path: tp.Union[str, pathlib.PurePath],
         encoding: str,
     ) -> "IniConfig":
         if not os.path.isfile(str(path)):
@@ -553,7 +541,7 @@ class IniConfig(FileConfigType):
 
         return cls(
             root_attribute=cls._process_data(ini_data),
-            path=path if isinstance(path, PurePath) else PurePath(path),
+            path=path if isinstance(path, pathlib.PurePath) else pathlib.PurePath(path),
         )
 
     @exceptions.handle_unknown_exception
@@ -562,25 +550,21 @@ class IniConfig(FileConfigType):
             raise TypeError("ConfigType is comparable only to ConfigType")
         return self._hash == other.hash
 
-    @exceptions.handle_unknown_exception
-    def __getattr__(self, item: str) -> tp.Any:
-        return getattr(self._root, item.lower())
-
     @classmethod
     @exceptions.handle_unknown_exception
-    def _process_data(cls, data: tp.Any) -> attrs.IniAttribute:
+    def _process_data(cls, data: tp.Any) -> attributes.IniAttribute:
         if isinstance(data, dict):
-            return attrs.IniAttribute(value={k.lower(): cls._process_data(v) for k, v in data.items()})
+            return attributes.IniAttribute(value={k.lower(): cls._process_data(v) for k, v in data.items()})
         if isinstance(data, str):
-            return attrs.IniAttribute(value=_types.map_primitive(data))
+            return attributes.IniAttribute(value=_types.map_primitive(data))
         raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
 
 
 class EnvConfig(ConfigType):
 
-    _root: tp.Final[rxconf.EnvAttribute]
+    _root: tp.Final[attributes.EnvAttribute]
 
-    def __init__(self: "EnvConfig", root_attribute: rxconf.EnvAttribute) -> None:
+    def __init__(self: "EnvConfig", root_attribute: attributes.EnvAttribute) -> None:
         self._root = root_attribute
         self._hash = hashtools.compute_conf_hash(root_attribute)
 
@@ -592,10 +576,6 @@ class EnvConfig(ConfigType):
         if not isinstance(other, ConfigType):
             raise TypeError("ConfigType is comparable only to ConfigType")
         return self._hash == other.hash
-
-    @exceptions.handle_unknown_exception
-    def __getattr__(self, item: str) -> tp.Any:
-        return getattr(self._root, item.lower())
 
     @classmethod
     @exceptions.handle_unknown_exception
@@ -623,20 +603,20 @@ class EnvConfig(ConfigType):
 
     @classmethod
     @exceptions.handle_unknown_exception
-    def _process_data(cls, data: tp.Dict[str, str]) -> attrs.EnvAttribute:
-        processed_data = {k.lower(): attrs.EnvAttribute(value=_types.map_primitive(v)) for k, v in data.items()}
-        return attrs.EnvAttribute(value=processed_data)
+    def _process_data(cls, data: tp.Dict[str, str]) -> attributes.EnvAttribute:
+        processed_data = {k.lower(): attributes.EnvAttribute(value=_types.map_primitive(v)) for k, v in data.items()}
+        return attributes.EnvAttribute(value=processed_data)
 
 
 class DotenvConfig(FileConfigType, EnvConfig):
 
     _allowed_extensions: tp.Final[frozenset] = frozenset({".env"})
-    _path: tp.Final[PurePath]
+    _path: tp.Final[pathlib.PurePath]
 
     def __init__(
         self: "DotenvConfig",
-        root_attribute: rxconf.EnvAttribute,
-        path: PurePath,
+        root_attribute: attributes.EnvAttribute,
+        path: pathlib.PurePath,
     ) -> None:
         self._root = root_attribute  # type: ignore
         self._path = path
@@ -660,7 +640,7 @@ class DotenvConfig(FileConfigType, EnvConfig):
     @exceptions.handle_unknown_exception
     def load_from_path(
         cls,
-        path: tp.Union[str, PurePath] = ".env",
+        path: tp.Union[str, pathlib.PurePath] = ".env",
         encoding: str = "utf-8",
     ) -> FileConfigType:
         dotenv_values = dotenv.dotenv_values(dotenv_path=path, encoding=encoding)
@@ -668,14 +648,14 @@ class DotenvConfig(FileConfigType, EnvConfig):
         root_attribute = cls._process_data(processed_values)
         return cls(
             root_attribute=root_attribute,
-            path=path if isinstance(path, PurePath) else PurePath(path),
+            path=path if isinstance(path, pathlib.PurePath) else pathlib.PurePath(path),
         )
 
     @classmethod
     @exceptions.handle_unknown_exception
     async def load_from_path_async(
         cls,
-        path: tp.Union[str, PurePath] = ".env",
+        path: tp.Union[str, pathlib.PurePath] = ".env",
         encoding: str = "utf-8",
     ) -> "FileConfigType":
         return cls.load_from_path(

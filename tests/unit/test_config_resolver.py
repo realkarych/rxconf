@@ -2,12 +2,12 @@ from unittest.mock import patch
 
 import pytest
 
-from rxconf import config_resolver, config_types, exceptions
+import rxconf
 
 
 @pytest.fixture
 def resolver():
-    return config_resolver.FileConfigResolver(config_types=config_types.BASE_FILE_CONFIG_TYPES)
+    return rxconf.config_resolver.FileConfigResolver(config_types=rxconf.config_types.BASE_FILE_CONFIG_TYPES)
 
 
 def test_resolve_yaml_file(resolver):
@@ -17,7 +17,7 @@ def test_resolve_yaml_file(resolver):
         patch("rxconf.config_types.YamlConfig.__init__", return_value=None),
     ):
         config_type = resolver.resolve(path)
-        assert config_type == config_types.YamlConfig
+        assert config_type == rxconf.config_types.YamlConfig
 
 
 def test_resolve_json_file(resolver):
@@ -27,7 +27,7 @@ def test_resolve_json_file(resolver):
         patch("rxconf.config_types.JsonConfig.__init__", return_value=None),
     ):
         config_type = resolver.resolve(path)
-        assert config_type == config_types.JsonConfig
+        assert config_type == rxconf.config_types.JsonConfig
 
 
 def test_resolve_toml_file(resolver):
@@ -37,7 +37,7 @@ def test_resolve_toml_file(resolver):
         patch("rxconf.config_types.TomlConfig.__init__", return_value=None),
     ):
         config_type = resolver.resolve(path)
-        assert config_type == config_types.TomlConfig
+        assert config_type == rxconf.config_types.TomlConfig
 
 
 def test_resolve_ini_file(resolver):
@@ -47,7 +47,7 @@ def test_resolve_ini_file(resolver):
         patch("rxconf.config_types.IniConfig.__init__", return_value=None),
     ):
         config_type = resolver.resolve(path)
-        assert config_type == config_types.IniConfig
+        assert config_type == rxconf.config_types.IniConfig
 
 
 def test_resolve_dotenv_file(resolver):
@@ -57,22 +57,22 @@ def test_resolve_dotenv_file(resolver):
         patch("rxconf.config_types.DotenvConfig.__init__", return_value=None),
     ):
         config_type = resolver.resolve(path)
-        assert config_type == config_types.DotenvConfig
+        assert config_type == rxconf.config_types.DotenvConfig
 
 
 def test_resolve_invalid_extension(resolver):
     path = "config.txt"
     with patch("os.path.splitext", return_value=("config", ".txt")):
-        with pytest.raises(exceptions.InvalidExtensionError) as excinfo:
+        with pytest.raises(rxconf.InvalidExtensionError) as excinfo:
             resolver.resolve(path)
         assert "invalid extension" in str(excinfo.value)
 
 
 def test_resolve_empty_config_types():
-    resolver = config_resolver.FileConfigResolver(config_types=[])
+    resolver = rxconf.config_resolver.FileConfigResolver(config_types=[])
     path = "config.yaml"
     with patch("os.path.splitext", return_value=("config", ".yaml")):
-        with pytest.raises(exceptions.InvalidExtensionError) as excinfo:
+        with pytest.raises(rxconf.InvalidExtensionError) as excinfo:
             resolver.resolve(path)
         assert "invalid extension" in str(excinfo.value)
 
@@ -84,4 +84,4 @@ def test_resolve_case_insensitive_extension(resolver):
         patch("rxconf.config_types.YamlConfig.__init__", return_value=None),
     ):
         config_type = resolver.resolve(path)
-        assert config_type == config_types.YamlConfig
+        assert config_type == rxconf.config_types.YamlConfig
