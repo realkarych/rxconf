@@ -12,18 +12,18 @@ _RESOURCE_DIR = Path.cwd() / Path("tests/resources")
 def test_empty() -> None:
     conf = rxconf.Conf.from_file(config_path=_RESOURCE_DIR / "empty.yaml")
 
-    assert conf._MetaTree__config._root == {}
+    assert conf._MetaTree__structure._root == {}
 
 
 @pytest.mark.asyncio
 async def test_empty_async() -> None:
     conf = await rxconf.AsyncConf.from_file(config_path=_RESOURCE_DIR / "empty.yaml")
 
-    assert conf._MetaTree__config._root == {}
+    assert conf._MetaTree__structure._root == {}
 
 
 def test_wrong_equality() -> None:
-    conf = rxconf.Conf.from_file(config_path=_RESOURCE_DIR / "empty.yaml")._MetaTree__config
+    conf = rxconf.Conf.from_file(config_path=_RESOURCE_DIR / "empty.yaml")._MetaTree__structure
     with pytest.raises(rxconf.RxConfError):
         assert conf == 1
 
