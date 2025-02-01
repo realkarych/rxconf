@@ -1,10 +1,14 @@
 import abc
+import functools
 import typing as tp
 
 from . import _types, exceptions
 
 
 def _patch_other_value(func: tp.Callable[..., tp.Any]) -> tp.Callable[..., tp.Any]:
+    """Executes value from AttributeType object and provides it to the overrided function."""
+
+    @functools.wraps(func)
     def wrapper(self: "AttributeType", other: tp.Any) -> tp.Any:
         if isinstance(other, AttributeType):
             other = object.__getattribute__(other, "_AttributeType__value")
@@ -14,6 +18,7 @@ def _patch_other_value(func: tp.Callable[..., tp.Any]) -> tp.Callable[..., tp.An
 
 
 class AttributeType(metaclass=abc.ABCMeta):
+    """Base class for all supported attribute types."""
 
     def __init__(self, value: tp.Any) -> None:  # pragma: no cover
         self.__value = value
@@ -176,6 +181,7 @@ class AttributeType(metaclass=abc.ABCMeta):
 
 
 class MockAttribute(AttributeType):  # pragma: no cover
+    """Mock Attribute class. Only for testing purposes."""
 
     def __init__(self, value: tp.Any = None) -> None:
         super().__init__(value)
@@ -185,6 +191,7 @@ class MockAttribute(AttributeType):  # pragma: no cover
 
 
 class VaultAttribute(AttributeType):
+    """Class for HashiCorp Vault attribute type."""
 
     def __init__(
         self: "VaultAttribute",
@@ -220,6 +227,7 @@ class VaultAttribute(AttributeType):
 
 
 class YamlAttribute(AttributeType):
+    """Class for YAML attribute type."""
 
     def __init__(
         self: "YamlAttribute",
@@ -255,6 +263,7 @@ class YamlAttribute(AttributeType):
 
 
 class JsonAttribute(AttributeType):
+    """Class for JSON attribute type."""
 
     def __init__(
         self: "JsonAttribute",
@@ -288,6 +297,7 @@ class JsonAttribute(AttributeType):
 
 
 class TomlAttribute(AttributeType):
+    """Class for TOML attribute type."""
 
     def __init__(
         self: "TomlAttribute",
@@ -321,6 +331,7 @@ class TomlAttribute(AttributeType):
 
 
 class EnvAttribute(AttributeType):
+    """Class for environment variable & .env attribute types."""
 
     def __init__(
         self: "EnvAttribute",
@@ -352,6 +363,7 @@ class EnvAttribute(AttributeType):
 
 
 class IniAttribute(AttributeType):
+    """Class for INI attribute type."""
 
     def __init__(
         self: "IniAttribute", value: tp.Union[_types.INI_ATTRIBUTE_TYPE, tp.Dict[str, "IniAttribute"]]

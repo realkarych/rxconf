@@ -1,3 +1,4 @@
+import contextlib
 import datetime as dt
 import sys
 import typing as tp
@@ -51,19 +52,17 @@ VAULT_ATTRIBUTE_TYPE: TypeAlias = tp.Union[
 
 
 def map_primitive(value: str) -> tp.Union[int, float, bool, None, str]:
+    """Unify the value from the whole configuration sources to a primitive type."""
+
     lower_value = value.lower()
-    if lower_value == "none" or lower_value == "null":
+    if lower_value in {"none", "null"}:
         return None
     if lower_value == "true":
         return True
     if lower_value == "false":
         return False
-    try:
+    with contextlib.suppress(ValueError):
         return int(value)
-    except ValueError:
-        pass
-    try:
+    with contextlib.suppress(ValueError):
         return float(value)
-    except ValueError:
-        pass
     return value
