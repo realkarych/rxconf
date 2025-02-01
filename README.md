@@ -18,11 +18,11 @@
 
 ---
 
+**TL;DR:** `pip install rxconf`
+
 **Documentation:** <https://realkarych.github.io/rxconf/>
 
 **Source code:** <https://github.com/realkarych/rxconf/>
-
-**TL;DR:** `pip install rxconf`
 
 ---
 
@@ -34,6 +34,14 @@ Currently in develop...
 The first stable version will be 0.1.0
 </h3>
 
-- [ ] Implement observers
-- [ ] Implement triggers
-- [ ] Docs: public docs & docstrings
+---
+
+<h3 align="center">
+Roadmap
+</h3>
+
+- [ ] Public Docs at <https://realkarych.github.io/rxconf/> (<a href="https://github.com/realkarych/rxconf/issues/87">#87</a>).
+- [ ] Docstrings for all public scope interfaces (<a href="https://github.com/realkarych/rxconf/issues/88">#88</a>).
+- [ ] Integration tests for RxConf (<a href="https://github.com/realkarych/rxconf/issues/89">#89</a>).
+- [ ] Async version of VaultConfig (<a href="https://github.com/realkarych/rxconf/issues/90">#90</a>).
+- [ ] Async version of RxConf (<a href="https://github.com/realkarych/rxconf/issues/91">#91</a>).
