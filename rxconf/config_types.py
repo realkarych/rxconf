@@ -45,7 +45,7 @@ class MetaConfigType(metaclass=abc.ABCMeta):  # pragma: no cover
     def __getattr__(self, item: str) -> tp.Any:
         """
         Get attribute from the root attribute.
-        Normalise the attribute name by removing the sault prefix.
+        Normalize the attribute name by removing the sault prefix.
         :param item: attribute name. Case-insensitive.
         """
 
@@ -189,7 +189,7 @@ class VaultConfig(VaultConfigType):
 
 
 class FileConfigType(MetaConfigType, metaclass=abc.ABCMeta):  # pragma: no cover
-    """ "
+    """
     Metaclass for file-based configs.
     Works with both sync and async versions.
     """

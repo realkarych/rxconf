@@ -44,4 +44,4 @@ Roadmap
 - [x] Docstrings for all public scope interfaces (<a href="https://github.com/realkarych/rxconf/issues/88">#88</a>).
 - [ ] Integration tests for RxConf (<a href="https://github.com/realkarych/rxconf/issues/89">#89</a>).
 - [ ] Async version of VaultConfig (<a href="https://github.com/realkarych/rxconf/issues/90">#90</a>).
-- [ ] Async version of RxConf (<a href="https://github.com/realkarych/rxconf/issues/91">#91</a>).
+- [x] Async version of RxConf (<a href="https://github.com/realkarych/rxconf/issues/91">#91</a>).
