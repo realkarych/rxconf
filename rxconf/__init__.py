@@ -6,7 +6,7 @@ from .exceptions import (
     InvalidExtensionError,
     RxConfError,
 )
-from .rxconf import Conf
+from .rxconf import AsyncRxConf, Conf, OnChangeAsyncTrigger, OnChangeTrigger, RxConf, SimpleAsyncTrigger, SimpleTrigger
 
 
 __all__ = [
@@ -14,6 +14,12 @@ __all__ = [
     "config_types",
     "config_resolver",
     "Conf",
+    "RxConf",
+    "AsyncRxConf",
+    "SimpleTrigger",
+    "SimpleAsyncTrigger",
+    "OnChangeTrigger",
+    "OnChangeAsyncTrigger",
     "BrokenConfigSchemaError",
     "ConfigNotFoundError",
     "InvalidExtensionError",
