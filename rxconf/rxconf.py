@@ -529,6 +529,7 @@ class OnChangeAsyncTrigger(MetaAsyncTrigger):
             raise exceptions.InvalidAttributeError(f"Attribute '{attribute_path}' not found in configuration.") from e
 
 
+@exceptions.handle_unknown_exception
 class Conf(MetaConf):
     """
     Base configuration class.
@@ -632,7 +633,7 @@ class Conf(MetaConf):
 
         if not isinstance(other, Conf):
             raise TypeError("Conf is comparable only to Conf")
-        return self._MetaTree__structure == other._MetaTree__structure
+        return self._MetaTree__structure == other._MetaTree__structure  # type: ignore
 
     def __ne__(self, other: object) -> bool:
         """
@@ -878,6 +879,7 @@ class MetaRxConf(metaclass=abc.ABCMeta):
         raise NotImplementedError()
 
 
+@exceptions.handle_unknown_exception
 class RxConf(MetaRxConf):
     """
     Entry point for reactive configurations.
@@ -1023,6 +1025,7 @@ class RxConf(MetaRxConf):
         return decorator
 
 
+@exceptions.handle_unknown_exception
 class AsyncRxConf(MetaRxConf):
     """
     Entry point for reactive configurations.

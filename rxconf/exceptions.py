@@ -54,19 +54,51 @@ class InvalidExtensionError(RxConfError):
         super().__init__(message)
 
 
-def handle_unknown_exception(func: tp.Callable[..., tp.Any]) -> tp.Callable[..., tp.Any]:
+@tp.overload
+def handle_unknown_exception(obj: type) -> type: ...
+
+
+@tp.overload
+def handle_unknown_exception(obj: tp.Callable[..., tp.Any]) -> tp.Callable[..., tp.Any]: ...
+
+
+def handle_unknown_exception(  # noqa: C901
+    obj: tp.Union[tp.Callable[..., tp.Any], type],
+) -> tp.Union[tp.Callable[..., tp.Any], type]:
     """
     A decorator that catches all exceptions in the decorated function and raises RxConfError instead.
     Implemented to guarantee that all exceptions in the rxconf package are overridden by RxConfError.
-    """
 
-    @functools.wraps(func)
+    When applied to a class, all callable attributes (methods, staticmethods and classmethods) will be wrapped.
+    """
+    if isinstance(obj, type):
+        for attr_name, attr in obj.__dict__.items():
+            if attr_name != "__call__" and attr_name.startswith("__") and attr_name.endswith("__"):
+                continue
+
+            if isinstance(attr, staticmethod):
+                decorated_func = handle_unknown_exception(attr.__func__)
+                setattr(obj, attr_name, staticmethod(decorated_func))
+            elif isinstance(attr, classmethod):
+                decorated_func = handle_unknown_exception(attr.__func__)
+                setattr(obj, attr_name, classmethod(decorated_func))
+            elif isinstance(attr, property):
+                new_getter = handle_unknown_exception(attr.fget) if attr.fget is not None else None
+                new_setter = handle_unknown_exception(attr.fset) if attr.fset is not None else None
+                new_deleter = handle_unknown_exception(attr.fdel) if attr.fdel is not None else None
+                setattr(obj, attr_name, property(new_getter, new_setter, new_deleter))
+            elif callable(attr):
+                decorated = handle_unknown_exception(attr)
+                setattr(obj, attr_name, decorated)
+        return obj
+
+    @functools.wraps(obj)
     def wrapper(*args: tp.Any, **kwargs: tp.Any) -> tp.Any:
         try:
-            return func(*args, **kwargs)
+            return obj(*args, **kwargs)
         except RxConfError:
             raise
         except Exception as exc:
-            raise RxConfError(f"An error occurred in {func.__name__}: {str(exc)}") from exc
+            raise RxConfError(f"An error occurred in {obj.__name__}: {str(exc)}") from exc
 
     return wrapper
