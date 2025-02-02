@@ -67,14 +67,14 @@ env_conf = Conf.from_env()
 
 ### So what are `yaml_conf`, `toml_conf` and `env_conf`?
 
-If you try to execute `type()` for them, you will see the heir of `ConfigType`.
+If you try to execute `type()` for them, you will see the heir of `MetaConfigType`.
 
 This is layer that incapsulate Attributes structure model.
 
 You can `print()` them or call `repr()` to see this structure.
 
 !!! note
-    JFYI: we have ConfigResolver that resolves what concrete FileConfigType should be created based on extension.
+    JFYI: we have MetaConfigResolver that resolves what concrete FileConfigType should be created based on extension.
 
 ### Secondly, we want to access variables
 
@@ -106,7 +106,7 @@ So AttributeTypes can be converted to primitives if you want:
 
 `str(hello_var) == "Hello"` — the string representation of `hello_var` value.
 
-#### We supports all types that supports ConfigType you chose
+#### We supports all types that supports MetaConfigType you chose
 
 | Type       | Yaml           | Toml           | Json           | Dotenv         | Ini            |
 |------------|----------------|----------------|----------------|----------------|----------------|
@@ -131,7 +131,7 @@ All exceptions can be raised by RxConf are inherited from `rxconf.exceptions.RxC
 There are some of them:
 
 - Not-existing file: `rxconf.exceptions.ConfigNotFoundError`.
-- Unknown extension (that is not specified in any `FileConfigType` registered in `ConfigResolver`): `rxconf.exceptions.InvalidExtensionError`.
+- Unknown extension (that is not specified in any `FileConfigType` registered in `MetaConfigResolver`): `rxconf.exceptions.InvalidExtensionError`.
 - Config with broken schema: `rxconf.exceptions.BrokenConfigSchemaError`.
 - Unknown attribute (e.g. `yaml_conf.some.unknown.attr`): `rxconf.exceptions.InvalidAttributeError`.
 
@@ -142,14 +142,14 @@ All existing exceptions your can check in [exceptions.py](https://github.com/rea
 RxConf is compatible with Asyncio. To use, import extension for base `Conf`:
 
 ```python
-from rxconf import AsyncConf
+from rxconf import Conf
 ```
 
 Then load config:
 
 ```python
 async def main():
-    conf = await AsyncConf.from_file(path="...")
+    conf = await Conf.from_file_async(path="...")
     # Then use conf as same as Conf
 ```
 

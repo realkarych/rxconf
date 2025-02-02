@@ -23,7 +23,10 @@ else:
 import configparser
 
 
-class ConfigType(metaclass=abc.ABCMeta):  # pragma: no cover
+class MetaConfigType(metaclass=abc.ABCMeta):  # pragma: no cover
+    """
+    Metaclass for all config types. It provides basic methods for config types.
+    """
 
     @abc.abstractmethod
     def __eq__(self, other: object) -> bool:
@@ -32,21 +35,35 @@ class ConfigType(metaclass=abc.ABCMeta):  # pragma: no cover
     @property
     @abc.abstractmethod
     def hash(self) -> int:
-        pass
+        """
+        Hash computed from the root (dummy) attribute which is computed from the whole config data.
+        """
+
+        raise NotImplementedError()
 
     @exceptions.handle_unknown_exception
     def __getattr__(self, item: str) -> tp.Any:
+        """
+        Get attribute from the root attribute.
+        Normalise the attribute name by removing the sault prefix.
+        :param item: attribute name. Case-insensitive.
+        """
+
         return getattr(self._root, item.lower().removeprefix(hashtools.ATTR_SAULT))
 
 
-class VaultConfigType(ConfigType):
+class VaultConfigType(MetaConfigType, metaclass=abc.ABCMeta):  # pragma: no cover
+    """
+    Metaclass for HashiCorp Vault configs.
+    Works with both sync and async versions.
+    """
 
     def __init__(
         self,
         root_attribute: attributes.AttributeType,
         path: pathlib.PurePath,
     ) -> None:
-        pass
+        raise NotImplementedError()
 
     @classmethod
     @abc.abstractmethod
@@ -56,7 +73,7 @@ class VaultConfigType(ConfigType):
         ip: str,
         path: pathlib.PurePath,
     ) -> "VaultConfigType":
-        pass
+        raise NotImplementedError()
 
     @classmethod
     @abc.abstractmethod
@@ -73,6 +90,11 @@ class VaultConfigType(ConfigType):
 
 
 class VaultConfig(VaultConfigType):
+    """ "
+    Default Vault config implementation.
+    Uses hvac library to interact with Vault.
+    """
+
     _root: tp.Final[attributes.VaultAttribute]
     _path: tp.Final[pathlib.PurePath]
 
@@ -97,6 +119,10 @@ class VaultConfig(VaultConfigType):
         ip: str,
         path: pathlib.PurePath,
     ) -> "VaultConfig":
+        """
+        Load config from Vault synchronously. Uses hvac library.
+        """
+
         try:
             client = hvac.Client(url=ip, token=token)
             response = client.secrets.kv.v2.read_secret_version(path=path, raise_on_deleted_version=True)
@@ -116,11 +142,23 @@ class VaultConfig(VaultConfigType):
         ip: str,
         path: pathlib.PurePath,
     ) -> "VaultConfig":
-        raise NotImplementedError("Async vault loading is not supported yet. Use sync method instead.")
+        """
+        WARNING: Not implemented yet. Use `load_from_vault` instead.
+        Load config from Vault asynchronously. Uses hvac library.
+        """
+
+        raise NotImplementedError(
+            "Async vault loading is not supported yet. Use sync method `load_from_vault` instead."
+        )
 
     @classmethod
     @exceptions.handle_unknown_exception
     def _process_data(cls, data: tp.Any) -> attributes.VaultAttribute:
+        """
+        Data processing method for Vault config. Works recursively. Converts all keys to lowercase.
+        :param data: data with optional inner structures to process.
+        """
+
         if isinstance(data, dict):
             return attributes.VaultAttribute(value={k.lower(): cls._process_data(v) for k, v in data.items()})
         if isinstance(data, list):
@@ -139,21 +177,40 @@ class VaultConfig(VaultConfigType):
         raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
 
     @exceptions.handle_unknown_exception
-    def __eq__(self, other: ConfigType) -> int:
-        if not isinstance(other, ConfigType):
-            raise TypeError("ConfigType is comparable only to ConfigType")
+    def __eq__(self, other: MetaConfigType) -> int:
+        """
+        Compare two configs by their hashes.
+        :param other: another config to compare.
+        """
+
+        if not isinstance(other, MetaConfigType):
+            raise TypeError("MetaConfigType is comparable only to MetaConfigType")
         return self._hash == other.hash
 
 
-class FileConfigType(ConfigType, metaclass=abc.ABCMeta):  # pragma: no cover
+class FileConfigType(MetaConfigType, metaclass=abc.ABCMeta):  # pragma: no cover
+    """ "
+    Metaclass for file-based configs.
+    Works with both sync and async versions.
+    """
 
     def __init__(self, root_attribute: attributes.AttributeType, path: pathlib.PurePath, *args, **kwargs) -> None:
-        pass
+        """
+        :param root_attribute: dummy node contains root attributes.
+        :param path: path to the config file on the local filesystem.
+        """
+
+        raise NotImplementedError()
 
     @property
     @abc.abstractmethod
     def allowed_extensions(self) -> tp.FrozenSet[str]:
-        pass
+        """
+        Allowed extensions for the config file. Format: {".ext1", ".ext2", ...}.
+        Case-insensitive.
+        """
+
+        raise NotImplementedError()
 
     @classmethod
     @abc.abstractmethod
@@ -162,7 +219,13 @@ class FileConfigType(ConfigType, metaclass=abc.ABCMeta):  # pragma: no cover
         path: tp.Union[str, pathlib.PurePath],
         encoding: str,
     ) -> "FileConfigType":
-        pass
+        """
+        Load file config from the local filesystem synchronously.
+        :param path: path to the config file.
+        :param encoding: file encoding (utf-8, cp1251, etc.).
+        """
+
+        raise NotImplementedError()
 
     @classmethod
     @abc.abstractmethod
@@ -171,13 +234,28 @@ class FileConfigType(ConfigType, metaclass=abc.ABCMeta):  # pragma: no cover
         path: tp.Union[str, pathlib.PurePath],
         encoding: str,
     ) -> "FileConfigType":
-        pass
+        """
+        Load file config from the local filesystem asynchronously.
+        :param path: path to the config file.
+        :param encoding: file encoding (utf-8, cp1251, etc.).
+        """
+
+        raise NotImplementedError()
 
     def __repr__(self) -> str:
+        """
+        String representation of the config. Uses the root attribute representation.
+        """
+
         return repr(self._root)
 
 
 class YamlConfig(FileConfigType):
+    """
+    YAML config implementation.
+    Uses PyYAML library to parse YAML files.
+    """
+
     _allowed_extensions: tp.Final[frozenset] = frozenset({".yaml", ".yml"})
     _root: tp.Final[attributes.YamlAttribute]
     _path: tp.Final[pathlib.PurePath]
@@ -246,9 +324,9 @@ class YamlConfig(FileConfigType):
         )
 
     @exceptions.handle_unknown_exception
-    def __eq__(self, other: ConfigType) -> int:
-        if not isinstance(other, ConfigType):
-            raise TypeError("ConfigType is comparable only to ConfigType")
+    def __eq__(self, other: MetaConfigType) -> int:
+        if not isinstance(other, MetaConfigType):
+            raise TypeError("MetaConfigType is comparable only to MetaConfigType")
         return self._hash == other.hash
 
     @classmethod
@@ -275,6 +353,11 @@ class YamlConfig(FileConfigType):
 
 
 class JsonConfig(FileConfigType):
+    """
+    JSON config implementation.
+    Uses built-in json library to parse JSON files.
+    """
+
     _allowed_extensions: tp.Final[frozenset] = frozenset({".json"})
     _root: tp.Final[attributes.JsonAttribute]
     _path: tp.Final[pathlib.PurePath]
@@ -342,9 +425,9 @@ class JsonConfig(FileConfigType):
         )
 
     @exceptions.handle_unknown_exception
-    def __eq__(self, other: ConfigType) -> bool:
-        if not isinstance(other, ConfigType):
-            raise TypeError("ConfigType is comparable only to ConfigType")
+    def __eq__(self, other: MetaConfigType) -> bool:
+        if not isinstance(other, MetaConfigType):
+            raise TypeError("MetaConfigType is comparable only to MetaConfigType")
         return self._hash == other.hash
 
     @classmethod
@@ -369,6 +452,11 @@ class JsonConfig(FileConfigType):
 
 
 class TomlConfig(FileConfigType):
+    """
+    TOML config implementation.
+    Uses toml library to parse TOML.
+    """
+
     _allowed_extensions: tp.Final[frozenset] = frozenset({".toml"})
     _root: tp.Final[attributes.TomlAttribute]
     _path: tp.Final[pathlib.PurePath]
@@ -441,9 +529,9 @@ class TomlConfig(FileConfigType):
         )
 
     @exceptions.handle_unknown_exception
-    def __eq__(self, other: ConfigType) -> bool:
-        if not isinstance(other, ConfigType):
-            raise TypeError("ConfigType is comparable only to ConfigType")
+    def __eq__(self, other: MetaConfigType) -> bool:
+        if not isinstance(other, MetaConfigType):
+            raise TypeError("MetaConfigType is comparable only to MetaConfigType")
         return self._hash == other.hash
 
     @classmethod
@@ -468,6 +556,11 @@ class TomlConfig(FileConfigType):
 
 
 class IniConfig(FileConfigType):
+    """
+    INI config implementation.
+    Uses built-in configparser library to parse INI files.
+    """
+
     _allowed_extensions: tp.Final[frozenset] = frozenset({".ini"})
     _root: tp.Final[attributes.IniAttribute]
     _path: tp.Final[pathlib.PurePath]
@@ -545,9 +638,9 @@ class IniConfig(FileConfigType):
         )
 
     @exceptions.handle_unknown_exception
-    def __eq__(self, other: ConfigType) -> bool:
-        if not isinstance(other, ConfigType):
-            raise TypeError("ConfigType is comparable only to ConfigType")
+    def __eq__(self, other: MetaConfigType) -> bool:
+        if not isinstance(other, MetaConfigType):
+            raise TypeError("MetaConfigType is comparable only to MetaConfigType")
         return self._hash == other.hash
 
     @classmethod
@@ -560,7 +653,11 @@ class IniConfig(FileConfigType):
         raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
 
 
-class EnvConfig(ConfigType):
+class EnvConfig(MetaConfigType):
+    """
+    Environment variables config implementation.
+    Uses os.environ to get environment variables.
+    """
 
     _root: tp.Final[attributes.EnvAttribute]
 
@@ -572,9 +669,9 @@ class EnvConfig(ConfigType):
         return repr(self._root)
 
     @exceptions.handle_unknown_exception
-    def __eq__(self, other: ConfigType) -> bool:
-        if not isinstance(other, ConfigType):
-            raise TypeError("ConfigType is comparable only to ConfigType")
+    def __eq__(self, other: MetaConfigType) -> bool:
+        if not isinstance(other, MetaConfigType):
+            raise TypeError("MetaConfigType is comparable only to MetaConfigType")
         return self._hash == other.hash
 
     @classmethod
@@ -609,6 +706,10 @@ class EnvConfig(ConfigType):
 
 
 class DotenvConfig(FileConfigType, EnvConfig):
+    """
+    Dotenv file config implementation. Extends EnvConfig.
+    Uses python-dotenv library to parse .env files.
+    """
 
     _allowed_extensions: tp.Final[frozenset] = frozenset({".env"})
     _path: tp.Final[pathlib.PurePath]
@@ -623,9 +724,9 @@ class DotenvConfig(FileConfigType, EnvConfig):
         self._hash = hashtools.compute_conf_hash(root_attribute)
 
     @exceptions.handle_unknown_exception
-    def __eq__(self, other: ConfigType) -> bool:
-        if not isinstance(other, ConfigType):
-            raise TypeError("ConfigType is comparable only to ConfigType")
+    def __eq__(self, other: MetaConfigType) -> bool:
+        if not isinstance(other, MetaConfigType):
+            raise TypeError("MetaConfigType is comparable only to MetaConfigType")
         return self._hash == other.hash
 
     @property
@@ -664,6 +765,8 @@ class DotenvConfig(FileConfigType, EnvConfig):
         )
 
 
+# Default (supported natively) config types. Extend this tuple to add custom config types.
+# Do not try to override this variable. It is constant.
 BASE_FILE_CONFIG_TYPES: tp.Final[tp.Tuple[tp.Type[FileConfigType], ...]] = (
     YamlConfig,
     JsonConfig,
