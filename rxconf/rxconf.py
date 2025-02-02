@@ -169,7 +169,7 @@ class OnChangeTrigger(MetaTrigger):
 
     def __init__(
         self: "OnChangeTrigger",
-        trigger: SimpleTrigger,
+        trigger: MetaTrigger,
         all_attributes: tp.Optional[tp.Tuple[str, ...]] = None,
         any_attributes: tp.Optional[tp.Tuple[str, ...]] = None,
     ) -> None:
@@ -242,6 +242,8 @@ class OnChangeTrigger(MetaTrigger):
         Checks if any of the attributes from `any_attributes` is changed.
         """
 
+        if old_conf == actual_conf:
+            return False
         return (
             any(
                 self._is_attribute_changed(old_conf=old_conf, actual_conf=actual_conf, attribute_path=attr)
@@ -260,6 +262,8 @@ class OnChangeTrigger(MetaTrigger):
         Checks if all of the attributes from `all_attributes` are changed.
         """
 
+        if old_conf == actual_conf:
+            return False
         return (
             all(
                 self._is_attribute_changed(old_conf=old_conf, actual_conf=actual_conf, attribute_path=attr)
@@ -542,7 +546,7 @@ class VaultConfFactory(MetaConfFactory):
         )
 
 
-class IRxConf(MetaConf, metaclass=abc.ABCMeta):
+class MetaRxConf(metaclass=abc.ABCMeta):
     """
     Interface for reactive configurations.
     """
@@ -550,11 +554,11 @@ class IRxConf(MetaConf, metaclass=abc.ABCMeta):
     @classmethod
     @abc.abstractmethod
     def from_file(
-        cls: tp.Type["IRxConf"],
+        cls: tp.Type["MetaRxConf"],
         config_path: tp.Union[str, pathlib.PurePath],
         encoding: str,
         file_config_resolver: config_resolver.FileConfigResolver,
-    ) -> "IRxConf":
+    ) -> "MetaRxConf":
         """
         Classmethod for creating reactive configuration from file.
         """
@@ -563,11 +567,25 @@ class IRxConf(MetaConf, metaclass=abc.ABCMeta):
 
     @classmethod
     @abc.abstractmethod
+    async def from_file_async(
+        cls: tp.Type["MetaRxConf"],
+        config_path: tp.Union[str, pathlib.PurePath],
+        encoding: str = "utf-8",
+        file_config_resolver: config_resolver.FileConfigResolver = config_resolver.DefaultFileConfigResolver,
+    ) -> "MetaRxConf":
+        """
+        Classmethod for creating reactive configuration from file asynchronously.
+        """
+
+        raise NotImplementedError()
+
+    @classmethod
+    @abc.abstractmethod
     def from_env(
-        cls: tp.Type["IRxConf"],
+        cls: tp.Type["MetaRxConf"],
         prefix: tp.Optional[str] = None,
         remove_prefix: tp.Optional[bool] = False,
-    ) -> "IRxConf":
+    ) -> "MetaRxConf":
         """
         Classmethod for creating reactive configuration from environment variables.
         """
@@ -577,11 +595,11 @@ class IRxConf(MetaConf, metaclass=abc.ABCMeta):
     @classmethod
     @abc.abstractmethod
     def from_vault(
-        cls: tp.Type["IRxConf"],
+        cls: tp.Type["MetaRxConf"],
         token: str,
         ip: str,
         path: tp.Union[str, pathlib.PurePath],
-    ) -> "IRxConf":
+    ) -> "MetaRxConf":
         """
         Classmethod for creating reactive configuration from HashiCorp Vault.
         """
@@ -590,7 +608,7 @@ class IRxConf(MetaConf, metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def include_config(
-        self: "IRxConf",
+        self: "MetaRxConf",
         triggers: tp.Optional[tp.Iterable[MetaTrigger]] = None,
     ) -> tp.Callable:
         """
@@ -601,7 +619,7 @@ class IRxConf(MetaConf, metaclass=abc.ABCMeta):
         raise NotImplementedError()
 
 
-class RxConf(IRxConf):
+class RxConf(MetaRxConf):
     """
     Entry point for reactive configurations.
     It's not recommended to use this class directly.
