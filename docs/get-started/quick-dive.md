@@ -142,14 +142,14 @@ All existing exceptions your can check in [exceptions.py](https://github.com/rea
 RxConf is compatible with Asyncio. To use, import extension for base `Conf`:
 
 ```python
-from rxconf import AsyncConf
+from rxconf import Conf
 ```
 
 Then load config:
 
 ```python
 async def main():
-    conf = await AsyncConf.from_file(path="...")
+    conf = await Conf.from_file_async(path="...")
     # Then use conf as same as Conf
 ```
 

@@ -16,7 +16,7 @@ def test_empty() -> None:
 
 @pytest.mark.asyncio
 async def test_empty_async() -> None:
-    conf = await rxconf.AsyncConf.from_file(config_path=_RESOURCE_DIR / "empty.ini")
+    conf = await rxconf.Conf.from_file_async(config_path=_RESOURCE_DIR / "empty.ini")
 
     assert conf._MetaTree__structure._root == {}
 
@@ -44,7 +44,7 @@ def test_primitive_types() -> None:
 
 @pytest.mark.asyncio
 async def test_primitive_types_async() -> None:
-    conf = await rxconf.AsyncConf.from_file(config_path=_RESOURCE_DIR / "primitives.ini")
+    conf = await rxconf.Conf.from_file_async(config_path=_RESOURCE_DIR / "primitives.ini")
 
     assert conf.primitives.integer == 42
     assert conf.primitives.float == 36.6
@@ -65,7 +65,7 @@ def test_key_cases() -> None:
 
 @pytest.mark.asyncio
 async def test_key_cases_async() -> None:
-    conf = await rxconf.AsyncConf.from_file(config_path=_RESOURCE_DIR / "primitives.ini")
+    conf = await rxconf.Conf.from_file_async(config_path=_RESOURCE_DIR / "primitives.ini")
 
     assert conf.primitives.camelcase
     assert conf.primitives.CamelCase
@@ -87,7 +87,7 @@ def test_numeric_casts() -> None:
 
 @pytest.mark.asyncio
 async def test_numeric_casts_async() -> None:
-    conf = await rxconf.AsyncConf.from_file(config_path=_RESOURCE_DIR / "primitives.ini")
+    conf = await rxconf.Conf.from_file_async(config_path=_RESOURCE_DIR / "primitives.ini")
 
     assert conf.primitives.integer - 1 < conf.primitives.integer < conf.primitives.integer + 1
     assert conf.primitives.integer - 0.1 < conf.primitives.integer <= int(conf.primitives.integer + 0.1)
@@ -109,7 +109,7 @@ def test_string_casts() -> None:
 
 @pytest.mark.asyncio
 async def test_string_casts_async() -> None:
-    conf = await rxconf.AsyncConf.from_file(config_path=_RESOURCE_DIR / "primitives.ini")
+    conf = await rxconf.Conf.from_file_async(config_path=_RESOURCE_DIR / "primitives.ini")
 
     assert conf.primitives.string[0] == "H"
     assert conf.primitives.string[1:-1] == "ello world ="
@@ -131,7 +131,7 @@ def test_inner_structures() -> None:
 
 @pytest.mark.asyncio
 async def test_inner_structures_async() -> None:
-    conf = await rxconf.AsyncConf.from_file(config_path=_RESOURCE_DIR / "inner_structures.ini")
+    conf = await rxconf.Conf.from_file_async(config_path=_RESOURCE_DIR / "inner_structures.ini")
 
     assert conf.config.name == "John Doe"
     assert conf.config.age == 42

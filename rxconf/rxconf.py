@@ -54,6 +54,22 @@ class MetaConf(MetaTree, metaclass=abc.ABCMeta):  # pragma: no cover
 
     @classmethod
     @abc.abstractmethod
+    async def from_file_async(
+        cls: tp.Type["MetaConf"],
+        config_path: tp.Union[str, pathlib.PurePath],
+        encoding: str = "utf-8",
+        file_config_resolver: config_resolver.FileConfigResolver = config_resolver.DefaultFileConfigResolver,
+    ) -> "MetaConf":
+        """
+        Classmethod for creating configuration from file asynchronously.
+        :param config_path: path to the configuration file on the local filesystem.
+        :param encoding: encoding of the configuration file. Example: "utf-8".
+        """
+
+        raise NotImplementedError()
+
+    @classmethod
+    @abc.abstractmethod
     def from_env(
         cls: tp.Type["MetaConf"],
         prefix: tp.Optional[str] = None,
@@ -75,58 +91,6 @@ class MetaConf(MetaTree, metaclass=abc.ABCMeta):  # pragma: no cover
         ip: str,
         path: tp.Union[str, pathlib.PurePath],
     ) -> "MetaConf":
-        """
-        Classmethod for creating configuration from HashiCorp Vault.
-        Check https://www.vaultproject.io/ for more information.
-        :param token: token for accessing the Vault.
-        :param ip: IP address of the Vault.
-        :param path: path to the configuration in the Vault.
-        """
-
-        raise NotImplementedError()
-
-
-class MetaAsyncConf(MetaTree, metaclass=abc.ABCMeta):  # pragma: no cover
-
-    @classmethod
-    @abc.abstractmethod
-    async def from_file(
-        cls: tp.Type["MetaAsyncConf"],
-        config_path: tp.Union[str, pathlib.PurePath],
-        encoding: str,
-        file_config_resolver: config_resolver.FileConfigResolver,
-    ) -> "MetaAsyncConf":
-        """
-        Classmethod for creating configuration from file.
-        :param config_path: path to the configuration file on the local filesystem.
-        :param encoding: encoding of the configuration file. Example: "utf-8".
-        """
-
-        raise NotImplementedError()
-
-    @classmethod
-    @abc.abstractmethod
-    async def from_env(
-        cls: tp.Type["MetaAsyncConf"],
-        prefix: tp.Optional[str] = None,
-        remove_prefix: tp.Optional[bool] = False,
-    ) -> "MetaAsyncConf":
-        """
-        Classmethod for creating configuration from environment variables.
-        :param prefix: prefix of the environment variables. Will load only variables with this prefix.
-        :param remove_prefix: if True, prefix will be removed from the attribute names.
-        """
-
-        raise NotImplementedError()
-
-    @classmethod
-    @abc.abstractmethod
-    async def from_vault(
-        cls: tp.Type["MetaAsyncConf"],
-        token: str,
-        ip: str,
-        path: tp.Union[str, pathlib.PurePath],
-    ) -> "MetaAsyncConf":
         """
         Classmethod for creating configuration from HashiCorp Vault.
         Check https://www.vaultproject.io/ for more information.
@@ -348,7 +312,6 @@ class Conf(MetaConf):
     Base configuration class.
     Stores configuration in the tree-like structure.
     If you want to use reactive configuration, use RxConf instead, it will inject the configuration into the function.
-    If you want to use frozen asynchronous configuration, use AsyncConf instead.
     """
 
     def __init__(self, config: config_types.MetaConfigType) -> None:
@@ -377,6 +340,28 @@ class Conf(MetaConf):
             config=config_builder.FileConfigTypeBuilder(
                 config_resolver=file_config_resolver,
             ).build(
+                path=config_path,
+                encoding=encoding,
+            )
+        )
+
+    @classmethod
+    async def from_file_async(
+        cls: tp.Type["Conf"],
+        config_path: tp.Union[str, pathlib.PurePath],
+        encoding: str = "utf-8",
+        file_config_resolver: config_resolver.FileConfigResolver = config_resolver.DefaultFileConfigResolver,
+    ) -> "Conf":
+        """
+        Classmethod for creating frozen configuration from file asynchronously.
+        :param config_path: path to the configuration file on the local filesystem.
+        :param encoding: encoding of the configuration file. Example: "utf-8" (default), "cp1250", "iso-8859-2" etc.
+        """
+
+        return cls(
+            config=await config_builder.FileConfigTypeBuilder(
+                config_resolver=file_config_resolver,
+            ).build_async(
                 path=config_path,
                 encoding=encoding,
             )
@@ -446,71 +431,6 @@ class Conf(MetaConf):
         Returns the string representation of the configuration structure.
         """
 
-        return repr(self._MetaTree__structure)
-
-
-class AsyncConf(MetaAsyncConf):
-    """
-    Base asynchronous configuration class.
-    Stores configuration in the tree-like structure.
-    If you want to use reactive configuration, use RxConf instead, it will inject the configuration into the function.
-    If you want to use sync frozen configuration, use Conf instead.
-    """
-
-    def __init__(self, config: config_types.MetaConfigType) -> None:
-        super().__init__(config)
-
-    @classmethod
-    async def from_file(
-        cls: tp.Type["AsyncConf"],
-        config_path: tp.Union[str, pathlib.PurePath],
-        encoding: str = "utf-8",
-        file_config_resolver: config_resolver.FileConfigResolver = config_resolver.DefaultFileConfigResolver,
-    ) -> "AsyncConf":
-        return cls(
-            config=await config_builder.FileConfigTypeBuilder(
-                config_resolver=file_config_resolver,
-            ).build_async(
-                path=config_path,
-                encoding=encoding,
-            )
-        )
-
-    @classmethod
-    async def from_env(
-        cls: tp.Type["AsyncConf"],
-        prefix: tp.Optional[str] = None,
-        remove_prefix: tp.Optional[bool] = False,
-    ) -> "AsyncConf":
-        return cls(
-            config=config_types.EnvConfig.load_from_environment(
-                prefix=prefix,
-                remove_prefix=remove_prefix,
-            ),
-        )
-
-    @classmethod
-    async def from_vault(
-        cls: tp.Type["AsyncConf"],
-        token: str,
-        ip: str,
-        path: tp.Union[str, pathlib.PurePath],
-    ) -> "AsyncConf":
-        # TODO: add support for VaultConfig
-        raise NotImplementedError("AsyncConf does not support VaultConfig yet. Use Conf instead.")  # pragma: no cover
-
-    def __eq__(self, other: object) -> bool:
-        if not isinstance(other, AsyncConf):
-            raise TypeError("AsyncConf is comparable only to AsyncConf")
-        return self._MetaTree__structure == other._MetaTree__structure
-
-    def __ne__(self, other: object) -> bool:
-        return not self.__eq__(other)
-
-    def __getattr__(self, item: str) -> tp.Any:
-        return getattr(self._MetaTree__structure, f"{hashtools.ATTR_SAULT}{item.lower()}")
-
-    def __repr__(self) -> str:
         return repr(self._MetaTree__structure)
 
 

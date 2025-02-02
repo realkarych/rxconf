@@ -6,7 +6,7 @@ from .exceptions import (
     InvalidExtensionError,
     RxConfError,
 )
-from .rxconf import AsyncConf, Conf
+from .rxconf import Conf
 
 
 __all__ = [
@@ -14,7 +14,6 @@ __all__ = [
     "config_types",
     "config_resolver",
     "Conf",
-    "AsyncConf",
     "BrokenConfigSchemaError",
     "ConfigNotFoundError",
     "InvalidExtensionError",

@@ -173,21 +173,14 @@ def test_repr():
 
 @pytest.mark.asyncio
 async def test_empty_async() -> None:
-    conf = await rxconf.AsyncConf.from_file(config_path=_RESOURCE_DIR / "empty.env")
+    conf = await rxconf.Conf.from_file_async(config_path=_RESOURCE_DIR / "empty.env")
 
     assert conf._MetaTree__structure._root == {}
 
 
 @pytest.mark.asyncio
-async def test_from_env_async() -> None:
-    conf2 = await rxconf.AsyncConf.from_env(prefix="some_prefix", remove_prefix=True)
-    assert conf2.value1 == 1
-    assert conf2.value2 == 2
-
-
-@pytest.mark.asyncio
 async def test_primitive_types_async() -> None:
-    conf = await rxconf.AsyncConf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
+    conf = await rxconf.Conf.from_file_async(config_path=_RESOURCE_DIR / "primitives.env")
 
     assert conf.integer == 42
     assert conf.float == 36.6
@@ -198,7 +191,7 @@ async def test_primitive_types_async() -> None:
 
 @pytest.mark.asyncio
 async def test_key_cases_async() -> None:
-    conf = await rxconf.AsyncConf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
+    conf = await rxconf.Conf.from_file_async(config_path=_RESOURCE_DIR / "primitives.env")
 
     assert conf.STRANGECASE
     assert conf.STRanGeCasE
@@ -206,7 +199,7 @@ async def test_key_cases_async() -> None:
 
 @pytest.mark.asyncio
 async def test_numeric_casts_async() -> None:
-    conf = await rxconf.AsyncConf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
+    conf = await rxconf.Conf.from_file_async(config_path=_RESOURCE_DIR / "primitives.env")
 
     assert conf.integer - 1 < conf.integer < conf.integer + 1
     assert conf.integer - 0.1 < conf.integer <= int(conf.integer + 0.1)
@@ -217,7 +210,7 @@ async def test_numeric_casts_async() -> None:
 
 @pytest.mark.asyncio
 async def test_string_casts_async() -> None:
-    conf = await rxconf.AsyncConf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
+    conf = await rxconf.Conf.from_file_async(config_path=_RESOURCE_DIR / "primitives.env")
 
     assert conf.STRING[0] == "H"
     assert conf.string[1:-1] == "ello world ="
@@ -229,7 +222,7 @@ async def test_string_casts_async() -> None:
 
 @pytest.mark.asyncio
 async def test_not_existing_attribute_async() -> None:
-    conf = await rxconf.AsyncConf.from_file(config_path=_RESOURCE_DIR / "primitives.env")
+    conf = await rxconf.Conf.from_file_async(config_path=_RESOURCE_DIR / "primitives.env")
 
     with pytest.raises(rxconf.exceptions.RxConfError):
         assert conf.string.unknown

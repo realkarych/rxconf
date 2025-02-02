@@ -17,7 +17,7 @@ def test_empty() -> None:
 
 @pytest.mark.asyncio
 async def test_empty_async() -> None:
-    conf = await rxconf.AsyncConf.from_file(config_path=_RESOURCE_DIR / "empty.yaml")
+    conf = await rxconf.Conf.from_file_async(config_path=_RESOURCE_DIR / "empty.yaml")
 
     assert conf._MetaTree__structure._root == {}
 
@@ -46,7 +46,7 @@ def test_primitive_types() -> None:
 
 @pytest.mark.asyncio
 async def test_primitive_types_async() -> None:
-    conf = await rxconf.AsyncConf.from_file(config_path=_RESOURCE_DIR / "primitives.yml")
+    conf = await rxconf.Conf.from_file_async(config_path=_RESOURCE_DIR / "primitives.yml")
 
     assert conf.integer == 42
     assert conf.float == 36.6
