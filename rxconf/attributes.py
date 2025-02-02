@@ -6,7 +6,7 @@ from . import _types, exceptions
 
 
 def _patch_other_value(func: tp.Callable[..., tp.Any]) -> tp.Callable[..., tp.Any]:
-    """Executes value from AttributeType object and provides it to the overrided function."""
+    """Executes value from AttributeType object and provides it to the overridden function."""
 
     @functools.wraps(func)
     def wrapper(self: "AttributeType", other: tp.Any) -> tp.Any:

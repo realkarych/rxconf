@@ -105,7 +105,7 @@ class MetaConf(MetaTree, metaclass=abc.ABCMeta):  # pragma: no cover
 class MetaTrigger(metaclass=abc.ABCMeta):  # pragma: no cover
     """
     Metaclass for triggers.
-    Trigger is a object that calls when configuration changes.
+    Trigger is an object that calls when configuration changes.
     Check `RxConf.include_config` for more information.
     """
 
@@ -126,7 +126,7 @@ class SimpleTrigger(MetaTrigger):
     """
     The base trigger.
     Calls the provided function with provided arguments when configuration changes.
-    Do not identify which concrete attribute(s) has (have) changed.
+    Does not check which concrete attribute(s) has (have) changed.
     """
 
     def __init__(
@@ -152,7 +152,7 @@ class SimpleTrigger(MetaTrigger):
     ) -> None:
         """
         Calls the provided function with provided arguments.
-        Do not identify which concrete attribute(s) has (have) changed.
+        Does not check which concrete attribute(s) has (have) changed.
         """
 
         self._func(*self._args, **self._kwargs)
@@ -200,7 +200,7 @@ class OnChangeTrigger(MetaTrigger):
     @property
     def all_of(self) -> tp.Tuple[str, ...]:
         """
-        Returns normalized tuple of attributes that must be changed to call the trigger.
+        Returns a normalized tuple of attributes that must be changed to call the trigger.
         """
 
         return self._all_of_attributes
@@ -208,7 +208,7 @@ class OnChangeTrigger(MetaTrigger):
     @property
     def any_of(self) -> tp.Tuple[str, ...]:
         """
-        Returns normalized tuple of attributes that can be changed to call the trigger.
+        Returns a normalized tuple of attributes that can be changed to call the trigger.
         """
 
         return self._any_of_attributes
@@ -259,7 +259,7 @@ class OnChangeTrigger(MetaTrigger):
         actual_conf: MetaConf,
     ) -> bool:
         """
-        Checks if all of the attributes from `all_attributes` are changed.
+        Checks if all the attributes from `all_attributes` are changed.
         """
 
         if old_conf == actual_conf:
@@ -379,7 +379,7 @@ class Conf(MetaConf):
     ) -> "Conf":
         """
         Classmethod for creating frozen configuration from environment variables.
-        :param prefix: prefix of the environment variables. Will load only variables with this prefix.
+        :param prefix: prefix of the environment variables. It will load only variables with this prefix.
         :param remove_prefix: if True, prefix will be removed from the attribute names.
         """
 
@@ -675,7 +675,7 @@ class RxConf(MetaRxConf):
         """
         Classmethod for creating reactive configuration from environment variables.
         WARNING: if you want to use dotenv files, use `from_file` method instead.
-        :param prefix: prefix of the environment variables. Will load only variables with this prefix.
+        :param prefix: prefix of the environment variables. It will load only variables with this prefix.
         """
 
         return cls(
@@ -713,7 +713,7 @@ class RxConf(MetaRxConf):
         """
         Returns the current configuration. Current != actual.
         Current is the configuration that was used in the last function call.
-        According to OOP best-practises, it's not recommend using this property directly.
+        According to OOP best-practices, it's not recommended to use this property directly.
         """
 
         if self._current_conf is None:
