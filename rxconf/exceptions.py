@@ -16,7 +16,7 @@ class RxConfError(RuntimeError):
 class BrokenConfigSchemaError(RxConfError):
     """
     Raised when the schema of the configuration file is broken.
-    For exaple: missing required attributes, invalid types, wrong indentation, etc.
+    For example: missing required attributes, invalid types, wrong indentation, etc.
     """
 
     def __init__(self, message: str):
