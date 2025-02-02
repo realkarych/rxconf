@@ -117,7 +117,7 @@ class VaultConfig(VaultConfigType):
         cls,
         token: str,
         ip: str,
-        path: pathlib.PurePath,
+        path: tp.Union[str, pathlib.PurePath],
     ) -> "VaultConfig":
         """
         Load config from Vault synchronously. Uses hvac library.
@@ -125,7 +125,7 @@ class VaultConfig(VaultConfigType):
 
         try:
             client = hvac.Client(url=ip, token=token)
-            response = client.secrets.kv.v2.read_secret_version(path=path, raise_on_deleted_version=True)
+            response = client.secrets.kv.v2.read_secret_version(path=str(path), raise_on_deleted_version=True)
         except VaultError as exc:
             raise exceptions.RxConfError(f"Unable to retrieve Vault data from path={path}") from exc
 
@@ -136,11 +136,11 @@ class VaultConfig(VaultConfigType):
 
     @classmethod
     @exceptions.handle_unknown_exception
-    def load_from_vault_async(
+    async def load_from_vault_async(
         cls,
         token: str,
         ip: str,
-        path: pathlib.PurePath,
+        path: tp.Union[str, pathlib.PurePath],
     ) -> "VaultConfig":
         """
         WARNING: Not implemented yet. Use `load_from_vault` instead.
@@ -177,7 +177,7 @@ class VaultConfig(VaultConfigType):
         raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
 
     @exceptions.handle_unknown_exception
-    def __eq__(self, other: MetaConfigType) -> int:
+    def __eq__(self, other: object) -> bool:
         """
         Compare two configs by their hashes.
         :param other: another config to compare.
@@ -324,7 +324,7 @@ class YamlConfig(FileConfigType):
         )
 
     @exceptions.handle_unknown_exception
-    def __eq__(self, other: MetaConfigType) -> int:
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, MetaConfigType):
             raise TypeError("MetaConfigType is comparable only to MetaConfigType")
         return self._hash == other.hash
@@ -425,7 +425,7 @@ class JsonConfig(FileConfigType):
         )
 
     @exceptions.handle_unknown_exception
-    def __eq__(self, other: MetaConfigType) -> bool:
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, MetaConfigType):
             raise TypeError("MetaConfigType is comparable only to MetaConfigType")
         return self._hash == other.hash
@@ -529,7 +529,7 @@ class TomlConfig(FileConfigType):
         )
 
     @exceptions.handle_unknown_exception
-    def __eq__(self, other: MetaConfigType) -> bool:
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, MetaConfigType):
             raise TypeError("MetaConfigType is comparable only to MetaConfigType")
         return self._hash == other.hash
@@ -638,7 +638,7 @@ class IniConfig(FileConfigType):
         )
 
     @exceptions.handle_unknown_exception
-    def __eq__(self, other: MetaConfigType) -> bool:
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, MetaConfigType):
             raise TypeError("MetaConfigType is comparable only to MetaConfigType")
         return self._hash == other.hash
@@ -669,7 +669,7 @@ class EnvConfig(MetaConfigType):
         return repr(self._root)
 
     @exceptions.handle_unknown_exception
-    def __eq__(self, other: MetaConfigType) -> bool:
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, MetaConfigType):
             raise TypeError("MetaConfigType is comparable only to MetaConfigType")
         return self._hash == other.hash
@@ -724,7 +724,7 @@ class DotenvConfig(FileConfigType, EnvConfig):
         self._hash = hashtools.compute_conf_hash(root_attribute)
 
     @exceptions.handle_unknown_exception
-    def __eq__(self, other: MetaConfigType) -> bool:
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, MetaConfigType):
             raise TypeError("MetaConfigType is comparable only to MetaConfigType")
         return self._hash == other.hash

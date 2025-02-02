@@ -1,5 +1,17 @@
 import functools
+import sys
 import typing as tp
+
+
+if sys.version_info >= (3, 10):
+    from typing import ParamSpec
+else:
+    from typing_extensions import ParamSpec
+
+
+T = tp.TypeVar("T")
+P = ParamSpec("P")
+R = tp.TypeVar("R")
 
 
 class RxConfError(RuntimeError):
@@ -55,11 +67,11 @@ class InvalidExtensionError(RxConfError):
 
 
 @tp.overload
-def handle_unknown_exception(obj: type) -> type: ...
+def handle_unknown_exception(obj: tp.Type[T]) -> tp.Type[T]: ...
 
 
 @tp.overload
-def handle_unknown_exception(obj: tp.Callable[..., tp.Any]) -> tp.Callable[..., tp.Any]: ...
+def handle_unknown_exception(obj: tp.Callable[P, R]) -> tp.Callable[P, R]: ...
 
 
 def handle_unknown_exception(  # noqa: C901
