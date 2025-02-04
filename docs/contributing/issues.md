@@ -1,3 +1,0 @@
-- Submit issues & bugs: <https://github.com/realkarych/rxconf/issues>.
-- If you have an idea, welcome to [https://github.com/realkarych/rxconf/discussions/45](discussions).
-- Feel free to write PM (SLA 24 hours): <https://karych.t.me/> or EMail: `karych@karych.ru`
