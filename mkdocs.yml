@@ -1,5 +1,5 @@
 site_name: RxConf
-site_description: Python realtime configurations
+site_description: Python dynamic configurations
 site_url: https://realkarych.github.io/rxconf/
 
 theme:
@@ -43,19 +43,10 @@ nav:
       - Welcome to RxConf: index.md
       - Why RxConf: get-started/why.md
       - Quick Dive: get-started/quick-dive.md
-  - Concepts:
-      - RxConf: concepts/rxconf.md
-      - Observers: concepts/observers.md
-      - Triggers: concepts/triggers.md
-      - Asynchronous Mode: concepts/asynchronous.md
   - API Docs:
       - RxConf: api/rxconf.md
-  - Examples:
-      - Custom Config: examples/custom-config.md
-      - Associate Extensions: examples/associate-extensions.md
-      - Projects Uses RxConf: examples/projects.md
   - Contributing:
-      - Environment Setup: contributing/setup.md
+      - Dev.Setup: contributing/setup.md
       - Guidelines: contributing/guidelines.md
       - Submitting: contributing/issues.md
 

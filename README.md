@@ -4,7 +4,7 @@
 </p>
 
 <p align="center">
-    <em>RxConf library, easy to use, powerful and flexible for realtime configuration management in Python</em>
+    <em>RxConf library, easy to use, powerful and flexible for dynamic configuration management in Python</em>
 </p>
 
 <p align="center">
