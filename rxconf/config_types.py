@@ -1,6 +1,5 @@
 import abc
 import datetime
-import json
 import os
 import pathlib
 import sys
@@ -9,18 +8,43 @@ import typing as tp
 import aiofiles
 import dotenv
 import hvac  # type: ignore
-import yaml
 from hvac.exceptions import VaultError  # type: ignore
 
 from . import _types, attributes, exceptions, hashtools
 
 
-if sys.version_info >= (3, 11):
-    import tomllib as toml
-else:
-    import toml
+yaml = None
+toml = None
+json = None
+configparser = None
 
-import configparser
+
+def requires_library(lib: str):
+    """
+    A decorator to enforce the presence of a library before defining a class.
+    Raises ImportError if the library is not installed.
+    """
+
+    def decorator(cls):
+        if lib == "toml":
+            if sys.version_info >= (3, 11):
+                try:
+                    globals()["toml"] = __import__("tomllib")
+                except ImportError as e:
+                    raise ImportError(f"Package {lib} not found. Please, run `pip install rxconf[{lib}]`.") from e
+            else:
+                try:
+                    globals()["toml"] = __import__("toml")
+                except ImportError as e:
+                    raise ImportError(f"Package {lib} not found. Please, run `pip install rxconf[{lib}]`.") from e
+        else:
+            try:
+                globals()[lib] = __import__(lib)
+            except ImportError as e:
+                raise ImportError(f"Package {lib} not found. Please, run `pip install rxconf[{lib}]`.") from e
+        return cls
+
+    return decorator
 
 
 class MetaConfigType(metaclass=abc.ABCMeta):  # pragma: no cover
@@ -250,6 +274,7 @@ class FileConfigType(MetaConfigType, metaclass=abc.ABCMeta):  # pragma: no cover
         return repr(self._root)
 
 
+@requires_library("yaml")
 class YamlConfig(FileConfigType):
     """
     YAML config implementation.
@@ -352,6 +377,7 @@ class YamlConfig(FileConfigType):
         raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
 
 
+@requires_library("json")
 class JsonConfig(FileConfigType):
     """
     JSON config implementation.
@@ -451,6 +477,7 @@ class JsonConfig(FileConfigType):
         raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
 
 
+@requires_library("toml")
 class TomlConfig(FileConfigType):
     """
     TOML config implementation.
@@ -555,6 +582,7 @@ class TomlConfig(FileConfigType):
         raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
 
 
+@requires_library("configparser")
 class IniConfig(FileConfigType):
     """
     INI config implementation.
