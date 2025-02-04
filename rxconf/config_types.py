@@ -1,5 +1,6 @@
 import abc
 import datetime
+import importlib
 import os
 import pathlib
 import sys
@@ -13,35 +14,34 @@ from hvac.exceptions import VaultError  # type: ignore
 from . import _types, attributes, exceptions, hashtools
 
 
-yaml = None
-toml = None
-json = None
-configparser = None
+yaml = importlib.import_module("yaml")
+json = importlib.import_module("json")
+configparser = importlib.import_module("configparser")
+
+if sys.version_info >= (3, 11):
+    toml = importlib.import_module("tomllib")
+else:
+    toml = importlib.import_module("toml")
 
 
-def requires_library(lib: str):
+def requires_libraries(*libs):
     """
-    A decorator to enforce the presence of a library before defining a class.
-    Raises ImportError if the library is not installed.
+    A decorator to check the presence of libraries before defining a class.
+    Raises ImportError if any library is not installed.
     """
 
     def decorator(cls):
-        if lib == "toml":
-            if sys.version_info >= (3, 11):
+        for lib in libs:
+            if lib == "toml" and sys.version_info >= (3, 11):
                 try:
                     globals()["toml"] = __import__("tomllib")
                 except ImportError as e:
-                    raise ImportError(f"Package {lib} not found. Please, run `pip install rxconf[{lib}]`.") from e
+                    raise ImportError("Package tomllib not found. Please, run `pip install rxconf[toml]`.") from e
             else:
                 try:
-                    globals()["toml"] = __import__("toml")
+                    globals()[lib] = __import__(lib)
                 except ImportError as e:
                     raise ImportError(f"Package {lib} not found. Please, run `pip install rxconf[{lib}]`.") from e
-        else:
-            try:
-                globals()[lib] = __import__(lib)
-            except ImportError as e:
-                raise ImportError(f"Package {lib} not found. Please, run `pip install rxconf[{lib}]`.") from e
         return cls
 
     return decorator
@@ -274,7 +274,7 @@ class FileConfigType(MetaConfigType, metaclass=abc.ABCMeta):  # pragma: no cover
         return repr(self._root)
 
 
-@requires_library("yaml")
+@requires_libraries("yaml")
 class YamlConfig(FileConfigType):
     """
     YAML config implementation.
@@ -377,7 +377,7 @@ class YamlConfig(FileConfigType):
         raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
 
 
-@requires_library("json")
+@requires_libraries("json")
 class JsonConfig(FileConfigType):
     """
     JSON config implementation.
@@ -477,7 +477,7 @@ class JsonConfig(FileConfigType):
         raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
 
 
-@requires_library("toml")
+@requires_libraries("toml")
 class TomlConfig(FileConfigType):
     """
     TOML config implementation.
@@ -582,7 +582,7 @@ class TomlConfig(FileConfigType):
         raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
 
 
-@requires_library("configparser")
+@requires_libraries("configparser")
 class IniConfig(FileConfigType):
     """
     INI config implementation.
