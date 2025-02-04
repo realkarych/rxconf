@@ -41,14 +41,13 @@ theme:
 nav:
   - Get Started:
       - Welcome to RxConf: index.md
-      - Why RxConf: get-started/why.md
       - Quick Dive: get-started/quick-dive.md
+      - Why RxConf: get-started/why.md
   - API Docs:
       - RxConf: api/rxconf.md
   - Contributing:
       - Dev.Setup: contributing/setup.md
       - Guidelines: contributing/guidelines.md
-      - Submitting: contributing/issues.md
 
 watch:
   - rxconf
