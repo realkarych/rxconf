@@ -1,165 +1,99 @@
-# Hello World app using RxConf
+# Test App using RxConf
 
-!!! warning
+!!! info
     It is assumed that you are using Python version >= 3.9 and either CPython or PyPy.
-    It is assumed that Python is installed in [PATH](https://en.wikipedia.org/wiki/PATH_\(variable\)).
 
 ## Prepare project
 
-Create directory `hello_world` and open it.
+### 1. Setup dependencies
 
-### On Unix or MacOS
-
-```bash
-python -m venv venv && source venv/bin/activate
-```
-
-### On Windows
-
-```powershell
-python -m venv venv
-.\venv\Scripts\activate
-```
-
-Then install RxConf:
-
-```shell
-pip install rxconf
-```
-
-## Prepare config files
-
-### test.yaml
-
-```yaml
-app:
-    hello_key: Hello
-```
-
-### test.toml
-
-```toml
-[app]
-world_key = "World"
-```
-
-### Add env variable
-
-- On Unix or MacOS: `export APP_EXCLAMATION_MARK=!`
-- On Windows: `set APP_EXCLAMATION_MARK=!`
-
-## Let's manipulate them using RxConf
-
-Create `main.py` in the same directory and open it in your favorite code editor / IDE.
-
-### Firstly, we want to load our configs
-
-```python
-from rxconf import Conf
-
-yaml_conf = Conf.from_file(config_path="test.yaml")
-toml_conf = Conf.from_file(config_path="test.toml")
-env_conf = Conf.from_env()
-```
+1. Create virtual environment, use your favourite package manager: `uv`, `poetry`, `pip` etc. *I will use pip*.
+2. Install RxConf library: `pip install rxconf`.
+3. Check installed dependencies: `pip list`.
+!!! tip
+    RxConf uses some required dependencies. Сheck them out and make sure their use and licenses are appropriate for you.
 
 !!! note
-    RxConf has single interface for all config-types and interface for loading env-variables.
+    RxConf natively support the most popular config formats: `yaml`, `toml`, `ini`, `json`, `dotenv`,
+    virtual environments, HashiCorp Vault.
 
-### So what are `yaml_conf`, `toml_conf` and `env_conf`?
+    Some of them require additional deps, that RxConf will ask you to install when you first run the script.
+    For example, if you'll use toml config, RxConf will ask you to install `rxconf[toml]` dependency.
 
-If you try to execute `type()` for them, you will see the heir of `MetaConfigType`.
+### 2. Create config files
 
-This is layer that incapsulate Attributes structure model.
+- `dummy.yaml`
 
-You can `print()` them or call `repr()` to see this structure.
+    ```yaml
+    app:
+      name: "TestApp"
+      version: 1.0
+      debug: true
+    ```
 
-!!! note
-    JFYI: we have MetaConfigResolver that resolves what concrete FileConfigType should be created based on extension.
+- `dummy.json`
 
-### Secondly, we want to access variables
+    ```json
+    {
+      "app": {
+        "name": "TestApp",
+        "version": 1.0,
+        "debug": true
+      }
+    }
+    ```
 
-```python
-hello_var = yaml_conf.app.hello_key
-world_var = toml_conf.app.world_key
-exclamation_mark = env_conf.app_exclamation_mark
-```
+  *Notice that they're identical*
 
-!!! note
-    RxConf has single interface to create indistinguishable interface for all types of configs.
+### 3. Time to code
 
-### So what are `hello_var`, `world_var` and `exclamation_mark`?
+**Task to implement:**
 
-If you try to execute `type()` for them, you will see the heir of `AttributeType`.
+1. App impl. must be isolated from concrete config-type impl.
+2. App must print it's name every five seconds (to stdout).
+3. App must print it's version with name if debug = True.
+4. App must print message when the version is increased (and do nothing if decreased). Message: `Increase version: <new_version>`.
+5. App must exit when both name and version have changed.
 
-But there are very smart objects.
-They overrides primitive types, operands etc. and your can work with them as primitives:
-
-```python
-hello_var + " " + world_var + exclamation_mark == "Hello World!"
-```
-
-If you will print the result, you will get `True`.
-
-### Types support & Type casting
-
-So AttributeTypes can be converted to primitives if you want:
-
-`str(hello_var) == "Hello"` — the string representation of `hello_var` value.
-
-#### We supports all types that supports MetaConfigType you chose
-
-| Type       | Yaml           | Toml           | Json           | Dotenv         | Ini            |
-|------------|----------------|----------------|----------------|----------------|----------------|
-| `str`      | ✅              | ✅              | ✅              | ✅              | ✅              |
-| `int`      | ✅              | ✅              | ✅              | ✅              | ✅              |
-| `float`    | ✅              | ✅              | ✅              | ✅              | ✅              |
-| `bool`     | ✅              | ✅              | ✅              | ✅              | ✅              |
-| `None`     | ✅              | ❌              | ❌              | ✅              | ✅              |
-| `list`     | ✅              | ✅              | ✅              | ❌              | ❌              |
-| `set`      | ✅              | ❌              | ❌              | ❌              | ❌              |
-| `date`     | ✅              | ✅              | ❌              | ❌              | ❌              |
-| `datetime` | ✅              | ✅              | ❌              | ❌              | ❌              |
-
-!!! note
-    You can iterate via `AttributeType` if it's value's primitive representation is iterable,
-    hash it if it's hashable etc.
-
-### Exceptions handling
-
-All exceptions can be raised by RxConf are inherited from `rxconf.exceptions.RxConfError`.
-
-There are some of them:
-
-- Not-existing file: `rxconf.exceptions.ConfigNotFoundError`.
-- Unknown extension (that is not specified in any `FileConfigType` registered in `MetaConfigResolver`): `rxconf.exceptions.InvalidExtensionError`.
-- Config with broken schema: `rxconf.exceptions.BrokenConfigSchemaError`.
-- Unknown attribute (e.g. `yaml_conf.some.unknown.attr`): `rxconf.exceptions.InvalidAttributeError`.
-
-All existing exceptions your can check in [exceptions.py](https://github.com/realkarych/rxconf/blob/main/rxconf/exceptions.py).
-
-## Async configs
-
-RxConf is compatible with Asyncio. To use, import extension for base `Conf`:
+Firsly, let's write the boilerplate:
 
 ```python
-from rxconf import Conf
+def exit_on_name_version_changed() -> None:
+    print("Exit app!")
+    exit(0)
+
+def print_increase_msg(old_version: float, new_version: float) -> None:
+    if new_version > old_version:
+        print(f"Increase version: {new_version}")
+
+def main() -> None:
+    while True:
+        <Hmm, some non-ordinary business logic...>
+        sleep(5)
+
+if __name__ == "__main__":
+    main()
 ```
 
-Then load config:
+So, it doesn't work. We cannot easy control & manipulate the config state.
+
+Let's integrate RxConf to make this App smart!
 
 ```python
-async def main():
-    conf = await Conf.from_file_async(path="...")
-    # Then use conf as same as Conf
+import rxconf
+
+def exit_on_name_version_changed() -> None:
+    print("Exit app!")
+    exit(0)
+
+def print_increase_msg(old_version: float, new_version: float) -> None:
+    if new_version > old_version:
+        print(f"Increase version: {new_version}")
+
+def main() -> None:
+    while True:
+        sleep(5)
+
+if __name__ == "__main__":
+    main()
 ```
-
-To test, you can run this function with asyncio:
-
-```python
-import asyncio
-asyncio.run(main())
-```
-
-## Observers & Hot-Reload
-
-*In-develop...*
