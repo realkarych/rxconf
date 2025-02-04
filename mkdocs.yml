@@ -81,3 +81,6 @@ extra:
     - icon: fontawesome/brands/github
       link: https://github.com/realkarych/rxconf
       position: header
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/karych/
+      position: header
