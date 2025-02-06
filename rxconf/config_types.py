@@ -24,13 +24,13 @@ else:
     toml = importlib.import_module("toml")
 
 
-def requires_libraries(*libs):
+def requires_libraries(*libs: str) -> tp.Callable[[tp.Type], tp.Type]:
     """
     A decorator to check the presence of libraries before defining a class.
     Raises ImportError if any library is not installed.
     """
 
-    def decorator(cls):
+    def check_imports(cls: tp.Type) -> tp.Type:
         for lib in libs:
             if lib == "toml" and sys.version_info >= (3, 11):
                 try:
@@ -44,7 +44,7 @@ def requires_libraries(*libs):
                     raise ImportError(f"Package {lib} not found. Please, run `pip install rxconf[{lib}]`.") from e
         return cls
 
-    return decorator
+    return check_imports
 
 
 class MetaConfigType(metaclass=abc.ABCMeta):  # pragma: no cover
