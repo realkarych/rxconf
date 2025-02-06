@@ -8,8 +8,6 @@ import typing as tp
 
 import aiofiles
 import dotenv
-import hvac  # type: ignore
-from hvac.exceptions import VaultError  # type: ignore
 
 from . import _types, attributes, exceptions, hashtools
 
@@ -17,6 +15,8 @@ from . import _types, attributes, exceptions, hashtools
 yaml = importlib.import_module("yaml")
 json = importlib.import_module("json")
 configparser = importlib.import_module("configparser")
+hvac = importlib.import_module("hvac")
+VaultError = hvac.exceptions.VaultError
 
 if sys.version_info >= (3, 11):
     toml = importlib.import_module("tomllib")
@@ -113,6 +113,7 @@ class VaultConfigType(MetaConfigType, metaclass=abc.ABCMeta):  # pragma: no cove
         return repr(self._root)
 
 
+@requires_libraries("hvac")
 class VaultConfig(VaultConfigType):
     """ "
     Default Vault config implementation.
