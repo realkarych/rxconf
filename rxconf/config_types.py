@@ -1,6 +1,6 @@
 import abc
 import datetime
-import json
+import importlib
 import os
 import pathlib
 import sys
@@ -8,19 +8,43 @@ import typing as tp
 
 import aiofiles
 import dotenv
-import hvac  # type: ignore
-import yaml
-from hvac.exceptions import VaultError  # type: ignore
 
 from . import _types, attributes, exceptions, hashtools
 
 
-if sys.version_info >= (3, 11):
-    import tomllib as toml
-else:
-    import toml
+yaml = importlib.import_module("yaml")
+json = importlib.import_module("json")
+configparser = importlib.import_module("configparser")
+hvac = importlib.import_module("hvac")
+VaultError = hvac.exceptions.VaultError
 
-import configparser
+if sys.version_info >= (3, 11):
+    toml = importlib.import_module("tomllib")
+else:
+    toml = importlib.import_module("toml")
+
+
+def requires_libraries(*libs: str) -> tp.Callable[[tp.Type], tp.Type]:
+    """
+    A decorator to check the presence of libraries before defining a class.
+    Raises ImportError if any library is not installed.
+    """
+
+    def check_imports(cls: tp.Type) -> tp.Type:
+        for lib in libs:
+            if lib == "toml" and sys.version_info >= (3, 11):
+                try:
+                    globals()["toml"] = __import__("tomllib")
+                except ImportError as e:
+                    raise ImportError("Package tomllib not found. Please, run `pip install rxconf[toml]`.") from e
+            else:
+                try:
+                    globals()[lib] = __import__(lib)
+                except ImportError as e:
+                    raise ImportError(f"Package {lib} not found. Please, run `pip install rxconf[{lib}]`.") from e
+        return cls
+
+    return check_imports
 
 
 class MetaConfigType(metaclass=abc.ABCMeta):  # pragma: no cover
@@ -89,6 +113,7 @@ class VaultConfigType(MetaConfigType, metaclass=abc.ABCMeta):  # pragma: no cove
         return repr(self._root)
 
 
+@requires_libraries("hvac")
 class VaultConfig(VaultConfigType):
     """ "
     Default Vault config implementation.
@@ -250,6 +275,7 @@ class FileConfigType(MetaConfigType, metaclass=abc.ABCMeta):  # pragma: no cover
         return repr(self._root)
 
 
+@requires_libraries("yaml")
 class YamlConfig(FileConfigType):
     """
     YAML config implementation.
@@ -352,6 +378,7 @@ class YamlConfig(FileConfigType):
         raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
 
 
+@requires_libraries("json")
 class JsonConfig(FileConfigType):
     """
     JSON config implementation.
@@ -451,6 +478,7 @@ class JsonConfig(FileConfigType):
         raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
 
 
+@requires_libraries("toml")
 class TomlConfig(FileConfigType):
     """
     TOML config implementation.
@@ -555,6 +583,7 @@ class TomlConfig(FileConfigType):
         raise exceptions.BrokenConfigSchemaError(f"Unsupported data type: {type(data)}")  # pragma: no cover
 
 
+@requires_libraries("configparser")
 class IniConfig(FileConfigType):
     """
     INI config implementation.

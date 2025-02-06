@@ -27,6 +27,14 @@ python-dotenv = "^1.0.1"
 toml = {version = "^0.10.2", markers = "python_version < '3.11'"}
 hvac = "^2.3.0"
 
+[tool.poetry.extras]
+yaml = ["yaml"]
+toml = ["toml"]
+ini = ["configparser"]
+json = ["json"]
+hvac = ["hvac"]
+all = ["yaml", "toml", "configparser", "json", "hvac"]
+
 [tool.poetry.group.dev.dependencies]
 types-aiofiles = "24.1.0.20241221"
 pytest = "^8.3.4"
