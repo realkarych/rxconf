@@ -20,8 +20,6 @@
 
 **TL;DR:** `pip install rxconf`
 
-**Documentation:** <https://realkarych.github.io/rxconf/>
-
 **Source code:** <https://github.com/realkarych/rxconf/>
 
 ---
